@@ -52,6 +52,7 @@ Join our community of developers creating universal apps.
 
 # Folder structure
 
+```
 src/
 ├── assets/                 # Static assets
 │   ├── images/            # App images
@@ -95,3 +96,4 @@ src/
     ├── components/        # Component tests
     ├── screens/          # Screen tests
     └── utils/            # Utility tests
+```
