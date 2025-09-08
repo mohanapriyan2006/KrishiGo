@@ -48,3 +48,50 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+
+# Folder structure
+
+src/
+├── assets/                 # Static assets
+│   ├── images/            # App images
+│   ├── icons/             # Icon files
+│   ├── fonts/             # Custom fonts
+│   └── lottie/            # Lottie animations
+├── components/            # Reusable components
+│   ├── common/            # Generic components (Button, Input, etc.)
+│   ├── ui/                # UI-specific components
+│   └── forms/             # Form-related components
+├── screens/               # Screen components
+│   ├── Auth/              # Authentication screens
+│   ├── Home/              # Home screen and related
+│   ├── Profile/           # Profile screens
+│   └── index.js           # Screen exports
+├── navigation/            # Navigation configuration
+│   ├── AppNavigator.js    # Main navigator
+│   ├── AuthNavigator.js   # Auth navigator
+│   └── index.js           # Navigation exports
+├── services/              # API and external services
+│   ├── api/               # API calls
+│   ├── auth/              # Authentication services
+│   └── storage/           # Local storage services
+├── utils/                 # Utility functions
+│   ├── helpers/           # Helper functions
+│   ├── constants/         # App constants
+│   └── validators/        # Validation functions
+├── hooks/                 # Custom React hooks
+│   ├── useAuth.js         # Auth-related hooks
+│   ├── useApi.js          # API hooks
+│   └── index.js           # Hook exports
+├── context/               # React Context providers
+│   ├── AuthContext.js     # Authentication context
+│   ├── AppContext.js      # General app context
+│   └── index.js           # Context exports
+├── styles/                # Global styles and themes
+│   ├── theme.js           # App theme configuration
+│   ├── globalStyles.js    # Global style definitions
+│   └── colors.js          # Color palette
+└── __tests__/             # Test files
+    ├── components/        # Component tests
+    ├── screens/          # Screen tests
+    └── utils/            # Utility tests
