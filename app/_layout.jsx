@@ -3,7 +3,12 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet, View } from 'react-native';
 
 
-import Home from '../screens/Home.jsx';
+import ChallengeScreen from '../screens/ChallengeScreen.jsx';
+import HomeScreen from '../screens/HomeScreen.jsx';
+import JourneyScreen from '../screens/JourneyScreen.jsx';
+import Login from '../screens/LoginScreen/Login.jsx';
+import ProfileScreen from '../screens/ProfileScreen.jsx';
+import RewardsScreen from '../screens/RewardsScreen.jsx';
 
 const Tab = createBottomTabNavigator();
 
@@ -56,11 +61,12 @@ export default function RootLayout() {
         headerShown: false,
       })}
     >
-      <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Journey" component={Home} />
-      <Tab.Screen name="Challenge" component={Home} />
-      <Tab.Screen name="Rewards" component={Home} />
-      <Tab.Screen name="Profile" component={Home} />
+      <Tab.Screen name="Login" component={Login} />
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Journey" component={JourneyScreen} />
+      <Tab.Screen name="Challenge" component={ChallengeScreen} />
+      <Tab.Screen name="Rewards" component={RewardsScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
 }
