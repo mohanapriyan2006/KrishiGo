@@ -8,6 +8,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import ProgressLine from '../components/ProgressLine';
 
 const JourneyScreen = () => {
     const [activeTab, setActiveTab] = useState('Ongoing');
@@ -77,16 +78,6 @@ const JourneyScreen = () => {
         Alert.alert('Profile', 'Profile page will open here');
     };
 
-    const renderProgressBar = (progress) => {
-        return (
-            <View className="w-full bg-white/30 rounded-full h-1.5 mt-2">
-                <View
-                    className="bg-white rounded-full h-1.5"
-                    style={{ width: `${progress}%` }}
-                />
-            </View>
-        );
-    };
 
     const renderCourseCard = (course) => (
         <View key={course.id} className="bg-primary rounded-2xl p-5 mb-4 shadow-lg">
@@ -106,7 +97,7 @@ const JourneyScreen = () => {
             </Text>
 
             {/* Progress Bar */}
-            {renderProgressBar(course.progress)}
+            <ProgressLine progress={course.progress} />
 
             {/* Lessons Count */}
             <Text className="text-white text-sm mt-3 opacity-90">

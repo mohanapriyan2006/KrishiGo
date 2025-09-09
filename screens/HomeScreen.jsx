@@ -1,7 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import RoundProgress from '../components/RoundProgress';
 
 export default function Home() {
+
+
     return (
         <ScrollView className="flex-1 bg-[#f5f5f5]">
             <View className="p-5 pb-30 pt-[50px]">
@@ -45,9 +48,12 @@ export default function Home() {
                 {/* Sustainability Score */}
                 <View className="flex-row p-10">
                     <View className="mr-10 flex-1/3 items-center justify-center">
-                        <View className="w-20 h-20 rounded-full bg-primary justify-center items-center">
-                            <Text className="text-2xl font-bold text-white">60%</Text>
-                        </View>
+                        <RoundProgress
+                            progress={80}
+                            size={120}
+                            showPercentage={true}
+                            className="mb-2"
+                        />
                     </View>
                     <View className="flex-2/3 justify-center">
                         <Text className="text-base  text-[#333] mb-1">Sustainability Score</Text>
