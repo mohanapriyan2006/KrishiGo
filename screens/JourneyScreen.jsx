@@ -89,7 +89,7 @@ const JourneyScreen = () => {
     };
 
     const renderCourseCard = (course) => (
-        <View key={course.id} className="bg-green-500 rounded-2xl p-5 mb-4 shadow-lg">
+        <View key={course.id} className="bg-primary rounded-2xl p-5 mb-4 shadow-lg">
             {/* Live Indicator */}
             {course.isLive && (
                 <View className="flex-row items-center mb-3">
@@ -105,69 +105,78 @@ const JourneyScreen = () => {
                 {course.title}
             </Text>
 
-            {/* Lessons Count */}
-            <Text className="text-white text-sm mb-3 opacity-90">
-                {course.lessons}
-            </Text>
-
             {/* Progress Bar */}
             {renderProgressBar(course.progress)}
 
+            {/* Lessons Count */}
+            <Text className="text-white text-sm mt-3 opacity-90">
+                {course.lessons}
+            </Text>
+
+
             {/* Resume Button */}
-            <View className="flex-row justify-end mt-4">
+            <View className="flex-row justify-end">
                 <TouchableOpacity
-                    className="bg-white px-6 py-2 rounded-full"
+                    className="bg-white px-6 py-2 rounded-lg"
                     onPress={() => handleResume(course.id)}
                 >
-                    <Text className="text-green-600 font-semibold text-sm">
+                    <Text className="text-primaryDark font-semibold text-sm tracking-wider">
                         {course.status === 'completed' ? 'Review' : 'Resume'}
                     </Text>
                 </TouchableOpacity>
             </View>
+
+
         </View>
     );
 
     return (
         <SafeAreaView className="flex-1 bg-gray-50">
-            <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+            <ScrollView className="flex-1 mt-10" showsVerticalScrollIndicator={false}>
+
                 {/* Header */}
-                <View className="flex-row justify-between items-center px-6 py-4 bg-white">
+                <View className="flex-row justify-between items-center px-6 py-3 bg-white">
                     <Text className="text-2xl font-bold text-gray-900">My journey</Text>
                     <TouchableOpacity
-                        className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center"
+                        className="w-[50px] h-[50px] bg-green-200/40 rounded-full items-center justify-center"
                         onPress={handleProfile}
                     >
-                        <Ionicons name="person-outline" size={20} color="#374151" />
+                        <Ionicons name="person-outline" size={30} color="#314C1C" />
                     </TouchableOpacity>
+                </View>
+
+                {/* Divider */}
+                <View className="items-center">
+                    <View className="w-60 h-0.5 bg-gray-300"></View>
                 </View>
 
                 {/* Tab Buttons */}
                 <View className="flex-row mx-6 mt-4 mb-6">
                     <TouchableOpacity
-                        className={`px-4 py-2 rounded-full mr-3 ${activeTab === 'Ongoing'
-                                ? 'bg-green-500'
-                                : 'bg-gray-200'
+                        className={`px-5 py-2 border-2 border-primaryDark rounded-full mr-3 ${activeTab === 'Ongoing'
+                            ? 'bg-primary'
+                            : 'bg-gray-200'
                             }`}
                         onPress={() => setActiveTab('Ongoing')}
                     >
                         <Text className={`font-medium text-sm ${activeTab === 'Ongoing'
-                                ? 'text-white'
-                                : 'text-gray-700'
+                            ? 'text-white'
+                            : 'text-gray-700'
                             }`}>
                             Ongoing
                         </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        className={`px-4 py-2 rounded-full ${activeTab === 'Completed'
-                                ? 'bg-green-500'
-                                : 'bg-gray-200'
+                        className={`px-5 border-2 border-primaryDark py-2 rounded-full ${activeTab === 'Completed'
+                            ? 'bg-primary'
+                            : 'bg-gray-200'
                             }`}
                         onPress={() => setActiveTab('Completed')}
                     >
                         <Text className={`font-medium text-sm ${activeTab === 'Completed'
-                                ? 'text-white'
-                                : 'text-gray-700'
+                            ? 'text-white'
+                            : 'text-gray-700'
                             }`}>
                             Completed
                         </Text>
@@ -194,16 +203,6 @@ const JourneyScreen = () => {
                         </Text>
                     </View>
                 )}
-
-                {/* AI Assistant Button */}
-                <View className="absolute bottom-6 right-6">
-                    <TouchableOpacity
-                        className="w-14 h-14 bg-green-500 rounded-full items-center justify-center shadow-lg"
-                        onPress={() => Alert.alert('AI Assistant', 'AI Assistant feature coming soon!')}
-                    >
-                        <Text className="text-white font-bold text-lg">AI</Text>
-                    </TouchableOpacity>
-                </View>
 
                 {/* Bottom Spacing for Tab Bar */}
                 <View className="h-24" />

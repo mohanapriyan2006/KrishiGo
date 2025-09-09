@@ -1,7 +1,7 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import {
     Alert,
+    Image,
     SafeAreaView,
     ScrollView,
     Text,
@@ -56,56 +56,36 @@ const ChallengeScreen = () => {
         <SafeAreaView className="flex-1 bg-gray-50">
             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
                 {/* Header */}
-                <View className="px-6 py-4 bg-white">
+                <View className="px-6 py-4 mt-10 bg-white">
                     <Text className="text-2xl font-bold text-gray-900">Challenges</Text>
                 </View>
 
                 {/* Main Challenge Card */}
-                <View className="bg-white mx-6 mt-4 rounded-2xl p-6 shadow-sm">
+                <View className="bg-white mx-6 mt-8 rounded-2xl p-6 shadow-sm">
                     {/* Rubik's Cube Challenge */}
                     <View className="flex-row items-center mb-6">
                         {/* 3D Cube Illustration */}
-                        <View className="w-20 h-20 mr-4 items-center justify-center">
-                            {/* Creating a simple 3D cube effect */}
-                            <View className="relative">
-                                {/* Main cube face */}
-                                <View className="w-16 h-16 bg-blue-400 rounded-lg absolute" />
-                                {/* Top face */}
-                                <View
-                                    className="w-16 h-4 bg-blue-300 rounded-t-lg absolute -top-2 left-2"
-                                    style={{ transform: [{ perspective: 100 }, { rotateX: '45deg' }] }}
-                                />
-                                {/* Right face */}
-                                <View
-                                    className="w-4 h-16 bg-blue-500 rounded-r-lg absolute top-0 -right-2"
-                                    style={{ transform: [{ perspective: 100 }, { rotateY: '45deg' }] }}
-                                />
-                                {/* Colored segments */}
-                                <View className="absolute top-1 left-1 w-2 h-2 bg-red-400 rounded-sm" />
-                                <View className="absolute top-1 right-1 w-2 h-2 bg-yellow-400 rounded-sm" />
-                                <View className="absolute bottom-1 left-1 w-2 h-2 bg-green-400 rounded-sm" />
-                                <View className="absolute bottom-1 right-1 w-2 h-2 bg-orange-400 rounded-sm" />
-                                <View className="absolute top-6 left-6 w-2 h-2 bg-purple-400 rounded-sm" />
-                            </View>
+                        <View className="mr-4 items-center justify-center flex-1/3">
+                            <Image source={require('../assets/images/challenges.png')} style={{ width: 120, height: 120 }} />
                         </View>
 
                         {/* Challenge Info */}
-                        <View className="flex-1">
+                        <View className="flex-2/3">
                             <Text className="text-lg font-bold text-gray-900 mb-1">
                                 Complete Challenge
                             </Text>
-                            <Text className="text-gray-600 text-sm mb-3">
+                            <Text className="text-gray-600 text-base mb-3">
                                 Earn Rewards
                             </Text>
 
                             {/* Start Challenge Button */}
                             <TouchableOpacity
-                                className={`px-6 py-2 rounded-full ${challengeStarted ? 'bg-gray-400' : 'bg-green-500'
+                                className={`px-6 py-3 rounded-lg ${challengeStarted ? 'bg-gray-400' : 'bg-primary'
                                     }`}
                                 onPress={handleStartChallenge}
                                 disabled={challengeStarted}
                             >
-                                <Text className="text-white font-semibold text-sm text-center">
+                                <Text className="text-white font-semibold text-base text-center">
                                     {challengeStarted ? 'Challenge Active' : 'Start Challenge'}
                                 </Text>
                             </TouchableOpacity>
@@ -114,12 +94,12 @@ const ChallengeScreen = () => {
                 </View>
 
                 {/* Earn Rewards Points Section */}
-                <View className="bg-white mx-6 mt-4 rounded-2xl p-6 shadow-sm">
-                    <Text className="text-lg font-bold text-gray-900 mb-4">
+                <View className="bg-white mx-6 mt-8 rounded-2xl p-6 shadow-sm">
+                    <Text className="text-2xl font-bold text-primaryDark mb-4">
                         Earn Rewards Points
                     </Text>
 
-                    <Text className="text-gray-600 text-sm mb-4">
+                    <Text className="text-gray-600 text-lg mb-4">
                         Ways to earn rewards :
                     </Text>
 
@@ -139,16 +119,6 @@ const ChallengeScreen = () => {
                                         {item.task}
                                     </Text>
                                 </View>
-                                <View className="flex-row items-center">
-                                    <Text className="text-green-600 text-sm font-medium mr-2">
-                                        {item.points}pts
-                                    </Text>
-                                    <Ionicons
-                                        name={item.completed ? "checkmark-circle" : "chevron-forward"}
-                                        size={16}
-                                        color={item.completed ? "#10B981" : "#9CA3AF"}
-                                    />
-                                </View>
                             </TouchableOpacity>
                         ))}
                     </View>
@@ -164,22 +134,12 @@ const ChallengeScreen = () => {
 
                     {/* Earn Rewards Button */}
                     <TouchableOpacity
-                        className="bg-green-500 py-3 rounded-full shadow-sm"
+                        className="bg-primary py-3 rounded-lg shadow-sm"
                         onPress={handleEarnRewards}
                     >
-                        <Text className="text-white font-semibold text-center text-base">
+                        <Text className="text-white font-semibold text-center text-lg">
                             Earn Rewards
                         </Text>
-                    </TouchableOpacity>
-                </View>
-
-                {/* AI Assistant Button */}
-                <View className="absolute bottom-6 right-6">
-                    <TouchableOpacity
-                        className="w-14 h-14 bg-green-500 rounded-full items-center justify-center shadow-lg"
-                        onPress={() => Alert.alert('AI Assistant', 'AI Assistant feature coming soon!')}
-                    >
-                        <Text className="text-white font-bold text-lg">AI</Text>
                     </TouchableOpacity>
                 </View>
 
