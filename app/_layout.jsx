@@ -36,13 +36,13 @@ export default function RootLayout() {
               styles.tabIcon,
               { backgroundColor: focused ? 'rgba(255, 255, 255, 0.9)' : 'transparent' }
             ]}>
-              <Ionicons name={iconName} size={size} color={focused ? '#8BC34A' : '#e3e3e3'} />
+              <Ionicons name={iconName} size={size} color={focused ? '#78BB1B' : '#e3e3e3'} />
             </View>
           );
         },
         tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: '#8BC34A',
+          backgroundColor: '#78BB1B',
           paddingVertical: 8,
           height: 70,
           borderTopLeftRadius: 20,

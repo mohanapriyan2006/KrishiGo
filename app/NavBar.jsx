@@ -22,7 +22,7 @@ const NavBar = ({ activeTab, onTabPress }) => {
                     <Ionicons
                         name={tab.icon}
                         size={24}
-                        color={activeTab === tab.id ? '#8BC34A' : '#faf7f7'}
+                        color={activeTab === tab.id ? '#78BB1B' : '#faf7f7'}
                     />
                 </Pressable>
             ))}

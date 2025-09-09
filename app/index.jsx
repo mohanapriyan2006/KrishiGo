@@ -2,6 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { useState } from 'react';
 import '../global.css';
 import Login from '../screens/LoginScreen/Login';
+import RootLayout from './_layout';
 
 
 export default function Index() {
@@ -10,8 +11,8 @@ export default function Index() {
 
   return (
     <NavigationContainer>
-      {/* {isLogined ? <RootLayout /> : <Login />} */}
-      <Login />
+      {isLogined ? <RootLayout /> : <Login />}
+      {/* <Login /> */}
     </NavigationContainer>
   );
 }

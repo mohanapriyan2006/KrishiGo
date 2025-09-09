@@ -2,13 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-@utilities {
 
-    bg-green-mid {
-        @apply bg-[#78BB1B];
-    }
-
-    bg-green-dark {
-        @apply bg-[#314C1C];
-    }
+:root {
+    --color-primary: #78BB1B;
+    --color-primaryDark: #314C1C;
 }

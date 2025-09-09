@@ -1,75 +1,91 @@
 import { Ionicons } from '@expo/vector-icons';
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function Home() {
     return (
         <ScrollView className="flex-1 bg-[#f5f5f5]">
-            <View className="p-5 pb-24">
+            <View className="p-5 pb-30 pt-[50px]">
                 {/* Header */}
                 <View className="flex-row justify-between items-center mb-5">
-                    <View>
+                    <View className="p-8">
                         <Text className="text-base text-[#666]">Good Morning</Text>
-                        <Text className="text-2xl font-bold text-[#333]">Vijay !</Text>
+                        <Text className="text-3xl font-bold text-primaryDark">Vijay !</Text>
                     </View>
-                    <View className="bg-white p-2.5 rounded-full shadow">
-                        <Ionicons name="bicycle" size={40} color="#FF6B35" />
-                    </View>
+                    <Image source={require('../assets/images/welcome_img.png')} style={{ width: 180, height: 150 }} />
                 </View>
 
                 {/* Green Action Bar */}
-                <View className="flex-row bg-[#8BC34A] rounded-2xl py-4 px-2 justify-around mb-5 shadow">
+                <View className="flex-row bg-primary rounded-2xl py-4 px-2 justify-around mb-5 shadow">
                     <TouchableOpacity className="items-center">
-                        <View className="bg-green-100/40 p-2.5 rounded-full mb-1 shadow">
-                            <Ionicons name="school" size={24} color="white" />
+                        <View className={HomeStyles.quickActions.iconView}>
+                            <Ionicons name="school" size={30} color={HomeStyles.quickActions.iconColor} />
                         </View>
-                        <Text className="text-white text-xs mt-1 font-medium">My Course</Text>
+                        <Text className={HomeStyles.quickActions.text}>My Course</Text>
                     </TouchableOpacity>
                     <TouchableOpacity className="items-center">
-                        <Ionicons name="gift" size={24} color="white" />
-                        <Text className="text-white text-xs mt-1 font-medium">Rewards</Text>
+                        <View className={HomeStyles.quickActions.iconView}>
+                            <Ionicons name="gift" size={30} color={HomeStyles.quickActions.iconColor} />
+                        </View>
+                        <Text className={HomeStyles.quickActions.text}>Rewards</Text>
                     </TouchableOpacity>
                     <TouchableOpacity className="items-center">
-                        <Ionicons name="heart" size={24} color="white" />
-                        <Text className="text-white text-xs mt-1 font-medium">Favorite</Text>
+                        <View className={HomeStyles.quickActions.iconView}>
+                            <Ionicons name="heart" size={30} color={HomeStyles.quickActions.iconColor} />
+                        </View>
+                        <Text className={HomeStyles.quickActions.text}>Favorite</Text>
                     </TouchableOpacity>
                     <TouchableOpacity className="items-center">
-                        <Ionicons name="search" size={24} color="white" />
-                        <Text className="text-white text-xs mt-1 font-medium">Search</Text>
+                        <View className={HomeStyles.quickActions.iconView}>
+                            <Ionicons name="search" size={30} color={HomeStyles.quickActions.iconColor} />
+                        </View>
+                        <Text className={HomeStyles.quickActions.text}>Search</Text>
                     </TouchableOpacity>
                 </View>
 
                 {/* Sustainability Score */}
-                <View className="flex-row bg-white rounded-xl p-5 mb-5 shadow">
-                    <View className="mr-5">
-                        <View className="w-20 h-20 rounded-full bg-[#8BC34A] justify-center items-center">
+                <View className="flex-row p-10">
+                    <View className="mr-10 flex-1/3 items-center justify-center">
+                        <View className="w-20 h-20 rounded-full bg-primary justify-center items-center">
                             <Text className="text-2xl font-bold text-white">60%</Text>
                         </View>
                     </View>
-                    <View className="flex-1">
-                        <Text className="text-base font-bold text-[#333] mb-1">Sustainability Score</Text>
-                        <Text className="text-sm text-[#666] mb-1">Best : 70 - 100%</Text>
-                        <Text className="text-sm text-[#8BC34A] mb-2">Growing Strong 🌱</Text>
-                        <TouchableOpacity className="bg-[#8BC34A] py-2 px-4 rounded-xl self-start">
+                    <View className="flex-2/3 justify-center">
+                        <Text className="text-base  text-[#333] mb-1">Sustainability Score</Text>
+                        <Text className="text-[14px] font-bold text-black mb-1">Best : 70 - 100%</Text>
+                        <Text className="text-sm font-medium text-primary mb-2">Growing Strong 🌱</Text>
+                        <TouchableOpacity className="bg-primary py-2 px-4 rounded-xl self-start">
                             <Text className="text-white text-xs font-medium">Improve Now</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
 
+                {/* Divider */}
+                <View className="items-center mb-8">
+                    <View className="w-80 h-0.5 bg-gray-300"></View>
+                </View>
+
                 {/* Invite & Earn */}
-                <View className="flex-row bg-[#FFF3E0] rounded-xl p-5 items-center shadow">
-                    <View className="bg-[#FFE0B2] p-2.5 rounded-lg mr-4">
-                        <Ionicons name="mail" size={30} color="#FF6B35" />
-                    </View>
+                <View className="flex-row bg-green-200/40 rounded-2xl p-5 items-center">
+                    <Image source={require('../assets/images/invite.png')} style={{ width: 100, height: 90, resizeMode: 'contain', marginLeft: 10 }} />
                     <View className="flex-1">
                         <Text className="text-base font-bold text-[#333] mb-1">Invite & Earn</Text>
                         <Text className="text-sm text-[#666] mb-1">Share & Collect Rewards</Text>
                         <Text className="text-xs text-[#999]">Earn ₹/coin! | Refer Points | Make a Preorder | Grow Vegetation</Text>
                     </View>
-                    <View className="bg-[#8BC34A] w-10 h-10 rounded-full justify-center items-center">
+                    <View className="bg-primary w-10 h-10 rounded-full justify-center items-center">
                         <Text className="text-white text-xs font-bold">₹1</Text>
                     </View>
                 </View>
             </View>
         </ScrollView>
     );
+}
+
+
+const HomeStyles = {
+    quickActions: {
+        iconView: "bg-yellow-100/80 p-2.5 rounded-full mb-1",
+        iconColor: "#314C1C",
+        text: "text-white text-sm mt-1 font-medium"
+    }
 }
