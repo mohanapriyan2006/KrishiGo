@@ -1,7 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import FloatingAIButton from '../components/FloatingAIButton';
 import RoundProgress from '../components/RoundProgress';
 
 export default function Home() {
@@ -65,7 +64,7 @@ export default function Home() {
                         <Text className="text-[14px] font-bold text-black mb-1">Best : 70 - 100%</Text>
                         <Text className="text-sm font-medium text-primary mb-2">Growing Strong 🌱</Text>
                         <TouchableOpacity className="bg-primary py-2 px-4 rounded-xl self-start"
-                        onPress={() => navigation.navigate('Challenge')}>
+                            onPress={() => navigation.navigate('Challenge')}>
                             <Text className="text-white text-xs font-medium">Improve Now</Text>
                         </TouchableOpacity>
                     </View>
@@ -90,7 +89,6 @@ export default function Home() {
                 </View>
             </View>
 
-            <FloatingAIButton />
         </ScrollView>
     );
 }

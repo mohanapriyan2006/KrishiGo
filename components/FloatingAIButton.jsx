@@ -150,13 +150,13 @@ const FloatingAIButton = ({ isActive = false, setIsActive }) => {
           style={{
             transform: [{ scale: scaleAnim }, { scale: bounceAnim }],
           }}
-          className={`w-16 h-16 bg-slate-900 border-2 rounded-full items-center justify-center ${isActive ? 'border-green-400' : 'border-green-500/60'}`}
+          className={`w-16 h-16 bg-slate-900 border-2 rounded-full items-center justify-center ${isActive ? 'border-lime-400' : 'border-lime-500/60'}`}
         >
           <View
             className="absolute inset-1 rounded-full"
             style={{ backgroundColor: isActive ? 'rgba(55, 216, 0, 0.3)' : 'rgba(55, 216, 0, 0.2)' }}
           />
-          <Text className="text-green-400 font-bold text-xl relative z-10">
+          <Text className="text-lime-300 font-bold text-xl relative z-10">
             {isActive ? 'X' : 'AI'}
           </Text>
 

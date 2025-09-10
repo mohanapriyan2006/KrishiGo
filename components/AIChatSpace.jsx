@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import {
+    Image,
     KeyboardAvoidingView,
     Modal,
     Platform,
@@ -53,18 +54,25 @@ const ChatPopup = ({ visible, onClose }) => {
             className={`mb-3 ${message.isBot ? 'items-start' : 'items-end'
                 }`}
         >
-            <View
-                className={`max-w-[80%] px-4 py-3 rounded-2xl ${message.isBot
-                    ? 'bg-gray-100 rounded-tl-md'
-                    : 'bg-primary rounded-tr-md'
-                    }`}
-            >
-                <Text
-                    className={`text-sm ${message.isBot ? 'text-gray-800' : 'text-white'
+            <View className="flex-col ">
+                {message.isBot && (
+                    <Image source={require('../assets/images/AI.png')}
+                        style={{ width: 60, height: 60 }}
+                        className="-mb-6 -ml-6" />
+                )}
+                <View
+                    className={`max-w-[80%] px-4 py-3 rounded-2xl ${message.isBot
+                        ? 'bg-lime-300/30 border border-primary rounded-tl-none'
+                        : 'bg-primary rounded-tr-none'
                         }`}
                 >
-                    {message.text}
-                </Text>
+                    <Text
+                        className={`text-sm ${message.isBot ? 'text-gray-800' : 'text-white'
+                            }`}
+                    >
+                        {message.text}
+                    </Text>
+                </View>
             </View>
         </View>
     );
@@ -108,10 +116,10 @@ const ChatPopup = ({ visible, onClose }) => {
                     </ScrollView>
 
                     {/* Input Area */}
-                    <View className="px-4 py-4 bg-gray-50 border-t border-gray-200">
+                    <View className="px-4 py-4 bg-primary border-t border-gray-200">
                         <View className="flex-row items-center bg-white rounded-full px-4 py-2 shadow-sm border border-gray-200">
                             <TouchableOpacity className="mr-3">
-                                <Ionicons name="attach" size={20} color="#9CA3AF" />
+                                <Ionicons name="attach" size={20} color="#314C1C" />
                             </TouchableOpacity>
 
                             <TextInput
@@ -140,11 +148,11 @@ const ChatPopup = ({ visible, onClose }) => {
 };
 
 // Usage Component
-const ChatApp = () => {
+const AIChatSpace = () => {
     const [isActive, setIsActive] = useState(false);
 
     return (
-        <View className="flex-1 bg-gray-100 justify-center items-center">
+        <View className="absolute">
             <FloatingAIButton isActive={isActive} setIsActive={setIsActive} />
             <ChatPopup
                 visible={isActive}
@@ -154,4 +162,4 @@ const ChatApp = () => {
     );
 };
 
-export default ChatApp;
+export default AIChatSpace;
