@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import {
     Alert,
+    Image,
     SafeAreaView,
     ScrollView,
     Share,
@@ -81,50 +82,51 @@ const RewardsScreen = () => {
 
     return (
         <SafeAreaView className="flex-1 bg-gray-50">
-            <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+            <ScrollView className="flex-1 mt-10" showsVerticalScrollIndicator={false}>
                 {/* Header */}
                 <View className="px-6 py-4 bg-white">
                     <Text className="text-2xl font-bold text-gray-900">Your Rewards</Text>
                 </View>
 
                 {/* Points Card */}
-                <View className="bg-green-500 mx-6 mt-4 rounded-2xl p-6 shadow-lg">
-                    <View className="flex-row items-center justify-between">
+                <View className="bg-primary mx-6 mt-4 p-6 flex items-center rounded-2xl shadow-2xl">
+                    <View className="flex-row items-center gap-10 justify-between">
                         {/* Star Icon and Points */}
-                        <View className="flex-row items-center flex-1">
-                            <View className="w-12 h-12 bg-orange-400 rounded-full items-center justify-center mr-4">
-                                <Ionicons name="star" size={24} color="white" />
-                            </View>
+                        <View className="items-center justify-center flex-1/3 bg-yellow-100/80 p-2.5 rounded-full">
+                            <Image source={require('../assets/images/Coin.png')}
+                                style={{ height: 60, width: 60 }} />
+                        </View>
+                        <View className="flex-col flex-2/3">
                             <View>
                                 <Text className="text-white text-2xl font-bold">
                                     {totalPoints.toLocaleString()} pts
                                 </Text>
-                                <Text className="text-white text-sm opacity-90">
+                                <Text className="text-white tracking-wider text-sm opacity-90">
                                     Total points earned
                                 </Text>
                             </View>
+                            {/* Redeem Button */}
+                            <TouchableOpacity
+                                className="bg-white mt-2 px-4 py-2 rounded-lg"
+                                onPress={handleRedeemPoints}
+                            >
+                                <Text className="text-primaryDark tracking-wider font-semibold text-sm">
+                                    Redeem Points
+                                </Text>
+                            </TouchableOpacity>
                         </View>
 
-                        {/* Redeem Button */}
-                        <TouchableOpacity
-                            className="bg-white px-4 py-2 rounded-full"
-                            onPress={handleRedeemPoints}
-                        >
-                            <Text className="text-green-600 font-semibold text-sm">
-                                Redeem Points
-                            </Text>
-                        </TouchableOpacity>
                     </View>
                 </View>
 
                 {/* Referral Section */}
-                <View className="mx-6 mt-4">
+                <View className="mx-10 mt-4">
                     <View className="flex-row items-center justify-between">
                         <View>
-                            <Text className="text-green-600 text-sm font-medium">
+                            <Text className="text-primaryDark text-sm font-medium">
                                 Refer your friends
                             </Text>
-                            <Text className="text-green-600 text-sm">
+                            <Text className="text-primaryDark text-sm">
                                 Earn upto 899pts
                             </Text>
                         </View>
@@ -132,28 +134,27 @@ const RewardsScreen = () => {
                             className="flex-row items-center bg-gray-100 px-3 py-2 rounded-lg"
                             onPress={copyReferralCode}
                         >
-                            <Text className="text-gray-700 text-sm mr-2">
+                            <Text className="text-primaryDark text-sm mr-2">
                                 krishigo.in/ref-3213
                             </Text>
-                            <Ionicons name="copy-outline" size={16} color="#374151" />
+                            <Ionicons name="copy-outline" size={16} color="#314C1C" />
                         </TouchableOpacity>
                     </View>
                 </View>
 
                 {/* Daily Rewards Section */}
-                <View className="bg-white mx-6 mt-4 rounded-2xl p-6 shadow-sm">
+                <View className="bg-white mx-6 mt-6 rounded-2xl p-6 shadow-sm">
                     <Text className="text-lg font-bold text-gray-900 mb-4">
                         Daily Rewards
                     </Text>
 
-                    <View className="bg-green-50 rounded-xl p-4">
+                    <View className="bg-[#67b00019] rounded-xl p-4">
                         {dailyRewards.map((reward) => (
-                            <View key={reward.id} className="flex-row items-center justify-between mb-3 last:mb-0">
+                            <View key={reward.id} className="flex-row items-center justify-between border-b border-gray-200 py-3">
                                 {/* Gift Icon and Reward Info */}
                                 <View className="flex-row items-center flex-1">
-                                    <View className="w-10 h-10 mr-3">
-                                        <Text className="text-2xl">🎁</Text>
-                                    </View>
+                                    <Image source={require('../assets/images/gift.png')} 
+                                    style={{ width: 40, height: 40, marginRight: 12 }} />
                                     <View>
                                         <Text className="text-gray-900 font-medium">
                                             {reward.name}
@@ -166,20 +167,21 @@ const RewardsScreen = () => {
 
                                 {/* Claim Button */}
                                 <TouchableOpacity
-                                    className={`px-4 py-2 rounded-full ${reward.claimed
-                                            ? 'bg-gray-200'
-                                            : 'bg-green-400'
+                                    className={`px-4 py-2 rounded-xl ${reward.claimed
+                                        ? 'bg-gray-200'
+                                        : 'bg-[#85e30257]'
                                         }`}
                                     onPress={() => handleClaimReward(reward.id)}
                                     disabled={reward.claimed}
                                 >
                                     <Text className={`font-medium text-sm ${reward.claimed
-                                            ? 'text-gray-500'
-                                            : 'text-white'
+                                        ? 'text-gray-500'
+                                        : 'text-primaryDark'
                                         }`}>
                                         {reward.claimed ? 'Claimed' : 'Claim'}
                                     </Text>
                                 </TouchableOpacity>
+
                             </View>
                         ))}
                     </View>
@@ -195,9 +197,9 @@ const RewardsScreen = () => {
                         {leaderboardData.map((user, index) => (
                             <View
                                 key={`${user.rank}-${user.name}`}
-                                className={`flex-row items-center justify-between py-3 px-4 rounded-xl ${user.isCurrentUser
-                                        ? 'bg-green-50 border border-green-200'
-                                        : 'bg-gray-50'
+                                className={`flex-row items-center justify-between py-3 px-4 rounded-xl  ${user.isCurrentUser
+                                    ? 'bg-green-50 border mb-2 border-primary'
+                                    : 'bg-[#67b00019] mb-1'
                                     }`}
                             >
                                 {/* Rank */}
@@ -231,7 +233,7 @@ const RewardsScreen = () => {
                 {/* AI Assistant Button */}
                 <View className="absolute bottom-6 right-6">
                     <TouchableOpacity
-                        className="w-14 h-14 bg-green-500 rounded-full items-center justify-center shadow-lg"
+                        className="w-14 h-14 bg-primary rounded-full items-center justify-center shadow-lg"
                         onPress={() => Alert.alert('AI Assistant', 'AI Assistant feature coming soon!')}
                     >
                         <Text className="text-white font-bold text-lg">AI</Text>
