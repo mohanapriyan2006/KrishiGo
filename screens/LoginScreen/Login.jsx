@@ -98,7 +98,7 @@ const Login = ({ setIsLogined }) => {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-gradient-to-br from-green-100 to-green-200">
+        <SafeAreaView className="flex-1 bg-white">
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 className="flex-1"
@@ -109,18 +109,19 @@ const Login = ({ setIsLogined }) => {
                     showsVerticalScrollIndicator={false}
                 >
                     {/* Header */}
-                    <View className="flex-1 justify-center px-8">
+                    <View className="flex-1 justify-center px-8 relative">
+
                         {/* Logo/Title */}
                         <View className="items-center mb-12">
-                            <Text className="text-4xl font-bold text-green-700 mb-2">
+                            <Text className="text-4xl font-bold tracking-wider text-primaryDark mb-2">
                                 KrishiGo
                             </Text>
                         </View>
 
                         {/* Login Form */}
-                        <View className="bg-white/80 backdrop-blur-lg rounded-3xl p-8 shadow-xl">
+                        <View className="py-8 px-6">
                             {/* Email/Phone Input */}
-                            <View className="mb-6">
+                            <View className="mb-2">
                                 <Text className="text-gray-600 text-sm mb-2 font-medium">
                                     Email or Phone number
                                 </Text>
@@ -179,19 +180,19 @@ const Login = ({ setIsLogined }) => {
 
                             {/* Login Button */}
                             <TouchableOpacity
-                                className={`w-full bg-green-600 rounded-xl py-4 mb-4 shadow-lg ${loading ? 'opacity-70' : ''
+                                className={`w-full bg-primary rounded-xl py-2 mb-4 shadow-lg ${loading ? 'opacity-70' : ''
                                     }`}
                                 onPress={handleLogin}
                                 disabled={loading}
                             >
-                                <Text className="text-white text-center text-lg font-semibold">
+                                <Text className="text-white text-center tracking-wider text-xl font-semibold">
                                     {loading ? 'Logging in...' : 'Login'}
                                 </Text>
                             </TouchableOpacity>
 
                             {/* Google Login Button */}
                             <TouchableOpacity
-                                className="w-full bg-white border border-gray-200 rounded-xl py-4 mb-6 shadow-sm flex-row items-center justify-center"
+                                className="w-full bg-white border border-gray-200 rounded-xl py-2 mb-6 shadow-sm flex-row items-center justify-center"
                                 onPress={handleGoogleLogin}
                             >
                                 <Text className="text-lg mr-2">G</Text>
@@ -201,26 +202,27 @@ const Login = ({ setIsLogined }) => {
                             </TouchableOpacity>
 
                             {/* Register Link */}
-                            <View className="items-center">
+                            <View className="flex-row justify-center items-center">
                                 <Text className="text-gray-600 text-sm">
                                     New User?{' '}
-                                    <TouchableOpacity onPress={handleRegister}>
-                                        <Text className="text-green-600 font-semibold underline">
-                                            Register here
-                                        </Text>
-                                    </TouchableOpacity>
                                 </Text>
+                                <TouchableOpacity onPress={handleRegister}>
+                                    <Text className="text-primaryDark font-semibold underline">
+                                        Register here
+                                    </Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
 
                         {/* Contact Support */}
                         <View className="items-center mt-8 mb-4">
                             <TouchableOpacity onPress={handleCall}>
-                                <Text className="text-gray-700 text-base font-medium underline">
+                                <Text className="text-primaryDark text-base font-medium underline">
                                     Call us : 055-599-788
                                 </Text>
                             </TouchableOpacity>
                         </View>
+
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
