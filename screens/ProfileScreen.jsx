@@ -5,7 +5,7 @@ import {
     ScrollView,
     Text,
     TouchableOpacity,
-    View,
+    View
 } from 'react-native';
 
 const ProfileScreen = () => {
@@ -34,26 +34,20 @@ const ProfileScreen = () => {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-gray-50">
-            <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        <SafeAreaView className="flex-1 bg-gray-100">
+            <ScrollView className="flex-1 mt-10" showsVerticalScrollIndicator={false}>
                 {/* Header */}
                 <View className="flex-row justify-between items-center px-6 py-4 bg-white">
                     <Text className="text-2xl font-bold text-gray-900">My Profile</Text>
-                    <TouchableOpacity
-                        className="bg-red-500 px-4 py-2 rounded-full"
-                        onPress={handleLogout}
-                    >
-                        <Text className="text-white font-semibold text-sm">Logout</Text>
-                    </TouchableOpacity>
                 </View>
 
                 {/* Profile Card */}
                 <View className="bg-white mx-6 mt-4 rounded-2xl p-6 shadow-sm">
                     {/* Profile Picture and Basic Info */}
-                    <View className="flex-row items-center mb-6">
+                    <View className="flex-row items-center mb-8">
                         {/* Profile Avatar */}
-                        <View className="w-20 h-20 bg-green-100 rounded-full items-center justify-center mr-4">
-                            <Ionicons name="person" size={40} color="#059669" />
+                        <View className=" bg-[#67b00019] rounded-full items-center justify-center mr-4 p-4">
+                            <Ionicons name="person" size={50} color="#314C1C" />
                         </View>
 
                         {/* User Info */}
@@ -61,22 +55,22 @@ const ProfileScreen = () => {
                             <Text className="text-xl font-bold text-gray-900 mb-1">
                                 Vijay Kumar T
                             </Text>
-                            <Text className="text-green-600 font-semibold text-base mb-2">
+                            <Text className="text-primaryDark font-semibold text-base mb-2">
                                 8,490 pts
                             </Text>
 
                             {/* Stats Row */}
                             <View className="flex-row">
                                 {/* Hours */}
-                                <View className="bg-green-100 px-3 py-1 rounded-full mr-3">
-                                    <Text className="text-green-700 text-xs font-medium">20 hrs</Text>
-                                    <Text className="text-green-600 text-xs">Active hours</Text>
+                                <View className="bg-[#67b00019] px-3 py-1 rounded-lg mr-3">
+                                    <Text className="text-primaryDark text-xs font-semibold">20 hrs</Text>
+                                    <Text className="text-primaryDark text-xs">Active hours</Text>
                                 </View>
 
                                 {/* Courses */}
-                                <View className="bg-green-100 px-3 py-1 rounded-full">
-                                    <Text className="text-green-700 text-xs font-medium">15 courses</Text>
-                                    <Text className="text-green-600 text-xs">Enrolled courses</Text>
+                                <View className="bg-[#67b00019] px-3 py-1 rounded-lg">
+                                    <Text className="text-primaryDark text-xs font-semibold">15 courses</Text>
+                                    <Text className="text-primaryDark text-xs">Enrolled courses</Text>
                                 </View>
                             </View>
                         </View>
@@ -84,15 +78,18 @@ const ProfileScreen = () => {
 
                     {/* Personal Information Section */}
                     <View>
-                        <Text className="text-lg font-bold text-gray-900 mb-4">
-                            Personal Information
-                        </Text>
+                        <View className="flex-row gap-2">
+                            <Text className="text-lg font-bold text-gray-900 mb-4">
+                                Personal Information
+                            </Text>
+                            <Ionicons name="pencil" size={20} color="#314C1C" />
+                        </View>
 
                         {/* Info Items */}
-                        <View className="space-y-3">
+                        <View className="flex-col gap-2">
                             {/* Name */}
                             <TouchableOpacity
-                                className="bg-gray-50 p-4 rounded-xl"
+                                className="bg-[#67b00019] p-4 rounded-xl"
                                 onPress={handleEditProfile}
                             >
                                 <Text className="text-gray-900 font-medium">Vijay Kumar T</Text>
@@ -100,7 +97,7 @@ const ProfileScreen = () => {
 
                             {/* Email */}
                             <TouchableOpacity
-                                className="bg-gray-50 p-4 rounded-xl"
+                                className="bg-[#67b00019] p-4 rounded-xl"
                                 onPress={handleEditProfile}
                             >
                                 <Text className="text-gray-900 font-medium">vijaykumar.t@gmail.com</Text>
@@ -108,7 +105,7 @@ const ProfileScreen = () => {
 
                             {/* Phone */}
                             <TouchableOpacity
-                                className="bg-gray-50 p-4 rounded-xl"
+                                className="bg-[#67b00019] p-4 rounded-xl"
                                 onPress={handleEditProfile}
                             >
                                 <Text className="text-gray-900 font-medium">+91 12345-67890</Text>
@@ -116,7 +113,7 @@ const ProfileScreen = () => {
 
                             {/* Location */}
                             <TouchableOpacity
-                                className="bg-gray-50 p-4 rounded-xl"
+                                className="bg-[#67b00019] p-4 rounded-xl"
                                 onPress={handleEditProfile}
                             >
                                 <Text className="text-gray-900 font-medium">Coimbatore, Tamil Nadu</Text>
@@ -129,22 +126,21 @@ const ProfileScreen = () => {
 
                     {/* Settings */}
                     <TouchableOpacity
-                        className="bg-gray-50 p-4 rounded-xl flex-row items-center"
+                        className="bg-[#67b00019] p-4 mb-2 rounded-xl flex-row items-center"
                         onPress={handleSettings}
                     >
                         <Ionicons name="settings-outline" size={24} color="#374151" />
                         <Text className="text-gray-900 font-medium text-base ml-3">Settings</Text>
                         <Ionicons name="chevron-forward" size={20} color="#9CA3AF" className="ml-auto" />
                     </TouchableOpacity>
-                </View>
 
-                {/* AI Assistant Button */}
-                <View className="absolute bottom-6 right-6">
+                    {/* Logout */}
                     <TouchableOpacity
-                        className="w-14 h-14 bg-green-500 rounded-full items-center justify-center shadow-lg"
-                        onPress={() => Alert.alert('AI Assistant', 'AI Assistant feature coming soon!')}
+                        className="bg-red-200 p-4 rounded-xl flex-row items-center"
+                        onPress={handleLogout}
                     >
-                        <Text className="text-white font-bold text-lg">AI</Text>
+                        <Ionicons name="log-out-outline" size={24} color="red" />
+                        <Text className="text-red-700 font-medium text-base ml-3">Logout</Text>
                     </TouchableOpacity>
                 </View>
 

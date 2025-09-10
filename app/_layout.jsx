@@ -24,7 +24,7 @@ export default function RootLayout() {
           } else if (route.name === 'Journey') {
             iconName = 'map';
           } else if (route.name === 'Challenge') {
-            iconName = 'trophy';
+            iconName = 'medal';
           } else if (route.name === 'Rewards') {
             iconName = 'gift';
           } else if (route.name === 'Profile') {

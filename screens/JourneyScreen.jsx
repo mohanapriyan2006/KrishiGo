@@ -129,7 +129,7 @@ const JourneyScreen = () => {
                 <View className="flex-row justify-between items-center px-6 py-3 bg-white">
                     <Text className="text-2xl font-bold text-gray-900">My journey</Text>
                     <TouchableOpacity
-                        className="w-[50px] h-[50px] bg-green-200/40 rounded-full items-center justify-center"
+                        className="w-[50px] h-[50px] bg-[#67b00019] rounded-full items-center justify-center"
                         onPress={handleProfile}
                     >
                         <Ionicons name="person-outline" size={30} color="#314C1C" />

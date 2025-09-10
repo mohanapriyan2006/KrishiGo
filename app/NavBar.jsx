@@ -5,7 +5,7 @@ const NavBar = ({ activeTab, onTabPress }) => {
     const tabs = [
         { id: 'home', icon: 'home', label: 'Home' },
         { id: 'journey', icon: 'map', label: 'Journey' },
-        { id: 'challenge', icon: 'trophy', label: 'Challenge' },
+        { id: 'challenge', icon: 'medal', label: 'Challenge' },
         { id: 'rewards', icon: 'gift', label: 'Rewards' },
         { id: 'profile', icon: 'person', label: 'Profile' },
     ];
