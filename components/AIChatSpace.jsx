@@ -10,6 +10,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import FloatingAIButton from './FloatingAIButton';
 
 const ChatPopup = ({ visible, onClose }) => {
     const [messages, setMessages] = useState([
@@ -54,8 +55,8 @@ const ChatPopup = ({ visible, onClose }) => {
         >
             <View
                 className={`max-w-[80%] px-4 py-3 rounded-2xl ${message.isBot
-                        ? 'bg-gray-100 rounded-tl-md'
-                        : 'bg-green-500 rounded-tr-md'
+                    ? 'bg-gray-100 rounded-tl-md'
+                    : 'bg-primary rounded-tr-md'
                     }`}
             >
                 <Text
@@ -78,10 +79,10 @@ const ChatPopup = ({ visible, onClose }) => {
             <View className="flex-1 justify-end bg-black/50">
                 <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                    className="bg-white rounded-t-3xl max-h-[80%] min-h-[60%]"
+                    className="bg-white rounded-t-3xl h-full"
                 >
                     {/* Header */}
-                    <View className="bg-green-500 rounded-t-3xl px-6 py-4 flex-row items-center justify-between">
+                    <View className="bg-primary rounded-t-3xl px-6 py-4 flex-row items-center justify-between">
                         <View className="flex-row items-center">
                             <View className="w-8 h-8 bg-white/20 rounded-full items-center justify-center mr-3">
                                 <Ionicons name="chatbubble" size={16} color="white" />
@@ -125,7 +126,7 @@ const ChatPopup = ({ visible, onClose }) => {
 
                             <TouchableOpacity
                                 onPress={sendMessage}
-                                className="ml-3 bg-green-500 rounded-full p-2"
+                                className="ml-3 bg-primary rounded-full p-2"
                                 disabled={!inputText.trim()}
                             >
                                 <Ionicons name="send" size={16} color="white" />
@@ -140,20 +141,14 @@ const ChatPopup = ({ visible, onClose }) => {
 
 // Usage Component
 const ChatApp = () => {
-    const [showChat, setShowChat] = useState(false);
+    const [isActive, setIsActive] = useState(false);
 
     return (
         <View className="flex-1 bg-gray-100 justify-center items-center">
-            <TouchableOpacity
-                onPress={() => setShowChat(true)}
-                className="bg-green-500 px-6 py-3 rounded-full shadow-lg"
-            >
-                <Text className="text-white font-semibold text-lg">Open Chat</Text>
-            </TouchableOpacity>
-
+            <FloatingAIButton isActive={isActive} setIsActive={setIsActive} />
             <ChatPopup
-                visible={showChat}
-                onClose={() => setShowChat(false)}
+                visible={isActive}
+                onClose={() => setIsActive(false)}
             />
         </View>
     );

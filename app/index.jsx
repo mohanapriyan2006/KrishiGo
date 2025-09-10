@@ -1,18 +1,14 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { useState } from 'react';
 import '../global.css';
-import Login from '../screens/LoginScreen/Login';
 import RootLayout from './_layout';
 
 
 export default function Index() {
 
-  const [isLogined, setIsLogined] = useState(false);
 
   return (
     <NavigationContainer>
-      {isLogined ? <RootLayout /> : <Login />}
-      {/* <Login /> */}
+      <RootLayout />
     </NavigationContainer>
   );
 }

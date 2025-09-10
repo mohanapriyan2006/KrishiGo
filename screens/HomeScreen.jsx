@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import FloatingAIButton from '../components/FloatingAIButton';
 import RoundProgress from '../components/RoundProgress';
 
 export default function Home() {
@@ -71,7 +72,7 @@ export default function Home() {
                 </View>
 
                 {/* Invite & Earn */}
-                <View className="flex-row bg-green-200/40 rounded-2xl p-5 items-center">
+                <View className="flex-row bg-[#67b00019] rounded-2xl p-5 mx-2 items-center">
                     <Image source={require('../assets/images/invite.png')} style={{ width: 100, height: 90, resizeMode: 'contain', marginLeft: 10 }} />
                     <View className="flex-1">
                         <Text className="text-base font-bold text-[#333] mb-1">Invite & Earn</Text>
@@ -83,6 +84,8 @@ export default function Home() {
                     </View>
                 </View>
             </View>
+
+            <FloatingAIButton/>
         </ScrollView>
     );
 }

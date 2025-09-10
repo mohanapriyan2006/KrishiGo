@@ -3,10 +3,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet, View } from 'react-native';
 
 
+import ChatApp from '../components/AIChatSpace.jsx';
 import ChallengeScreen from '../screens/ChallengeScreen.jsx';
 import HomeScreen from '../screens/HomeScreen.jsx';
 import JourneyScreen from '../screens/JourneyScreen.jsx';
-import Login from '../screens/LoginScreen/Login.jsx';
 import ProfileScreen from '../screens/ProfileScreen.jsx';
 import RewardsScreen from '../screens/RewardsScreen.jsx';
 
@@ -61,7 +61,7 @@ export default function RootLayout() {
         headerShown: false,
       })}
     >
-      <Tab.Screen name="Login" component={Login} />
+      <Tab.Screen name="Login" component={ChatApp} />
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Journey" component={JourneyScreen} />
       <Tab.Screen name="Challenge" component={ChallengeScreen} />
