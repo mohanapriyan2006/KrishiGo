@@ -140,13 +140,13 @@ const Register = ({ onRegister }) => {
                     showsVerticalScrollIndicator={false}
                 >
                     {/* Header */}
-                    <View className="flex-1 justify-center px-8">
+                    <View className="flex-1 justify-center px-8 py-20">
                         {/* Logo/Title */}
-                        <View className="items-center mb-8">
-                            <Text className="text-4xl font-bold text-green-700 mb-2">
+                        <View className="items-center mb-2">
+                            <Text className="text-4xl font-bold text-primaryDark mb-2">
                                 KrishiGo
                             </Text>
-                            <Text className="text-green-600 text-lg">
+                            <Text className="text-primaryDark text-lg">
                                 Create Account
                             </Text>
                         </View>
@@ -154,7 +154,7 @@ const Register = ({ onRegister }) => {
                         {/* Registration Form */}
                         <View className="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl">
                             {/* Name Row */}
-                            <View className="flex-row mb-4 space-x-3">
+                            <View className="flex-row mb-4 gap-2">
                                 {/* First Name */}
                                 <View className="flex-1">
                                     <Text className="text-gray-600 text-sm mb-2 font-medium">
@@ -246,7 +246,7 @@ const Register = ({ onRegister }) => {
                             </View>
 
                             {/* Location Row */}
-                            <View className="flex-row mb-4 space-x-3">
+                            <View className="flex-row mb-4 gap-2">
                                 {/* City */}
                                 <View className="flex-1">
                                     <Text className="text-gray-600 text-sm mb-2 font-medium">
@@ -364,7 +364,7 @@ const Register = ({ onRegister }) => {
 
                             {/* Register Button */}
                             <TouchableOpacity
-                                className={`w-full bg-green-600 rounded-xl py-4 mb-4 shadow-lg ${loading ? 'opacity-70' : ''
+                                className={`w-full bg-primary rounded-xl py-4 mb-4 shadow-lg ${loading ? 'opacity-70' : ''
                                     }`}
                                 onPress={handleRegister}
                                 disabled={loading}
@@ -386,15 +386,15 @@ const Register = ({ onRegister }) => {
                             </TouchableOpacity>
 
                             {/* Login Link */}
-                            <View className="items-center">
+                            <View className="flex-row justify-center items-center">
                                 <Text className="text-gray-600 text-sm">
                                     Already have an account?{' '}
-                                    <TouchableOpacity onPress={handleNavigateToLogin}>
-                                        <Text className="text-green-600 font-semibold underline">
-                                            Login here
-                                        </Text>
-                                    </TouchableOpacity>
                                 </Text>
+                                <TouchableOpacity onPress={handleNavigateToLogin}>
+                                    <Text className="text-primaryDark font-semibold underline">
+                                        Login here
+                                    </Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
                     </View>

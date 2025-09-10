@@ -103,7 +103,7 @@ const Login = ({ setIsLogined }) => {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-white">
+        <SafeAreaView className="flex-1 bg-gradient-to-br from-lime-100 to-lime-200">
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 className="flex-1"
@@ -124,7 +124,7 @@ const Login = ({ setIsLogined }) => {
                         </View>
 
                         {/* Login Form */}
-                        <View className="py-8 px-6">
+                        <View className="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl">
                             {/* Email/Phone Input */}
                             <View className="mb-2">
                                 <Text className="text-gray-600 text-sm mb-2 font-medium">
