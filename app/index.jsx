@@ -1,14 +1,18 @@
-import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import '../global.css';
-import RootLayout from './_layout';
+import Login from '../screens/LoginScreen/Login';
+import Register from '../screens/LoginScreen/Register';
+import RootLayout from './MainLayout';
 
+const Stack = createNativeStackNavigator();
 
 export default function Index() {
 
-
   return (
-    <NavigationContainer>
-      <RootLayout />
-    </NavigationContainer>
+    <Stack.Navigator initialRouteName='Login' screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name="Register" component={Register} />
+      <Stack.Screen name="Main" component={RootLayout} />
+    </Stack.Navigator>
   );
 }

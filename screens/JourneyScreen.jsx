@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import {
     Alert,
@@ -11,6 +12,9 @@ import {
 import ProgressLine from '../components/ProgressLine';
 
 const JourneyScreen = () => {
+
+    const navigation = useNavigation();
+
     const [activeTab, setActiveTab] = useState('Ongoing');
 
     const journeyData = [
@@ -74,10 +78,6 @@ const JourneyScreen = () => {
         );
     };
 
-    const handleProfile = () => {
-        Alert.alert('Profile', 'Profile page will open here');
-    };
-
 
     const renderCourseCard = (course) => (
         <View key={course.id} className="bg-primary rounded-2xl p-5 mb-4 shadow-lg">
@@ -130,7 +130,7 @@ const JourneyScreen = () => {
                     <Text className="text-2xl font-bold text-gray-900">My journey</Text>
                     <TouchableOpacity
                         className="w-[50px] h-[50px] bg-[#67b00019] rounded-full items-center justify-center"
-                        onPress={handleProfile}
+                        onPress={() => navigation.navigate('Profile')}
                     >
                         <Ionicons name="person-outline" size={30} color="#314C1C" />
                     </TouchableOpacity>

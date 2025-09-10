@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import {
     Alert,
@@ -30,6 +31,9 @@ const loginSchema = yup.object().shape({
 });
 
 const Login = ({ setIsLogined }) => {
+
+    const navigation = useNavigation();
+
     const [formData, setFormData] = useState({
         emailOrPhone: '',
         password: '',
@@ -82,6 +86,7 @@ const Login = ({ setIsLogined }) => {
             Alert.alert('Error', 'Login failed. Please try again.');
         } finally {
             setLoading(false);
+            navigation.navigate('Main');
         }
     };
 
@@ -90,7 +95,7 @@ const Login = ({ setIsLogined }) => {
     };
 
     const handleRegister = () => {
-        Alert.alert('Register', 'Navigate to registration screen');
+        navigation.navigate('Register');
     };
 
     const handleCall = () => {

@@ -1,10 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import FloatingAIButton from '../components/FloatingAIButton';
 import RoundProgress from '../components/RoundProgress';
 
 export default function Home() {
 
+    const navigation = useNavigation();
 
     return (
         <ScrollView className="flex-1 bg-[#f5f5f5]">
@@ -20,13 +22,15 @@ export default function Home() {
 
                 {/* Green Action Bar */}
                 <View className="flex-row bg-primary rounded-2xl py-4 px-2 justify-around mb-5 shadow">
-                    <TouchableOpacity className="items-center">
+                    <TouchableOpacity className="items-center"
+                        onPress={() => navigation.navigate('Journey')}>
                         <View className={HomeStyles.quickActions.iconView}>
                             <Ionicons name="school" size={30} color={HomeStyles.quickActions.iconColor} />
                         </View>
                         <Text className={HomeStyles.quickActions.text}>My Course</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity className="items-center">
+                    <TouchableOpacity className="items-center"
+                        onPress={() => navigation.navigate('Rewards')}>
                         <View className={HomeStyles.quickActions.iconView}>
                             <Ionicons name="gift" size={30} color={HomeStyles.quickActions.iconColor} />
                         </View>
@@ -60,7 +64,8 @@ export default function Home() {
                         <Text className="text-base  text-[#333] mb-1">Sustainability Score</Text>
                         <Text className="text-[14px] font-bold text-black mb-1">Best : 70 - 100%</Text>
                         <Text className="text-sm font-medium text-primary mb-2">Growing Strong 🌱</Text>
-                        <TouchableOpacity className="bg-primary py-2 px-4 rounded-xl self-start">
+                        <TouchableOpacity className="bg-primary py-2 px-4 rounded-xl self-start"
+                        onPress={() => navigation.navigate('Challenge')}>
                             <Text className="text-white text-xs font-medium">Improve Now</Text>
                         </TouchableOpacity>
                     </View>
@@ -85,7 +90,7 @@ export default function Home() {
                 </View>
             </View>
 
-            <FloatingAIButton/>
+            <FloatingAIButton />
         </ScrollView>
     );
 }

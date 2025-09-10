@@ -61,7 +61,7 @@ export default function RootLayout() {
         headerShown: false,
       })}
     >
-      <Tab.Screen name="Login" component={ChatApp} />
+      <Tab.Screen name="Sample" component={ChatApp} />
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Journey" component={JourneyScreen} />
       <Tab.Screen name="Challenge" component={ChallengeScreen} />

@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import {
     Alert,
     SafeAreaView,
@@ -9,6 +10,9 @@ import {
 } from 'react-native';
 
 const ProfileScreen = () => {
+
+    const navigation = useNavigation();
+
     const handleLogout = () => {
         Alert.alert(
             'Logout',
@@ -17,8 +21,7 @@ const ProfileScreen = () => {
                 { text: 'Cancel', style: 'cancel' },
                 {
                     text: 'Logout', style: 'destructive', onPress: () => {
-                        // Handle logout logic here
-                        Alert.alert('Logged out', 'You have been logged out successfully');
+                        navigation.navigate('Login');
                     }
                 },
             ]
