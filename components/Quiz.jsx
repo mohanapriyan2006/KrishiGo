@@ -1,5 +1,7 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
+    Image,
     SafeAreaView,
     ScrollView,
     StatusBar,
@@ -9,7 +11,11 @@ import {
 } from 'react-native';
 import ProgressLine from './ProgressLine';
 
+
 const QuizScreen = () => {
+
+    const navigation = useNavigation();
+
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [currentQuestion, setCurrentQuestion] = useState(1);
     const [score, setScore] = useState(0);
@@ -98,12 +104,12 @@ const QuizScreen = () => {
     const getOptionStyle = (index) => {
         if (!isAnswered) {
             return selectedAnswer === index
-                ? 'bg-green-100 border-green-500'
+                ? 'bg-lime-100 border-lime-500'
                 : 'bg-gray-50 border-gray-200';
         }
 
         if (index === currentQuestionData.correctAnswer) {
-            return 'bg-green-100 border-green-500';
+            return 'bg-lime-100 border-lime-500';
         } else if (index === selectedAnswer && index !== currentQuestionData.correctAnswer) {
             return 'bg-red-100 border-red-500';
         } else {
@@ -127,12 +133,14 @@ const QuizScreen = () => {
             <StatusBar barStyle="light-content" backgroundColor="#8bc34a" />
 
             {/* Header */}
-            <View className="bg-green-500 px-4 py-3 flex-row justify-between items-center">
-                <TouchableOpacity className="w-8 h-8 bg-white/20 rounded-full items-center justify-center">
+            <View className="bg-primary px-4 h-[80px] flex-row justify-between items-end pb-3">
+                <TouchableOpacity
+                 className="w-8 h-8 bg-white/20 rounded-full items-center justify-center"
+                 onPress={() => navigation.goBack()}>
                     <Text className="text-white text-lg">←</Text>
                 </TouchableOpacity>
 
-                <View className="flex-row items-center space-x-4">
+                <View className="flex-row items-center gap-4">
                     <View className="bg-white/20 px-3 py-1 rounded-full">
                         <Text className="text-white font-semibold">Score: {score}</Text>
                     </View>
@@ -146,19 +154,20 @@ const QuizScreen = () => {
 
             <ScrollView className="flex-1">
                 {/* Illustration Container */}
-                <View className="relative bg-gradient-to-b from-green-200 to-green-100 mx-4 mt-4 rounded-2xl overflow-hidden min-h-48">
+                <View className="relative mx-1 my-1 rounded-2xl overflow-hidden min-h-[240px]">
                     {/* Question Board */}
-                    <View className="mx-6 my-8 bg-gradient-to-b from-amber-50 to-amber-200 border-4 border-amber-800 rounded-lg p-4 relative shadow-lg">
-                        <Text className="text-gray-800 text-base font-medium leading-6">
+                    <View className="mx-10 my-8 bg-amber-200/40 rounded-lg absolute top-[40%] z-40 ">
+                        <Text className="text-gray-800 text-lg font-bold leading-6">
                             {currentQuestionData.question}
                         </Text>
-
-                        {/* Board corners */}
-                        <View className="absolute -top-2 -left-2 w-4 h-4 bg-amber-800 rounded-full" />
-                        <View className="absolute -top-2 -right-2 w-4 h-4 bg-amber-800 rounded-full" />
-                        <View className="absolute -bottom-2 -left-2 w-4 h-4 bg-amber-800 rounded-full" />
-                        <View className="absolute -bottom-2 -right-2 w-4 h-4 bg-amber-800 rounded-full" />
                     </View>
+
+                    <View>
+                        <Image source={require('../assets/images/quiz_template1.png')}
+                            style={{ height: 220, width: '110%' }}
+                            className="absolute -bottom-[220px] z-1" />
+                    </View>
+
                 </View>
 
                 {/* Progress Bar */}
@@ -170,7 +179,7 @@ const QuizScreen = () => {
                 </View>
 
                 {/* Answer Options */}
-                <View className="mx-4 space-y-3">
+                <View className="mx-4 gap-3">
                     {currentQuestionData.options.map((option, index) => (
                         <TouchableOpacity
                             key={index}
@@ -194,7 +203,7 @@ const QuizScreen = () => {
                 {selectedAnswer !== null && !isAnswered && (
                     <TouchableOpacity
                         onPress={handleSubmitAnswer}
-                        className="mx-4 mt-4 bg-blue-500 py-4 rounded-xl items-center"
+                        className="mx-4 mt-4 bg-primary py-4 rounded-xl items-center"
                     >
                         <Text className="text-white font-semibold text-lg">Submit Answer</Text>
                     </TouchableOpacity>
@@ -206,19 +215,19 @@ const QuizScreen = () => {
                 <TouchableOpacity
                     onPress={handlePrevious}
                     disabled={currentQuestion === 1}
-                    className={`flex-1 mr-2 py-4 rounded-xl flex-row items-center justify-center ${currentQuestion === 1 ? 'bg-gray-200' : 'bg-green-200'
+                    className={`flex-1 mr-2 border border-primary py-4 rounded-xl flex-row items-center justify-center ${currentQuestion === 1 ? 'bg-gray-200' : 'bg-lime-100'
                         }`}
                 >
-                    <Text className="text-green-800 font-semibold">← Previous</Text>
+                    <Text className="text-primaryDark font-semibold">← Previous</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     onPress={handleNext}
                     disabled={!isAnswered || currentQuestion === quizQuestions.length}
-                    className={`flex-1 ml-2 py-4 rounded-xl flex-row items-center justify-center ${!isAnswered || currentQuestion === quizQuestions.length ? 'bg-gray-200' : 'bg-green-200'
+                    className={`flex-1 ml-2 py-4 border border-primary rounded-xl flex-row items-center justify-center ${!isAnswered ? 'bg-gray-200' : currentQuestion === quizQuestions.length ? 'bg-primary' : 'bg-lime-100'
                         }`}
                 >
-                    <Text className="text-green-800 font-semibold">
+                    <Text className={`${currentQuestion === quizQuestions.length ? 'text-white' : 'text-primaryDark'} font-semibold`}>
                         {currentQuestion === quizQuestions.length ? 'Finish' : 'Next →'}
                     </Text>
                 </TouchableOpacity>

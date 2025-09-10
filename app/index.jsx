@@ -1,4 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { QuizScreen } from '../components/Quiz';
 import '../global.css';
 import Login from '../screens/LoginScreen/Login';
 import Register from '../screens/LoginScreen/Register';
@@ -13,6 +14,7 @@ export default function Index() {
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Register" component={Register} />
       <Stack.Screen name="Main" component={RootLayout} />
+      <Stack.Screen name="Quiz" component={QuizScreen} />
     </Stack.Navigator>
   );
 }

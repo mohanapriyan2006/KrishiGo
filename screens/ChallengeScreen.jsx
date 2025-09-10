@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import {
     Alert,
@@ -10,15 +11,25 @@ import {
 } from 'react-native';
 
 const ChallengeScreen = () => {
+
+    const navigation = useNavigation();
+
     const [challengeStarted, setChallengeStarted] = useState(false);
     const [earnedPoints, setEarnedPoints] = useState(0);
 
     const handleStartChallenge = () => {
         setChallengeStarted(true);
         Alert.alert(
-            'Challenge Started!',
-            'Complete the challenge to earn rewards',
-            [{ text: 'OK' }]
+            'Challenge',
+            'Are you sure you want to start the challenge?',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Start', style: 'destructive', onPress: () => {
+                        navigation.navigate('Quiz');
+                    }
+                },
+            ]
         );
     };
 
@@ -83,7 +94,7 @@ const ChallengeScreen = () => {
                                 className={`px-6 py-3 rounded-lg ${challengeStarted ? 'bg-gray-400' : 'bg-primary'
                                     }`}
                                 onPress={handleStartChallenge}
-                                disabled={challengeStarted}
+                                // disabled={challengeStarted}
                             >
                                 <Text className="text-white font-semibold text-base text-center">
                                     {challengeStarted ? 'Challenge Active' : 'Start Challenge'}
@@ -106,10 +117,9 @@ const ChallengeScreen = () => {
                     {/* Reward Tasks List */}
                     <View className="space-y-3 mb-6">
                         {rewardTasks.map((item, index) => (
-                            <TouchableOpacity
+                            <View
                                 key={item.id}
                                 className="flex-row items-center justify-between py-2"
-                                onPress={() => handleCompleteTask(index, item.points)}
                             >
                                 <View className="flex-row items-center flex-1">
                                     <Text className="text-gray-700 text-sm mr-2">
@@ -119,7 +129,7 @@ const ChallengeScreen = () => {
                                         {item.task}
                                     </Text>
                                 </View>
-                            </TouchableOpacity>
+                            </View>
                         ))}
                     </View>
 
