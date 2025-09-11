@@ -1,8 +1,7 @@
 import { Feather } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
     Alert,
-    Animated,
     Modal,
     Text,
     TouchableOpacity,
@@ -64,7 +63,7 @@ const ActivityItem = ({ activity, onStart }) => (
             >
                 <Text className="text-white font-semibold text-sm">start</Text>
             </TouchableOpacity>
-            <View className="bg-white rounded-lg px-3 py-1">
+            <View className="bg-white rounded-lg p-1 px-2">
                 <Text className="text-primaryDark font-bold text-sm">
                     {activity.points}
                 </Text>
@@ -73,24 +72,9 @@ const ActivityItem = ({ activity, onStart }) => (
     </View>
 );
 
-const ChallengePopup = ({ visible, onClose, onActivityStart }) => {
-    const [fadeAnim] = useState(new Animated.Value(0));
+const ChallengePopup = ({ visible, onClose }) => {
 
-    React.useEffect(() => {
-        if (visible) {
-            Animated.timing(fadeAnim, {
-                toValue: 1,
-                duration: 300,
-                useNativeDriver: true,
-            }).start();
-        } else {
-            Animated.timing(fadeAnim, {
-                toValue: 0,
-                duration: 200,
-                useNativeDriver: true,
-            }).start();
-        }
-    }, [visible]);
+    const navigation = useNavigation();
 
     const handleActivityStart = (activity) => {
         Alert.alert(
@@ -101,7 +85,7 @@ const ChallengePopup = ({ visible, onClose, onActivityStart }) => {
                 {
                     text: 'Start',
                     onPress: () => {
-                        onActivityStart(activity);
+                        navigation.navigate('Quiz', { activityId: activity.id });
                         onClose();
                     }
                 }
@@ -158,7 +142,6 @@ const ChallengePopup = ({ visible, onClose, onActivityStart }) => {
 
 export default ChallengePopup;
 
-// // Usage Example Component
 // export const ChallengePopupExample = () => {
 //     const [showPopup, setShowPopup] = useState(false);
 //     const [userPoints, setUserPoints] = useState(0);

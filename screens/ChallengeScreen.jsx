@@ -16,7 +16,6 @@ const ChallengeScreen = () => {
 
     const navigation = useNavigation();
 
-    const [challengeStarted, setChallengeStarted] = useState(false);
     const [challengeUploadVisible, setChallengeUploadVisible] = useState(false);
 
     // challenge pop-up state
@@ -39,20 +38,7 @@ const ChallengeScreen = () => {
 
 
     const handleStartChallenge = () => {
-        
-        setChallengeStarted(true);
-        Alert.alert(
-            'Challenge',
-            'Are you sure you want to start the challenge?',
-            [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                    text: 'Start', style: 'destructive', onPress: () => {
-                        setShowPopup(true);
-                    }
-                },
-            ]
-        );
+        setShowPopup(true);
     };
 
 
@@ -103,13 +89,11 @@ const ChallengeScreen = () => {
 
                             {/* Start Challenge Button */}
                             <TouchableOpacity
-                                className={`px-6 py-3 rounded-lg ${challengeStarted ? 'bg-gray-400' : 'bg-primary'
-                                    }`}
+                                className={`px-6 py-3 rounded-lg bg-primary`}
                                 onPress={handleStartChallenge}
-                            // disabled={challengeStarted}
                             >
                                 <Text className="text-white font-semibold text-base text-center">
-                                    {challengeStarted ? 'Challenge Active' : 'Start Challenge'}
+                                    Start Challenge
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -120,7 +104,6 @@ const ChallengeScreen = () => {
                 <ChallengePopup
                     visible={showPopup}
                     onClose={() => setShowPopup(false)}
-                    onActivityStart={handleActivityStart}
                 />
 
                 {/* Earn Rewards Points Section */}

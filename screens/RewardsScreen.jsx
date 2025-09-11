@@ -10,12 +10,17 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import RewardPopUp from '../components/RewardPopUp';
 
 const RewardsScreen = () => {
     const [totalPoints, setTotalPoints] = useState(8490);
+
+    const [rewardPopUpVisible, setRewardPopUpVisible] = useState(false);
+    const [rewardPoints, setRewardPoints] = useState(0);
+
     const [dailyRewards, setDailyRewards] = useState([
-        { id: 1, name: 'Reward 1', points: 100, claimed: false },
-        { id: 2, name: 'Reward 2', points: 100, claimed: false },
+        { id: 1, name: 'Reward 1', points: 50, claimed: false },
+        { id: 2, name: 'Reward 2', points: 120, claimed: false },
     ]);
 
     const leaderboardData = [
@@ -65,11 +70,8 @@ const RewardsScreen = () => {
         const claimedReward = dailyRewards.find(r => r.id === rewardId);
         setTotalPoints(prev => prev + claimedReward.points);
 
-        Alert.alert(
-            'Reward Claimed!',
-            `You earned ${claimedReward.points} points!`,
-            [{ text: 'OK' }]
-        );
+        setRewardPoints(claimedReward.points);
+        setRewardPopUpVisible(true);
     };
 
     const copyReferralCode = () => {
@@ -153,8 +155,8 @@ const RewardsScreen = () => {
                             <View key={reward.id} className="flex-row items-center justify-between border-b border-gray-200 py-3">
                                 {/* Gift Icon and Reward Info */}
                                 <View className="flex-row items-center flex-1">
-                                    <Image source={require('../assets/images/gift.png')} 
-                                    style={{ width: 40, height: 40, marginRight: 12 }} />
+                                    <Image source={require('../assets/images/gift.png')}
+                                        style={{ width: 40, height: 40, marginRight: 12 }} />
                                     <View>
                                         <Text className="text-gray-900 font-medium">
                                             {reward.name}
@@ -186,6 +188,9 @@ const RewardsScreen = () => {
                         ))}
                     </View>
                 </View>
+
+                {/* Reward Pop-Up */}
+                <RewardPopUp visible={rewardPopUpVisible} onClose={() => setRewardPopUpVisible(false)} points={rewardPoints} />
 
                 {/* Leaderboard Section */}
                 <View className="bg-white mx-6 mt-4 rounded-2xl p-6 shadow-sm">
