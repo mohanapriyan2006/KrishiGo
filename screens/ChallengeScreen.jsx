@@ -9,6 +9,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import ChallengePopup from '../components/ChallengePopup';
 import ChallengeUpload from '../components/ChallengeUpload';
 
 const ChallengeScreen = () => {
@@ -18,7 +19,27 @@ const ChallengeScreen = () => {
     const [challengeStarted, setChallengeStarted] = useState(false);
     const [challengeUploadVisible, setChallengeUploadVisible] = useState(false);
 
+    // challenge pop-up state
+    const [showPopup, setShowPopup] = useState(false);
+    const [userPoints, setUserPoints] = useState(0);
+
+    const handleActivityStart = (activity) => {
+        console.log('Starting activity:', activity.title);
+
+        // Simulate activity completion and point earning
+        setTimeout(() => {
+            const points = parseInt(activity.points.replace('pts', ''));
+            setUserPoints(prev => prev + points);
+            Alert.alert(
+                'Activity Completed!',
+                `You earned ${activity.points}! Total: ${userPoints + points} points`
+            );
+        }, 2000);
+    };
+
+
     const handleStartChallenge = () => {
+        
         setChallengeStarted(true);
         Alert.alert(
             'Challenge',
@@ -27,7 +48,7 @@ const ChallengeScreen = () => {
                 { text: 'Cancel', style: 'cancel' },
                 {
                     text: 'Start', style: 'destructive', onPress: () => {
-                        navigation.navigate('Quiz');
+                        setShowPopup(true);
                     }
                 },
             ]
@@ -52,6 +73,7 @@ const ChallengeScreen = () => {
         { id: 3, task: 'Upload content', points: 200, completed: false },
         { id: 4, task: 'Earn upto 7000pts', points: 7000, completed: false },
     ];
+
 
     return (
         <SafeAreaView className="flex-1 bg-gray-50">
@@ -93,6 +115,13 @@ const ChallengeScreen = () => {
                         </View>
                     </View>
                 </View>
+
+                {/* Challenge Pop-up */}
+                <ChallengePopup
+                    visible={showPopup}
+                    onClose={() => setShowPopup(false)}
+                    onActivityStart={handleActivityStart}
+                />
 
                 {/* Earn Rewards Points Section */}
                 <View className="bg-white mx-6 mt-8 rounded-2xl p-6 shadow-sm">

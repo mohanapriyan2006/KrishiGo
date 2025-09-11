@@ -62,6 +62,7 @@ export default function RootLayout() {
           headerShown: false,
         })}
       >
+        {/* <Tab.Screen name="Sample" component={ChallengePopupExample} /> */}
         <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="Journey" component={JourneyScreen} />
         <Tab.Screen name="Challenge" component={ChallengeScreen} />
