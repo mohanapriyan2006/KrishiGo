@@ -32,7 +32,7 @@ const ProfileScreen = () => {
         Alert.alert('Settings', 'Settings page will be implemented here');
     };
 
-    const handleEditProfile = () => {
+    const  handleEditProfilePhoto = () => {
         Alert.alert('Edit Profile', 'Edit profile functionality will be implemented here');
     };
 
@@ -49,9 +49,18 @@ const ProfileScreen = () => {
                     {/* Profile Picture and Basic Info */}
                     <View className="flex-row items-center mb-8">
                         {/* Profile Avatar */}
-                        <View className=" bg-[#67b00019] rounded-full items-center justify-center mr-4 p-4">
-                            <Ionicons name="person" size={50} color="#314C1C" />
+                        <View>
+                            <View className=" bg-[#67b00019] rounded-full items-center justify-center mr-4 p-4">
+                                <Ionicons name="person" size={50} color="#314C1C" />
+                            </View>
+                            <TouchableOpacity
+                                className="absolute top-0 right-2 bg-primaryDark p-2 rounded-full border-2 border-white"
+                                onPress={ handleEditProfilePhoto}
+                            >
+                                <Ionicons name="pencil" size={12} color="white" />
+                            </TouchableOpacity>
                         </View>
+
 
                         {/* User Info */}
                         <View className="flex-1">
@@ -85,42 +94,37 @@ const ProfileScreen = () => {
                             <Text className="text-lg font-bold text-gray-900 mb-4">
                                 Personal Information
                             </Text>
-                            <Ionicons name="pencil" size={20} color="#314C1C" />
                         </View>
 
                         {/* Info Items */}
                         <View className="flex-col gap-2">
                             {/* Name */}
-                            <TouchableOpacity
+                            <View
                                 className="bg-[#67b00019] p-4 rounded-xl"
-                                onPress={handleEditProfile}
                             >
                                 <Text className="text-gray-900 font-medium">Vijay Kumar T</Text>
-                            </TouchableOpacity>
+                            </View>
 
                             {/* Email */}
-                            <TouchableOpacity
+                            <View
                                 className="bg-[#67b00019] p-4 rounded-xl"
-                                onPress={handleEditProfile}
                             >
                                 <Text className="text-gray-900 font-medium">vijaykumar.t@gmail.com</Text>
-                            </TouchableOpacity>
+                            </View>
 
                             {/* Phone */}
-                            <TouchableOpacity
+                            <View
                                 className="bg-[#67b00019] p-4 rounded-xl"
-                                onPress={handleEditProfile}
                             >
                                 <Text className="text-gray-900 font-medium">+91 12345-67890</Text>
-                            </TouchableOpacity>
+                            </View>
 
                             {/* Location */}
-                            <TouchableOpacity
+                            <View
                                 className="bg-[#67b00019] p-4 rounded-xl"
-                                onPress={handleEditProfile}
                             >
                                 <Text className="text-gray-900 font-medium">Coimbatore, Tamil Nadu</Text>
-                            </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
 
