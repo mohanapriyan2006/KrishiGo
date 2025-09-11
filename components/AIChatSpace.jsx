@@ -44,7 +44,9 @@ CORE IDENTITY:
 - Consider local conditions, weather patterns, and seasonal farming cycles
 
 COMMUNICATION STYLE:
-- Use simple, clear language that any farmer can understand
+- Use simple, clear language that any farmer can understand and use emojis to make responses friendly and engaging
+- Be concise and to the point, avoiding unnecessary details and lengthy explanations
+- Prioritize actionable advice that farmers can implement immediately
 - Avoid technical jargon unless necessary, and always explain complex terms
 - Break down complex topics into easy-to-follow steps
 - Use bullet points, numbered lists, and short paragraphs for better readability
@@ -61,12 +63,13 @@ CAPABILITIES:
 
 RESPONSE FORMAT:
 - Start with a brief, clear answer to the main question
+- Follow with a step-by-step action plan if applicable
 - Use headings, bullet points, and numbered steps for easy scanning
 - Include practical tips and warnings when relevant
 - End with actionable next steps or follow-up suggestions
-- If analyzing images, describe what you see clearly before giving advice
+- If analyzing images, describe what you see clearly before giving advice or recommendations
 
-Remember: You're here to make farming easier and more profitable for hardworking farmers. Always prioritize practical, implementable solutions.`;
+Remember: You're here to make farming easier and more profitable for hardworking farmers. Always prioritize practical, implementable solutions. Be the friendly expert they can rely on for real-world farming advice.`;
 
 const ChatPopup = ({ visible, onClose }) => {
 	const [messages, setMessages] = useState([]);
@@ -119,37 +122,45 @@ const ChatPopup = ({ visible, onClose }) => {
 
 	// Start a new chat session
 	const startNewChat = async () => {
-		if (!userId) return; // Ensure userId is available
+		if (!userId) return;
 
-		// 1. Immediately update the UI for a responsive feel
-		const welcomeMessage = {
-			id: "welcome",
-			text: "🌾 Hello, fellow farmer! I'm your AI farming assistant, here to help you grow better crops and manage your farm more effectively.\n\n🚜 I can help you with:\n• Crop diseases and pest identification\n• Soil health and fertilizer advice\n• Planting and harvesting schedules\n• Weather-based farming tips\n• Market insights and pricing\n• Sustainable farming practices\n\nWhat farming challenge can I help you solve today?",
-			isBot: true,
-			timestamp: new Date(),
-		};
-		setMessages([welcomeMessage]);
-		setCurrentChatTitle("New Chat");
-		setCurrentChatId(null); // Temporarily nullify ID while creating the new one
-
-		// 2. Create the new chat session document in Firebase
 		try {
+			// Create a new chat session document in Firebase
 			const chatSessionRef = collection(db, "users", userId, "chatSessions");
-
-			// Use addDoc and capture the returned document reference.
-			// DO NOT add an 'id' field here; Firestore handles the document ID.
 			const newChatDocRef = await addDoc(chatSessionRef, {
 				title: "New Chat",
 				lastMessage: "Chat started",
 				lastMessageTime: serverTimestamp(),
-				// messageCount is not used in your code, so it can be omitted or initialized
+				createdAt: serverTimestamp(),
 			});
 
-			// 3. Get the REAL, auto-generated ID from the document reference
-			const firestoreGeneratedId = newChatDocRef.id;
+			// Set the current chat ID to the newly created document ID
+			setCurrentChatId(newChatDocRef.id);
+			setCurrentChatTitle("New Chat");
 
-			// 4. Set this correct ID as the current chat ID in your app's state
-			setCurrentChatId(firestoreGeneratedId);
+			// Add welcome message
+			const welcomeMessage = {
+				id: "welcome-" + Date.now(),
+				text: "🌾 Hello, fellow farmer! I'm your AI farming assistant, here to help you grow better crops and manage your farm more effectively.\n\n🚜 I can help you with:\n• Crop diseases and pest identification\n• Soil health and fertilizer advice\n• Planting and harvesting schedules\n• Weather-based farming tips\n• Market insights and pricing\n• Sustainable farming practices\n\nWhat farming challenge can I help you solve today?",
+				isBot: true,
+				timestamp: new Date(),
+			};
+
+			setMessages([welcomeMessage]);
+
+			// Save welcome message to Firebase
+			const messagesRef = collection(
+				db,
+				"users",
+				userId,
+				"chatSessions",
+				newChatDocRef.id,
+				"messages"
+			);
+			await addDoc(messagesRef, {
+				...welcomeMessage,
+				timestamp: serverTimestamp(),
+			});
 		} catch (error) {
 			console.error("Error creating new chat session:", error);
 			Alert.alert("Error", "Could not start a new chat. Please try again.");
@@ -187,18 +198,7 @@ const ChatPopup = ({ visible, onClose }) => {
 					});
 				});
 
-				if (chatHistory.length === 0) {
-					// Add welcome message for empty chat
-					const welcomeMessage = {
-						id: "welcome",
-						text: "🌾 Hello, fellow farmer! I'm your AI farming assistant, here to help you grow better crops and manage your farm more effectively.\n\n🚜 I can help you with:\n• Crop diseases and pest identification\n• Soil health and fertilizer advice\n• Planting and harvesting schedules\n• Weather-based farming tips\n• Market insights and pricing\n• Sustainable farming practices\n\nWhat farming challenge can I help you solve today?",
-						isBot: true,
-						timestamp: new Date(),
-					};
-					setMessages([welcomeMessage]);
-				} else {
-					setMessages(chatHistory);
-				}
+				setMessages(chatHistory);
 				setIsInitialLoading(false);
 			});
 
@@ -441,6 +441,21 @@ const ChatPopup = ({ visible, onClose }) => {
 		}
 	}, [messages]);
 
+	// Format text with bold styling for **text**
+	const formatTextWithBold = (text) => {
+		const parts = text.split(/(\*\*.*?\*\*)/g);
+		return parts.map((part, index) => {
+			if (part.startsWith("**") && part.endsWith("**")) {
+				return (
+					<Text key={index} className="font-bold">
+						{part.replace(/\*\*/g, "")}
+					</Text>
+				);
+			}
+			return part;
+		});
+	};
+
 	const MessageBubble = ({ message }) => (
 		<View className={`mb-3 ${message.isBot ? "items-start" : "items-end"}`}>
 			<View className="flex-col">
@@ -464,7 +479,7 @@ const ChatPopup = ({ visible, onClose }) => {
 						}`}
 						selectable
 					>
-						{message.text}
+						{formatTextWithBold(message.text)}
 					</Text>
 					<Text
 						className={`text-xs mt-2 ${
@@ -513,10 +528,10 @@ const ChatPopup = ({ visible, onClose }) => {
 			animationType="slide"
 			onRequestClose={onClose}
 		>
-			<View className="flex-1 justify-end bg-black/50">
+			<View className="flex-1 bg-black/50">
 				<KeyboardAvoidingView
 					behavior={Platform.OS === "ios" ? "padding" : "height"}
-					className="bg-white rounded-t-3xl h-full flex-row"
+					className="bg-white h-full flex-row"
 				>
 					{/* Sidebar */}
 					<Animated.View
@@ -589,7 +604,7 @@ const ChatPopup = ({ visible, onClose }) => {
 					{/* Main Chat Area */}
 					<View className="flex-1">
 						{/* Header */}
-						<View className="bg-primary rounded-tl-3xl px-6 py-4 flex-row items-center justify-between">
+						<View className="bg-primary px-6 py-4 flex-row items-center justify-between">
 							<View className="flex-row items-center">
 								<TouchableOpacity onPress={toggleSidebar} className="mr-3">
 									<Ionicons name="menu" size={24} color="white" />

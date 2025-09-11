@@ -1,407 +1,530 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import {
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    SafeAreaView,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from 'react-native';
-import * as yup from 'yup';
+	createUserWithEmailAndPassword,
+	GoogleAuthProvider,
+	onAuthStateChanged,
+	signInWithPopup,
+} from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import {
+	Alert,
+	KeyboardAvoidingView,
+	Platform,
+	SafeAreaView,
+	ScrollView,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	View,
+} from "react-native";
+import * as yup from "yup";
+import { auth, db } from "../../config/firebase";
 
 // Validation schema
 const registerSchema = yup.object().shape({
-    firstName: yup
-        .string()
-        .required('First name is required')
-        .min(2, 'First name must be at least 2 characters'),
-    lastName: yup
-        .string()
-        .required('Last name is required')
-        .min(2, 'Last name must be at least 2 characters'),
-    phoneNumber: yup
-        .string()
-        .required('Phone number is required')
-        .matches(/^[0-9]{10}$/, 'Phone number must be 10 digits'),
-    email: yup
-        .string()
-        .required('Email is required')
-        .email('Enter a valid email address'),
-    city: yup
-        .string()
-        .required('City is required')
-        .min(2, 'City must be at least 2 characters'),
-    state: yup
-        .string()
-        .required('State is required')
-        .min(2, 'State must be at least 2 characters'),
-    password: yup
-        .string()
-        .required('Password is required')
-        .min(8, 'Password must be at least 8 characters')
-        .matches(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-            'Password must contain at least one uppercase letter, one lowercase letter, and one number'
-        ),
-    confirmPassword: yup
-        .string()
-        .required('Confirm password is required')
-        .oneOf([yup.ref('password')], 'Passwords must match'),
+	firstName: yup
+		.string()
+		.required("First name is required")
+		.min(2, "First name must be at least 2 characters"),
+	lastName: yup
+		.string()
+		.required("Last name is required")
+		.min(2, "Last name must be at least 2 characters"),
+	phoneNumber: yup
+		.string()
+		.required("Phone number is required")
+		.matches(/^[0-9]{10}$/, "Phone number must be 10 digits"),
+	email: yup
+		.string()
+		.required("Email is required")
+		.email("Enter a valid email address"),
+	city: yup
+		.string()
+		.required("City is required")
+		.min(2, "City must be at least 2 characters"),
+	state: yup
+		.string()
+		.required("State is required")
+		.min(2, "State must be at least 2 characters"),
+	password: yup
+		.string()
+		.required("Password is required")
+		.min(8, "Password must be at least 8 characters")
+		.matches(
+			/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+			"Password must contain at least one uppercase letter, one lowercase letter, and one number"
+		),
+	confirmPassword: yup
+		.string()
+		.required("Confirm password is required")
+		.oneOf([yup.ref("password")], "Passwords must match"),
 });
 
 const Register = ({ onRegister }) => {
-    const navigation = useNavigation();
+	const navigation = useNavigation();
 
-    const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        phoneNumber: '',
-        email: '',
-        city: '',
-        state: '',
-        password: '',
-        confirmPassword: '',
-    });
-    const [errors, setErrors] = useState({});
-    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-    const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
-    const [loading, setLoading] = useState(false);
+	const [formData, setFormData] = useState({
+		firstName: "",
+		lastName: "",
+		phoneNumber: "",
+		email: "",
+		city: "",
+		state: "",
+		password: "",
+		confirmPassword: "",
+	});
+	const [errors, setErrors] = useState({});
+	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+	const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
+		useState(false);
+	const [loading, setLoading] = useState(false);
 
-    const handleInputChange = (field, value) => {
-        setFormData(prev => ({
-            ...prev,
-            [field]: value,
-        }));
-        // Clear error for this field when user starts typing
-        if (errors[field]) {
-            setErrors(prev => ({
-                ...prev,
-                [field]: '',
-            }));
-        }
-    };
+	// Check if user is already logged in
+	useEffect(() => {
+		const unsubscribe = onAuthStateChanged(auth, (user) => {
+			if (user) {
+				// User is signed in, redirect to main screen
+				navigation.navigate("Main");
+			}
+		});
 
-    const validateForm = async () => {
-        try {
-            await registerSchema.validate(formData, { abortEarly: false });
-            setErrors({});
-            return true;
-        } catch (validationErrors) {
-            const errorObject = {};
-            validationErrors.inner.forEach(error => {
-                errorObject[error.path] = error.message;
-            });
-            setErrors(errorObject);
-            return false;
-        }
-    };
+		return unsubscribe;
+	}, [navigation]);
 
-    const handleRegister = async () => {
-        const isValid = await validateForm();
-        if (!isValid) return;
+	const handleInputChange = (field, value) => {
+		setFormData((prev) => ({
+			...prev,
+			[field]: value,
+		}));
+		// Clear error for this field when user starts typing
+		if (errors[field]) {
+			setErrors((prev) => ({
+				...prev,
+				[field]: "",
+			}));
+		}
+	};
 
-        setLoading(true);
-        try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            Alert.alert('Success', 'Registration successful!', [
-                { text: 'OK', onPress: () => onRegister && onRegister() }
-            ]);
-        } catch (_error) {
-            Alert.alert('Error', 'Registration failed. Please try again.');
-        } finally {
-            setLoading(false);
-            navigation.navigate('Main');
-        }
-    };
+	const validateForm = async () => {
+		try {
+			await registerSchema.validate(formData, { abortEarly: false });
+			setErrors({});
+			return true;
+		} catch (validationErrors) {
+			const errorObject = {};
+			validationErrors.inner.forEach((error) => {
+				errorObject[error.path] = error.message;
+			});
+			setErrors(errorObject);
+			return false;
+		}
+	};
 
-    const handleGoogleRegister = () => {
-        Alert.alert('Google Registration', 'Google registration functionality will be implemented here');
-    };
+	const saveUserToFirestore = async (user) => {
+		try {
+			// Create a user document in Firestore
+			await setDoc(doc(db, "users", user.uid), {
+				uid: user.uid,
+				firstName: formData.firstName,
+				lastName: formData.lastName,
+				email: formData.email,
+				phoneNumber: formData.phoneNumber,
+				city: formData.city,
+				state: formData.state,
+				createdAt: new Date(),
+				lastLogin: new Date(),
+			});
 
-    const handleNavigateToLogin = () => {
-        navigation.navigate('Login');
-    };
+			console.log("User saved to Firestore successfully");
+		} catch (error) {
+			console.error("Error saving user to Firestore:", error);
+			throw new Error("Failed to save user data");
+		}
+	};
 
-    return (
-        <SafeAreaView className="flex-1 bg-gradient-to-br from-green-100 to-green-200">
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                className="flex-1"
-            >
-                <ScrollView
-                    contentContainerStyle={{ flexGrow: 1 }}
-                    className="flex-1"
-                    showsVerticalScrollIndicator={false}
-                >
-                    {/* Header */}
-                    <View className="flex-1 justify-center px-8 py-20">
-                        {/* Logo/Title */}
-                        <View className="items-center mb-2">
-                            <Text className="text-4xl font-bold text-primaryDark mb-2">
-                                KrishiGo
-                            </Text>
-                            <Text className="text-primaryDark text-lg">
-                                Create Account
-                            </Text>
-                        </View>
+	const handleRegister = async () => {
+		const isValid = await validateForm();
+		if (!isValid) return;
 
-                        {/* Registration Form */}
-                        <View className="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl">
-                            {/* Name Row */}
-                            <View className="flex-row mb-4 gap-2">
-                                {/* First Name */}
-                                <View className="flex-1">
-                                    <Text className="text-gray-600 text-sm mb-2 font-medium">
-                                        First Name
-                                    </Text>
-                                    <TextInput
-                                        className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${errors.firstName ? 'border-red-500' : 'border-gray-200'
-                                            } shadow-sm`}
-                                        placeholder="First name"
-                                        placeholderTextColor="#9CA3AF"
-                                        value={formData.firstName}
-                                        onChangeText={(text) => handleInputChange('firstName', text)}
-                                        autoCapitalize="words"
-                                        autoCorrect={false}
-                                    />
-                                    {errors.firstName && (
-                                        <Text className="text-red-500 text-xs mt-1 ml-2">
-                                            {errors.firstName}
-                                        </Text>
-                                    )}
-                                </View>
+		setLoading(true);
+		try {
+			// Check if user already exists
+			const userCredential = await createUserWithEmailAndPassword(
+				auth,
+				formData.email,
+				formData.password
+			);
 
-                                {/* Last Name */}
-                                <View className="flex-1">
-                                    <Text className="text-gray-600 text-sm mb-2 font-medium">
-                                        Last Name
-                                    </Text>
-                                    <TextInput
-                                        className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${errors.lastName ? 'border-red-500' : 'border-gray-200'
-                                            } shadow-sm`}
-                                        placeholder="Last name"
-                                        placeholderTextColor="#9CA3AF"
-                                        value={formData.lastName}
-                                        onChangeText={(text) => handleInputChange('lastName', text)}
-                                        autoCapitalize="words"
-                                        autoCorrect={false}
-                                    />
-                                    {errors.lastName && (
-                                        <Text className="text-red-500 text-xs mt-1 ml-2">
-                                            {errors.lastName}
-                                        </Text>
-                                    )}
-                                </View>
-                            </View>
+			// Save user data to Firestore
+			await saveUserToFirestore(userCredential.user);
 
-                            {/* Phone Number */}
-                            <View className="mb-4">
-                                <Text className="text-gray-600 text-sm mb-2 font-medium">
-                                    Phone Number
-                                </Text>
-                                <TextInput
-                                    className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${errors.phoneNumber ? 'border-red-500' : 'border-gray-200'
-                                        } shadow-sm`}
-                                    placeholder="Enter phone number"
-                                    placeholderTextColor="#9CA3AF"
-                                    value={formData.phoneNumber}
-                                    onChangeText={(text) => handleInputChange('phoneNumber', text)}
-                                    keyboardType="phone-pad"
-                                    maxLength={10}
-                                />
-                                {errors.phoneNumber && (
-                                    <Text className="text-red-500 text-xs mt-1 ml-2">
-                                        {errors.phoneNumber}
-                                    </Text>
-                                )}
-                            </View>
+			Alert.alert("Success", "Registration successful!", [
+				{
+					text: "OK",
+					onPress: () => {
+						onRegister && onRegister();
+						navigation.navigate("Main");
+					},
+				},
+			]);
+		} catch (error) {
+			console.error("Registration error:", error);
 
-                            {/* Email */}
-                            <View className="mb-4">
-                                <Text className="text-gray-600 text-sm mb-2 font-medium">
-                                    Email Address
-                                </Text>
-                                <TextInput
-                                    className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${errors.email ? 'border-red-500' : 'border-gray-200'
-                                        } shadow-sm`}
-                                    placeholder="Enter email address"
-                                    placeholderTextColor="#9CA3AF"
-                                    value={formData.email}
-                                    onChangeText={(text) => handleInputChange('email', text)}
-                                    keyboardType="email-address"
-                                    autoCapitalize="none"
-                                    autoCorrect={false}
-                                />
-                                {errors.email && (
-                                    <Text className="text-red-500 text-xs mt-1 ml-2">
-                                        {errors.email}
-                                    </Text>
-                                )}
-                            </View>
+			if (error.code === "auth/email-already-in-use") {
+				Alert.alert(
+					"Account Exists",
+					"This email is already registered. Please login instead.",
+					[
+						{
+							text: "Login",
+							onPress: () => navigation.navigate("Login"),
+						},
+						{ text: "OK" },
+					]
+				);
+			} else if (error.code === "auth/weak-password") {
+				Alert.alert(
+					"Error",
+					"Password is too weak. Please choose a stronger password."
+				);
+			} else {
+				Alert.alert("Error", "Registration failed. Please try again.");
+			}
+		} finally {
+			setLoading(false);
+		}
+	};
 
-                            {/* Location Row */}
-                            <View className="flex-row mb-4 gap-2">
-                                {/* City */}
-                                <View className="flex-1">
-                                    <Text className="text-gray-600 text-sm mb-2 font-medium">
-                                        City
-                                    </Text>
-                                    <TextInput
-                                        className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${errors.city ? 'border-red-500' : 'border-gray-200'
-                                            } shadow-sm`}
-                                        placeholder="City"
-                                        placeholderTextColor="#9CA3AF"
-                                        value={formData.city}
-                                        onChangeText={(text) => handleInputChange('city', text)}
-                                        autoCapitalize="words"
-                                        autoCorrect={false}
-                                    />
-                                    {errors.city && (
-                                        <Text className="text-red-500 text-xs mt-1 ml-2">
-                                            {errors.city}
-                                        </Text>
-                                    )}
-                                </View>
+	const handleGoogleRegister = async () => {
+		try {
+			const provider = new GoogleAuthProvider();
+			const result = await signInWithPopup(auth, provider);
+			const user = result.user;
 
-                                {/* State */}
-                                <View className="flex-1">
-                                    <Text className="text-gray-600 text-sm mb-2 font-medium">
-                                        State
-                                    </Text>
-                                    <TextInput
-                                        className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${errors.state ? 'border-red-500' : 'border-gray-200'
-                                            } shadow-sm`}
-                                        placeholder="State"
-                                        placeholderTextColor="#9CA3AF"
-                                        value={formData.state}
-                                        onChangeText={(text) => handleInputChange('state', text)}
-                                        autoCapitalize="words"
-                                        autoCorrect={false}
-                                    />
-                                    {errors.state && (
-                                        <Text className="text-red-500 text-xs mt-1 ml-2">
-                                            {errors.state}
-                                        </Text>
-                                    )}
-                                </View>
-                            </View>
+			// Check if user already exists in Firestore
+			const userDoc = await getDoc(doc(db, "users", user.uid));
 
-                            {/* Password */}
-                            <View className="mb-4">
-                                <Text className="text-gray-600 text-sm mb-2 font-medium">
-                                    Password
-                                </Text>
-                                <View className="relative">
-                                    <TextInput
-                                        className={`w-full bg-white rounded-xl px-4 py-3 pr-12 text-base border ${errors.password ? 'border-red-500' : 'border-gray-200'
-                                            } shadow-sm`}
-                                        placeholder="Enter password"
-                                        placeholderTextColor="#9CA3AF"
-                                        value={formData.password}
-                                        onChangeText={(text) => handleInputChange('password', text)}
-                                        secureTextEntry={!isPasswordVisible}
-                                        autoCapitalize="none"
-                                        autoCorrect={false}
-                                    />
-                                    <TouchableOpacity
-                                        className="absolute right-4 top-3"
-                                        onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-                                    >
-                                        <Ionicons
-                                            name={isPasswordVisible ? 'eye-off' : 'eye'}
-                                            size={20}
-                                            color="#9CA3AF"
-                                        />
-                                    </TouchableOpacity>
-                                </View>
-                                {errors.password && (
-                                    <Text className="text-red-500 text-xs mt-1 ml-2">
-                                        {errors.password}
-                                    </Text>
-                                )}
-                            </View>
+			if (!userDoc.exists()) {
+				// Save new user to Firestore
+				await setDoc(doc(db, "users", user.uid), {
+					uid: user.uid,
+					firstName: user.displayName?.split(" ")[0] || "",
+					lastName: user.displayName?.split(" ")[1] || "",
+					email: user.email,
+					phoneNumber: "",
+					city: "",
+					state: "",
+					createdAt: new Date(),
+					lastLogin: new Date(),
+					isGoogleSignIn: true,
+				});
+			}
 
-                            {/* Confirm Password */}
-                            <View className="mb-6">
-                                <Text className="text-gray-600 text-sm mb-2 font-medium">
-                                    Confirm Password
-                                </Text>
-                                <View className="relative">
-                                    <TextInput
-                                        className={`w-full bg-white rounded-xl px-4 py-3 pr-12 text-base border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-200'
-                                            } shadow-sm`}
-                                        placeholder="Confirm password"
-                                        placeholderTextColor="#9CA3AF"
-                                        value={formData.confirmPassword}
-                                        onChangeText={(text) => handleInputChange('confirmPassword', text)}
-                                        secureTextEntry={!isConfirmPasswordVisible}
-                                        autoCapitalize="none"
-                                        autoCorrect={false}
-                                    />
-                                    <TouchableOpacity
-                                        className="absolute right-4 top-3"
-                                        onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}
-                                    >
-                                        <Ionicons
-                                            name={isConfirmPasswordVisible ? 'eye-off' : 'eye'}
-                                            size={20}
-                                            color="#9CA3AF"
-                                        />
-                                    </TouchableOpacity>
-                                </View>
-                                {errors.confirmPassword && (
-                                    <Text className="text-red-500 text-xs mt-1 ml-2">
-                                        {errors.confirmPassword}
-                                    </Text>
-                                )}
-                            </View>
+			Alert.alert("Success", "Google registration successful!");
+			navigation.navigate("Main");
+		} catch (error) {
+			console.error("Google sign-in error:", error);
+			Alert.alert("Error", "Google registration failed. Please try again.");
+		}
+	};
 
-                            {/* Register Button */}
-                            <TouchableOpacity
-                                className={`w-full bg-primary rounded-xl py-4 mb-4 shadow-lg ${loading ? 'opacity-70' : ''
-                                    }`}
-                                onPress={handleRegister}
-                                disabled={loading}
-                            >
-                                <Text className="text-white text-center text-lg font-semibold">
-                                    {loading ? 'Creating Account...' : 'Create Account'}
-                                </Text>
-                            </TouchableOpacity>
+	const handleNavigateToLogin = () => {
+		navigation.navigate("Login");
+	};
 
-                            {/* Google Register Button */}
-                            <TouchableOpacity
-                                className="w-full bg-white border border-gray-200 rounded-xl py-4 mb-6 shadow-sm flex-row items-center justify-center"
-                                onPress={handleGoogleRegister}
-                            >
-                                <Text className="text-lg mr-2">G</Text>
-                                <Text className="text-gray-700 text-base font-medium">
-                                    Continue with Google
-                                </Text>
-                            </TouchableOpacity>
+	return (
+		<SafeAreaView className="flex-1 bg-gradient-to-br from-green-100 to-green-200">
+			<KeyboardAvoidingView
+				behavior={Platform.OS === "ios" ? "padding" : "height"}
+				className="flex-1"
+			>
+				<ScrollView
+					contentContainerStyle={{ flexGrow: 1 }}
+					className="flex-1"
+					showsVerticalScrollIndicator={false}
+				>
+					{/* Header */}
+					<View className="flex-1 justify-center px-8 py-20">
+						{/* Logo/Title */}
+						<View className="items-center mb-2">
+							<Text className="text-4xl font-bold text-primaryDark mb-2">
+								KrishiGo
+							</Text>
+							<Text className="text-primaryDark text-lg">Create Account</Text>
+						</View>
 
-                            {/* Login Link */}
-                            <View className="flex-row justify-center items-center">
-                                <Text className="text-gray-600 text-sm">
-                                    Already have an account?{' '}
-                                </Text>
-                                <TouchableOpacity onPress={handleNavigateToLogin}>
-                                    <Text className="text-primaryDark font-semibold underline">
-                                        Login here
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                </ScrollView>
-            </KeyboardAvoidingView>
-        </SafeAreaView>
-    );
+						{/* Registration Form */}
+						<View className="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl">
+							{/* Name Row */}
+							<View className="flex-row mb-4 gap-2">
+								{/* First Name */}
+								<View className="flex-1">
+									<Text className="text-gray-600 text-sm mb-2 font-medium">
+										First Name
+									</Text>
+									<TextInput
+										className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${
+											errors.firstName ? "border-red-500" : "border-gray-200"
+										} shadow-sm`}
+										placeholder="First name"
+										placeholderTextColor="#9CA3AF"
+										value={formData.firstName}
+										onChangeText={(text) =>
+											handleInputChange("firstName", text)
+										}
+										autoCapitalize="words"
+										autoCorrect={false}
+									/>
+									{errors.firstName && (
+										<Text className="text-red-500 text-xs mt-1 ml-2">
+											{errors.firstName}
+										</Text>
+									)}
+								</View>
+
+								{/* Last Name */}
+								<View className="flex-1">
+									<Text className="text-gray-600 text-sm mb-2 font-medium">
+										Last Name
+									</Text>
+									<TextInput
+										className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${
+											errors.lastName ? "border-red-500" : "border-gray-200"
+										} shadow-sm`}
+										placeholder="Last name"
+										placeholderTextColor="#9CA3AF"
+										value={formData.lastName}
+										onChangeText={(text) => handleInputChange("lastName", text)}
+										autoCapitalize="words"
+										autoCorrect={false}
+									/>
+									{errors.lastName && (
+										<Text className="text-red-500 text-xs mt-1 ml-2">
+											{errors.lastName}
+										</Text>
+									)}
+								</View>
+							</View>
+
+							{/* Phone Number */}
+							<View className="mb-4">
+								<Text className="text-gray-600 text-sm mb-2 font-medium">
+									Phone Number
+								</Text>
+								<TextInput
+									className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${
+										errors.phoneNumber ? "border-red-500" : "border-gray-200"
+									} shadow-sm`}
+									placeholder="Enter phone number"
+									placeholderTextColor="#9CA3AF"
+									value={formData.phoneNumber}
+									onChangeText={(text) =>
+										handleInputChange("phoneNumber", text)
+									}
+									keyboardType="phone-pad"
+									maxLength={10}
+								/>
+								{errors.phoneNumber && (
+									<Text className="text-red-500 text-xs mt-1 ml-2">
+										{errors.phoneNumber}
+									</Text>
+								)}
+							</View>
+
+							{/* Email */}
+							<View className="mb-4">
+								<Text className="text-gray-600 text-sm mb-2 font-medium">
+									Email Address
+								</Text>
+								<TextInput
+									className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${
+										errors.email ? "border-red-500" : "border-gray-200"
+									} shadow-sm`}
+									placeholder="Enter email address"
+									placeholderTextColor="#9CA3AF"
+									value={formData.email}
+									onChangeText={(text) => handleInputChange("email", text)}
+									keyboardType="email-address"
+									autoCapitalize="none"
+									autoCorrect={false}
+								/>
+								{errors.email && (
+									<Text className="text-red-500 text-xs mt-1 ml-2">
+										{errors.email}
+									</Text>
+								)}
+							</View>
+
+							{/* Location Row */}
+							<View className="flex-row mb-4 gap-2">
+								{/* City */}
+								<View className="flex-1">
+									<Text className="text-gray-600 text-sm mb-2 font-medium">
+										City
+									</Text>
+									<TextInput
+										className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${
+											errors.city ? "border-red-500" : "border-gray-200"
+										} shadow-sm`}
+										placeholder="City"
+										placeholderTextColor="#9CA3AF"
+										value={formData.city}
+										onChangeText={(text) => handleInputChange("city", text)}
+										autoCapitalize="words"
+										autoCorrect={false}
+									/>
+									{errors.city && (
+										<Text className="text-red-500 text-xs mt-1 ml-2">
+											{errors.city}
+										</Text>
+									)}
+								</View>
+
+								{/* State */}
+								<View className="flex-1">
+									<Text className="text-gray-600 text-sm mb-2 font-medium">
+										State
+									</Text>
+									<TextInput
+										className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${
+											errors.state ? "border-red-500" : "border-gray-200"
+										} shadow-sm`}
+										placeholder="State"
+										placeholderTextColor="#9CA3AF"
+										value={formData.state}
+										onChangeText={(text) => handleInputChange("state", text)}
+										autoCapitalize="words"
+										autoCorrect={false}
+									/>
+									{errors.state && (
+										<Text className="text-red-500 text-xs mt-1 ml-2">
+											{errors.state}
+										</Text>
+									)}
+								</View>
+							</View>
+
+							{/* Password */}
+							<View className="mb-4">
+								<Text className="text-gray-600 text-sm mb-2 font-medium">
+									Password
+								</Text>
+								<View className="relative">
+									<TextInput
+										className={`w-full bg-white rounded-xl px-4 py-3 pr-12 text-base border ${
+											errors.password ? "border-red-500" : "border-gray-200"
+										} shadow-sm`}
+										placeholder="Enter password"
+										placeholderTextColor="#9CA3AF"
+										value={formData.password}
+										onChangeText={(text) => handleInputChange("password", text)}
+										secureTextEntry={!isPasswordVisible}
+										autoCapitalize="none"
+										autoCorrect={false}
+									/>
+									<TouchableOpacity
+										className="absolute right-4 top-3"
+										onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+									>
+										<Ionicons
+											name={isPasswordVisible ? "eye-off" : "eye"}
+											size={20}
+											color="#9CA3AF"
+										/>
+									</TouchableOpacity>
+								</View>
+								{errors.password && (
+									<Text className="text-red-500 text-xs mt-1 ml-2">
+										{errors.password}
+									</Text>
+								)}
+							</View>
+
+							{/* Confirm Password */}
+							<View className="mb-6">
+								<Text className="text-gray-600 text-sm mb-2 font-medium">
+									Confirm Password
+								</Text>
+								<View className="relative">
+									<TextInput
+										className={`w-full bg-white rounded-xl px-4 py-3 pr-12 text-base border ${
+											errors.confirmPassword
+												? "border-red-500"
+												: "border-gray-200"
+										} shadow-sm`}
+										placeholder="Confirm password"
+										placeholderTextColor="#9CA3AF"
+										value={formData.confirmPassword}
+										onChangeText={(text) =>
+											handleInputChange("confirmPassword", text)
+										}
+										secureTextEntry={!isConfirmPasswordVisible}
+										autoCapitalize="none"
+										autoCorrect={false}
+									/>
+									<TouchableOpacity
+										className="absolute right-4 top-3"
+										onPress={() =>
+											setIsConfirmPasswordVisible(!isConfirmPasswordVisible)
+										}
+									>
+										<Ionicons
+											name={isConfirmPasswordVisible ? "eye-off" : "eye"}
+											size={20}
+											color="#9CA3AF"
+										/>
+									</TouchableOpacity>
+								</View>
+								{errors.confirmPassword && (
+									<Text className="text-red-500 text-xs mt-1 ml-2">
+										{errors.confirmPassword}
+									</Text>
+								)}
+							</View>
+
+							{/* Register Button */}
+							<TouchableOpacity
+								className={`w-full bg-primary rounded-xl py-4 mb-4 shadow-lg ${
+									loading ? "opacity-70" : ""
+								}`}
+								onPress={handleRegister}
+								disabled={loading}
+							>
+								<Text className="text-white text-center text-lg font-semibold">
+									{loading ? "Creating Account..." : "Create Account"}
+								</Text>
+							</TouchableOpacity>
+
+							{/* Google Register Button */}
+							<TouchableOpacity
+								className="w-full bg-white border border-gray-200 rounded-xl py-4 mb-6 shadow-sm flex-row items-center justify-center"
+								onPress={handleGoogleRegister}
+							>
+								<Text className="text-lg mr-2">G</Text>
+								<Text className="text-gray-700 text-base font-medium">
+									Continue with Google
+								</Text>
+							</TouchableOpacity>
+
+							{/* Login Link */}
+							<View className="flex-row justify-center items-center">
+								<Text className="text-gray-600 text-sm">
+									Already have an account?{" "}
+								</Text>
+								<TouchableOpacity onPress={handleNavigateToLogin}>
+									<Text className="text-primaryDark font-semibold underline">
+										Login here
+									</Text>
+								</TouchableOpacity>
+							</View>
+						</View>
+					</View>
+				</ScrollView>
+			</KeyboardAvoidingView>
+		</SafeAreaView>
+	);
 };
 
 export default Register;
