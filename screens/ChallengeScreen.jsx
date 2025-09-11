@@ -9,13 +9,14 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import ChallengeUpload from '../components/ChallengeUpload';
 
 const ChallengeScreen = () => {
 
     const navigation = useNavigation();
 
     const [challengeStarted, setChallengeStarted] = useState(false);
-    const [earnedPoints, setEarnedPoints] = useState(0);
+    const [challengeUploadVisible, setChallengeUploadVisible] = useState(false);
 
     const handleStartChallenge = () => {
         setChallengeStarted(true);
@@ -33,27 +34,16 @@ const ChallengeScreen = () => {
         );
     };
 
-    const handleCompleteTask = (taskIndex, points) => {
-        Alert.alert(
-            'Task Completed!',
-            `You earned ${points} points!`,
-            [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        setEarnedPoints(prev => prev + points);
-                    }
-                }
-            ]
-        );
+
+    const handleChallengeUpload = (data) => {
+        console.log('Challenge Upload Data:', data);
+        // Handle the uploaded challenge data (e.g., send it to the server)
+        setChallengeUploadVisible(false);
+        Alert.alert('Success', 'Challenge data submitted successfully!');
     };
 
     const handleEarnRewards = () => {
-        Alert.alert(
-            'Earn Rewards',
-            'Complete more tasks to earn additional rewards!',
-            [{ text: 'OK' }]
-        );
+        setChallengeUploadVisible(true);
     };
 
     const rewardTasks = [
@@ -94,7 +84,7 @@ const ChallengeScreen = () => {
                                 className={`px-6 py-3 rounded-lg ${challengeStarted ? 'bg-gray-400' : 'bg-primary'
                                     }`}
                                 onPress={handleStartChallenge}
-                                // disabled={challengeStarted}
+                            // disabled={challengeStarted}
                             >
                                 <Text className="text-white font-semibold text-base text-center">
                                     {challengeStarted ? 'Challenge Active' : 'Start Challenge'}
@@ -133,15 +123,6 @@ const ChallengeScreen = () => {
                         ))}
                     </View>
 
-                    {/* Total Points Display */}
-                    {earnedPoints > 0 && (
-                        <View className="bg-green-50 p-3 rounded-xl mb-4">
-                            <Text className="text-green-700 font-semibold text-center">
-                                Total Earned: {earnedPoints} points
-                            </Text>
-                        </View>
-                    )}
-
                     {/* Earn Rewards Button */}
                     <TouchableOpacity
                         className="bg-primary py-3 rounded-lg shadow-sm"
@@ -152,6 +133,13 @@ const ChallengeScreen = () => {
                         </Text>
                     </TouchableOpacity>
                 </View>
+
+                {/* Challenge Upload Section */}
+                <ChallengeUpload
+                    visible={challengeUploadVisible}
+                    onClose={() => setChallengeUploadVisible(false)}
+                    onSubmit={handleChallengeUpload}
+                />
 
                 {/* Bottom Spacing for Tab Bar */}
                 <View className="h-24" />

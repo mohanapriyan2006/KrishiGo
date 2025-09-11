@@ -131,7 +131,7 @@ const RewardsScreen = () => {
                             </Text>
                         </View>
                         <TouchableOpacity
-                            className="flex-row items-center bg-gray-100 px-3 py-2 rounded-lg"
+                            className="flex-row items-center bg-[#67b00019] px-3 py-2 rounded-lg"
                             onPress={copyReferralCode}
                         >
                             <Text className="text-primaryDark text-sm mr-2">
