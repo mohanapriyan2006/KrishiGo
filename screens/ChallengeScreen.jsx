@@ -9,51 +9,48 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import ChallengePopup from '../components/ChallengePopup';
+import ChallengeUpload from '../components/ChallengeUpload';
 
 const ChallengeScreen = () => {
 
     const navigation = useNavigation();
 
-    const [challengeStarted, setChallengeStarted] = useState(false);
-    const [earnedPoints, setEarnedPoints] = useState(0);
+    const [challengeUploadVisible, setChallengeUploadVisible] = useState(false);
 
-    const handleStartChallenge = () => {
-        setChallengeStarted(true);
-        Alert.alert(
-            'Challenge',
-            'Are you sure you want to start the challenge?',
-            [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                    text: 'Start', style: 'destructive', onPress: () => {
-                        navigation.navigate('Quiz');
-                    }
-                },
-            ]
-        );
+    // challenge pop-up state
+    const [showPopup, setShowPopup] = useState(false);
+    const [userPoints, setUserPoints] = useState(0);
+
+    const handleActivityStart = (activity) => {
+        console.log('Starting activity:', activity.title);
+
+        // Simulate activity completion and point earning
+        setTimeout(() => {
+            const points = parseInt(activity.points.replace('pts', ''));
+            setUserPoints(prev => prev + points);
+            Alert.alert(
+                'Activity Completed!',
+                `You earned ${activity.points}! Total: ${userPoints + points} points`
+            );
+        }, 2000);
     };
 
-    const handleCompleteTask = (taskIndex, points) => {
-        Alert.alert(
-            'Task Completed!',
-            `You earned ${points} points!`,
-            [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        setEarnedPoints(prev => prev + points);
-                    }
-                }
-            ]
-        );
+
+    const handleStartChallenge = () => {
+        setShowPopup(true);
+    };
+
+
+    const handleChallengeUpload = (data) => {
+        console.log('Challenge Upload Data:', data);
+        // Handle the uploaded challenge data (e.g., send it to the server)
+        setChallengeUploadVisible(false);
+        Alert.alert('Success', 'Challenge data submitted successfully!');
     };
 
     const handleEarnRewards = () => {
-        Alert.alert(
-            'Earn Rewards',
-            'Complete more tasks to earn additional rewards!',
-            [{ text: 'OK' }]
-        );
+        setChallengeUploadVisible(true);
     };
 
     const rewardTasks = [
@@ -62,6 +59,7 @@ const ChallengeScreen = () => {
         { id: 3, task: 'Upload content', points: 200, completed: false },
         { id: 4, task: 'Earn upto 7000pts', points: 7000, completed: false },
     ];
+
 
     return (
         <SafeAreaView className="flex-1 bg-gray-50">
@@ -91,18 +89,22 @@ const ChallengeScreen = () => {
 
                             {/* Start Challenge Button */}
                             <TouchableOpacity
-                                className={`px-6 py-3 rounded-lg ${challengeStarted ? 'bg-gray-400' : 'bg-primary'
-                                    }`}
+                                className={`px-6 py-3 rounded-lg bg-primary`}
                                 onPress={handleStartChallenge}
-                                // disabled={challengeStarted}
                             >
                                 <Text className="text-white font-semibold text-base text-center">
-                                    {challengeStarted ? 'Challenge Active' : 'Start Challenge'}
+                                    Start Challenge
                                 </Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </View>
+
+                {/* Challenge Pop-up */}
+                <ChallengePopup
+                    visible={showPopup}
+                    onClose={() => setShowPopup(false)}
+                />
 
                 {/* Earn Rewards Points Section */}
                 <View className="bg-white mx-6 mt-8 rounded-2xl p-6 shadow-sm">
@@ -133,15 +135,6 @@ const ChallengeScreen = () => {
                         ))}
                     </View>
 
-                    {/* Total Points Display */}
-                    {earnedPoints > 0 && (
-                        <View className="bg-green-50 p-3 rounded-xl mb-4">
-                            <Text className="text-green-700 font-semibold text-center">
-                                Total Earned: {earnedPoints} points
-                            </Text>
-                        </View>
-                    )}
-
                     {/* Earn Rewards Button */}
                     <TouchableOpacity
                         className="bg-primary py-3 rounded-lg shadow-sm"
@@ -152,6 +145,13 @@ const ChallengeScreen = () => {
                         </Text>
                     </TouchableOpacity>
                 </View>
+
+                {/* Challenge Upload Section */}
+                <ChallengeUpload
+                    visible={challengeUploadVisible}
+                    onClose={() => setChallengeUploadVisible(false)}
+                    onSubmit={handleChallengeUpload}
+                />
 
                 {/* Bottom Spacing for Tab Bar */}
                 <View className="h-24" />
