@@ -1,15 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import {
-	createUserWithEmailAndPassword,
-	GoogleAuthProvider,
-	onAuthStateChanged,
-	signInWithPopup,
-} from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import {
-	Alert,
 	KeyboardAvoidingView,
 	Platform,
 	SafeAreaView,
@@ -20,6 +13,10 @@ import {
 	View,
 } from "react-native";
 import * as yup from "yup";
+import {
+	handleGoogleRegister,
+	handleRegister,
+} from "../../api/register/register_firebase";
 import { auth, db } from "../../config/firebase";
 
 // Validation schema
@@ -30,8 +27,7 @@ const registerSchema = yup.object().shape({
 		.min(2, "First name must be at least 2 characters"),
 	lastName: yup
 		.string()
-		.required("Last name is required")
-		.min(2, "Last name must be at least 2 characters"),
+		.required("Last name is required"),
 	phoneNumber: yup
 		.string()
 		.required("Phone number is required")
@@ -62,7 +58,7 @@ const registerSchema = yup.object().shape({
 		.oneOf([yup.ref("password")], "Passwords must match"),
 });
 
-const Register = ({ onRegister }) => {
+const Register = () => {
 	const navigation = useNavigation();
 
 	const [formData, setFormData] = useState({
@@ -122,113 +118,24 @@ const Register = ({ onRegister }) => {
 		}
 	};
 
-	const saveUserToFirestore = async (user) => {
-		try {
-			// Create a user document in Firestore
-			await setDoc(doc(db, "users", user.uid), {
-				uid: user.uid,
-				firstName: formData.firstName,
-				lastName: formData.lastName,
-				email: formData.email,
-				phoneNumber: formData.phoneNumber,
-				city: formData.city,
-				state: formData.state,
-				createdAt: new Date(),
-				lastLogin: new Date(),
-			});
+	// Use imported Firebase functions
+	const onRegister = () =>
+		handleRegister({
+			auth,
+			db,
+			formData,
+			validateForm,
+			setLoading,
+			navigation,
+			setErrors,
+		});
 
-			console.log("User saved to Firestore successfully");
-		} catch (error) {
-			console.error("Error saving user to Firestore:", error);
-			throw new Error("Failed to save user data");
-		}
-	};
-
-	const handleRegister = async () => {
-		const isValid = await validateForm();
-		if (!isValid) return;
-
-		setLoading(true);
-		try {
-			// Check if user already exists
-			const userCredential = await createUserWithEmailAndPassword(
-				auth,
-				formData.email,
-				formData.password
-			);
-
-			// Save user data to Firestore
-			await saveUserToFirestore(userCredential.user);
-
-			Alert.alert("Success", "Registration successful!", [
-				{
-					text: "OK",
-					onPress: () => {
-						onRegister && onRegister();
-						navigation.navigate("Main");
-					},
-				},
-			]);
-		} catch (error) {
-			console.error("Registration error:", error);
-
-			if (error.code === "auth/email-already-in-use") {
-				Alert.alert(
-					"Account Exists",
-					"This email is already registered. Please login instead.",
-					[
-						{
-							text: "Login",
-							onPress: () => navigation.navigate("Login"),
-						},
-						{ text: "OK" },
-					]
-				);
-			} else if (error.code === "auth/weak-password") {
-				Alert.alert(
-					"Error",
-					"Password is too weak. Please choose a stronger password."
-				);
-			} else {
-				Alert.alert("Error", "Registration failed. Please try again.");
-			}
-		} finally {
-			setLoading(false);
-		}
-	};
-
-	const handleGoogleRegister = async () => {
-		try {
-			const provider = new GoogleAuthProvider();
-			const result = await signInWithPopup(auth, provider);
-			const user = result.user;
-
-			// Check if user already exists in Firestore
-			const userDoc = await getDoc(doc(db, "users", user.uid));
-
-			if (!userDoc.exists()) {
-				// Save new user to Firestore
-				await setDoc(doc(db, "users", user.uid), {
-					uid: user.uid,
-					firstName: user.displayName?.split(" ")[0] || "",
-					lastName: user.displayName?.split(" ")[1] || "",
-					email: user.email,
-					phoneNumber: "",
-					city: "",
-					state: "",
-					createdAt: new Date(),
-					lastLogin: new Date(),
-					isGoogleSignIn: true,
-				});
-			}
-
-			Alert.alert("Success", "Google registration successful!");
-			navigation.navigate("Main");
-		} catch (error) {
-			console.error("Google sign-in error:", error);
-			Alert.alert("Error", "Google registration failed. Please try again.");
-		}
-	};
+	const onGoogleRegister = () =>
+		handleGoogleRegister({
+			auth,
+			db,
+			navigation,
+		});
 
 	const handleNavigateToLogin = () => {
 		navigation.navigate("Login");
@@ -265,9 +172,8 @@ const Register = ({ onRegister }) => {
 										First Name
 									</Text>
 									<TextInput
-										className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${
-											errors.firstName ? "border-red-500" : "border-gray-200"
-										} shadow-sm`}
+										className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${errors.firstName ? "border-red-500" : "border-gray-200"
+											} shadow-sm`}
 										placeholder="First name"
 										placeholderTextColor="#9CA3AF"
 										value={formData.firstName}
@@ -290,9 +196,8 @@ const Register = ({ onRegister }) => {
 										Last Name
 									</Text>
 									<TextInput
-										className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${
-											errors.lastName ? "border-red-500" : "border-gray-200"
-										} shadow-sm`}
+										className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${errors.lastName ? "border-red-500" : "border-gray-200"
+											} shadow-sm`}
 										placeholder="Last name"
 										placeholderTextColor="#9CA3AF"
 										value={formData.lastName}
@@ -314,9 +219,8 @@ const Register = ({ onRegister }) => {
 									Phone Number
 								</Text>
 								<TextInput
-									className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${
-										errors.phoneNumber ? "border-red-500" : "border-gray-200"
-									} shadow-sm`}
+									className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${errors.phoneNumber ? "border-red-500" : "border-gray-200"
+										} shadow-sm`}
 									placeholder="Enter phone number"
 									placeholderTextColor="#9CA3AF"
 									value={formData.phoneNumber}
@@ -339,9 +243,8 @@ const Register = ({ onRegister }) => {
 									Email Address
 								</Text>
 								<TextInput
-									className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${
-										errors.email ? "border-red-500" : "border-gray-200"
-									} shadow-sm`}
+									className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${errors.email ? "border-red-500" : "border-gray-200"
+										} shadow-sm`}
 									placeholder="Enter email address"
 									placeholderTextColor="#9CA3AF"
 									value={formData.email}
@@ -365,9 +268,8 @@ const Register = ({ onRegister }) => {
 										City
 									</Text>
 									<TextInput
-										className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${
-											errors.city ? "border-red-500" : "border-gray-200"
-										} shadow-sm`}
+										className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${errors.city ? "border-red-500" : "border-gray-200"
+											} shadow-sm`}
 										placeholder="City"
 										placeholderTextColor="#9CA3AF"
 										value={formData.city}
@@ -388,9 +290,8 @@ const Register = ({ onRegister }) => {
 										State
 									</Text>
 									<TextInput
-										className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${
-											errors.state ? "border-red-500" : "border-gray-200"
-										} shadow-sm`}
+										className={`w-full bg-white rounded-xl px-4 py-3 text-base border ${errors.state ? "border-red-500" : "border-gray-200"
+											} shadow-sm`}
 										placeholder="State"
 										placeholderTextColor="#9CA3AF"
 										value={formData.state}
@@ -413,9 +314,8 @@ const Register = ({ onRegister }) => {
 								</Text>
 								<View className="relative">
 									<TextInput
-										className={`w-full bg-white rounded-xl px-4 py-3 pr-12 text-base border ${
-											errors.password ? "border-red-500" : "border-gray-200"
-										} shadow-sm`}
+										className={`w-full bg-white rounded-xl px-4 py-3 pr-12 text-base border ${errors.password ? "border-red-500" : "border-gray-200"
+											} shadow-sm`}
 										placeholder="Enter password"
 										placeholderTextColor="#9CA3AF"
 										value={formData.password}
@@ -449,11 +349,10 @@ const Register = ({ onRegister }) => {
 								</Text>
 								<View className="relative">
 									<TextInput
-										className={`w-full bg-white rounded-xl px-4 py-3 pr-12 text-base border ${
-											errors.confirmPassword
-												? "border-red-500"
-												: "border-gray-200"
-										} shadow-sm`}
+										className={`w-full bg-white rounded-xl px-4 py-3 pr-12 text-base border ${errors.confirmPassword
+											? "border-red-500"
+											: "border-gray-200"
+											} shadow-sm`}
 										placeholder="Confirm password"
 										placeholderTextColor="#9CA3AF"
 										value={formData.confirmPassword}
@@ -486,10 +385,9 @@ const Register = ({ onRegister }) => {
 
 							{/* Register Button */}
 							<TouchableOpacity
-								className={`w-full bg-primary rounded-xl py-4 mb-4 shadow-lg ${
-									loading ? "opacity-70" : ""
-								}`}
-								onPress={handleRegister}
+								className={`w-full bg-primary rounded-xl py-4 mb-4 shadow-lg ${loading ? "opacity-70" : ""
+									}`}
+								onPress={onRegister}
 								disabled={loading}
 							>
 								<Text className="text-white text-center text-lg font-semibold">
@@ -500,7 +398,7 @@ const Register = ({ onRegister }) => {
 							{/* Google Register Button */}
 							<TouchableOpacity
 								className="w-full bg-white border border-gray-200 rounded-xl py-4 mb-6 shadow-sm flex-row items-center justify-center"
-								onPress={handleGoogleRegister}
+								onPress={onGoogleRegister}
 							>
 								<Text className="text-lg mr-2">G</Text>
 								<Text className="text-gray-700 text-base font-medium">

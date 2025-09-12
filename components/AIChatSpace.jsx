@@ -1,17 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import {
-	addDoc,
-	collection,
-	deleteDoc,
-	doc,
-	getDocs,
-	limit,
-	onSnapshot,
-	orderBy,
-	query,
-	serverTimestamp,
-	updateDoc,
-} from "firebase/firestore";
+// Firebase operations are encapsulated in ../ai/ai_firebase
 import { useEffect, useRef, useState } from "react";
 import {
 	ActivityIndicator,
@@ -27,49 +15,12 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { callGeminiAPI as callGeminiAPIExternal } from "../ai/ai_api";
+import { createFirebaseChatHandlers } from "../ai/ai_firebase";
 import { auth, db } from "../config/firebase";
 import FloatingAIButton from "./FloatingAIButton";
 
-// Gemini API configuration
-const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
-
-// Farmer-friendly system prompt
-const FARMER_SYSTEM_PROMPT = `You are an expert agricultural assistant designed to help farmers with practical, actionable advice. Your role is to:
-
-CORE IDENTITY:
-- Act as a knowledgeable, friendly farming expert who understands real-world agricultural challenges
-- Provide practical, cost-effective solutions that work for small to medium-scale farmers
-- Focus on sustainable farming practices, crop management, pest control, soil health, and farm economics
-- Consider local conditions, weather patterns, and seasonal farming cycles
-
-COMMUNICATION STYLE:
-- Use simple, clear language that any farmer can understand and use emojis to make responses friendly and engaging
-- Be concise and to the point, avoiding unnecessary details and lengthy explanations
-- Prioritize actionable advice that farmers can implement immediately
-- Avoid technical jargon unless necessary, and always explain complex terms
-- Break down complex topics into easy-to-follow steps
-- Use bullet points, numbered lists, and short paragraphs for better readability
-- Be encouraging and supportive - farming is challenging work
-
-CAPABILITIES:
-- Analyze images of crops, soil, pests, diseases, or farm equipment
-- Provide crop recommendations based on soil type, climate, and market conditions
-- Offer pest and disease identification and treatment advice
-- Suggest fertilizer and irrigation schedules
-- Help with farm planning and crop rotation strategies
-- Provide market insights and pricing guidance when possible
-- Assist with sustainable farming practices and organic methods
-
-RESPONSE FORMAT:
-- Start with a brief, clear answer to the main question
-- Follow with a step-by-step action plan if applicable
-- Use headings, bullet points, and numbered steps for easy scanning
-- Include practical tips and warnings when relevant
-- End with actionable next steps or follow-up suggestions
-- If analyzing images, describe what you see clearly before giving advice or recommendations
-
-Remember: You're here to make farming easier and more profitable for hardworking farmers. Always prioritize practical, implementable solutions. Be the friendly expert they can rely on for real-world farming advice.`;
+// API functions and system prompt now come from ../ai/ai_api
 
 const ChatPopup = ({ visible, onClose }) => {
 	const [messages, setMessages] = useState([]);
@@ -84,6 +35,27 @@ const ChatPopup = ({ visible, onClose }) => {
 	const sidebarAnimation = useRef(new Animated.Value(0)).current;
 	const userId = auth.currentUser?.uid;
 
+	// Create Firebase handlers wired to this component's state
+	const {
+		loadRecentChats,
+		startNewChat,
+		loadChat,
+		saveMessageToFirebase,
+		deleteChat,
+	} = createFirebaseChatHandlers({
+		db,
+		getUserId: () => auth.currentUser?.uid,
+		setMessages,
+		setRecentChats,
+		setCurrentChatId,
+		setCurrentChatTitle,
+		setIsInitialLoading,
+		setIsSidebarOpen,
+		getCurrentChatId: () => currentChatId,
+		getCurrentChatTitle: () => currentChatTitle,
+		getRecentChats: () => recentChats,
+	});
+
 	// Initialize chat when popup becomes visible
 	useEffect(() => {
 		if (visible && userId) {
@@ -92,204 +64,9 @@ const ChatPopup = ({ visible, onClose }) => {
 				startNewChat();
 			}
 		}
-	}, [visible, userId]);
+	}, [visible, userId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-	// Load recent chats from Firebase
-	const loadRecentChats = async () => {
-		if (!userId) return;
-
-		try {
-			const chatsRef = collection(db, "users", userId, "chatSessions");
-			const q = query(chatsRef, orderBy("lastMessageTime", "desc"), limit(20));
-
-			const unsubscribe = onSnapshot(q, (snapshot) => {
-				const chats = [];
-				snapshot.forEach((doc) => {
-					chats.push({
-						id: doc.id,
-						...doc.data(),
-						lastMessageTime: doc.data().lastMessageTime?.toDate() || new Date(),
-					});
-				});
-				setRecentChats(chats);
-			});
-
-			return unsubscribe;
-		} catch (error) {
-			console.error("Error loading recent chats:", error);
-		}
-	};
-
-	// Start a new chat session
-	const startNewChat = async () => {
-		if (!userId) return;
-
-		try {
-			// Create a new chat session document in Firebase
-			const chatSessionRef = collection(db, "users", userId, "chatSessions");
-			const newChatDocRef = await addDoc(chatSessionRef, {
-				title: "New Chat",
-				lastMessage: "Chat started",
-				lastMessageTime: serverTimestamp(),
-				createdAt: serverTimestamp(),
-			});
-
-			// Set the current chat ID to the newly created document ID
-			setCurrentChatId(newChatDocRef.id);
-			setCurrentChatTitle("New Chat");
-
-			// Add welcome message
-			const welcomeMessage = {
-				id: "welcome-" + Date.now(),
-				text: "🌾 Hello, fellow farmer! I'm your AI farming assistant, here to help you grow better crops and manage your farm more effectively.\n\n🚜 I can help you with:\n• Crop diseases and pest identification\n• Soil health and fertilizer advice\n• Planting and harvesting schedules\n• Weather-based farming tips\n• Market insights and pricing\n• Sustainable farming practices\n\nWhat farming challenge can I help you solve today?",
-				isBot: true,
-				timestamp: new Date(),
-			};
-
-			setMessages([welcomeMessage]);
-
-			// Save welcome message to Firebase
-			const messagesRef = collection(
-				db,
-				"users",
-				userId,
-				"chatSessions",
-				newChatDocRef.id,
-				"messages"
-			);
-			await addDoc(messagesRef, {
-				...welcomeMessage,
-				timestamp: serverTimestamp(),
-			});
-		} catch (error) {
-			console.error("Error creating new chat session:", error);
-			Alert.alert("Error", "Could not start a new chat. Please try again.");
-		}
-	};
-
-	// Load specific chat
-	const loadChat = async (chatId) => {
-		try {
-			setIsInitialLoading(true);
-			setCurrentChatId(chatId);
-			setIsSidebarOpen(false);
-
-			// Find chat title from recent chats
-			const chatSession = recentChats.find((chat) => chat.id === chatId);
-			setCurrentChatTitle(chatSession?.title || "Chat");
-
-			const messagesRef = collection(
-				db,
-				"users",
-				userId,
-				"chatSessions",
-				chatId,
-				"messages"
-			);
-			const q = query(messagesRef, orderBy("timestamp", "asc"));
-
-			const unsubscribe = onSnapshot(q, (snapshot) => {
-				const chatHistory = [];
-				snapshot.forEach((doc) => {
-					chatHistory.push({
-						id: doc.id,
-						...doc.data(),
-						timestamp: doc.data().timestamp?.toDate() || new Date(),
-					});
-				});
-
-				setMessages(chatHistory);
-				setIsInitialLoading(false);
-			});
-
-			return unsubscribe;
-		} catch (error) {
-			console.error("Error loading chat:", error);
-			setIsInitialLoading(false);
-		}
-	};
-
-	// Save message to Firebase
-	const saveMessageToFirebase = async (message) => {
-		if (!userId || !currentChatId) return;
-
-		try {
-			// Save message to chat
-			const messagesRef = collection(
-				db,
-				"users",
-				userId,
-				"chatSessions",
-				currentChatId,
-				"messages"
-			);
-			await addDoc(messagesRef, {
-				...message,
-				timestamp: serverTimestamp(),
-			});
-
-			// Update chat session with last message
-			const chatSessionRef = doc(
-				db,
-				"users",
-				userId,
-				"chatSessions",
-				currentChatId
-			);
-			const updateData = {
-				lastMessage:
-					message.text.substring(0, 100) +
-					(message.text.length > 100 ? "..." : ""),
-				lastMessageTime: serverTimestamp(),
-			};
-
-			// Generate title from first user message if it's a new chat
-			if (currentChatTitle === "New Chat" && !message.isBot) {
-				const title =
-					message.text.substring(0, 50) +
-					(message.text.length > 50 ? "..." : "");
-				updateData.title = title;
-				setCurrentChatTitle(title);
-			}
-
-			await updateDoc(chatSessionRef, updateData);
-		} catch (error) {
-			console.error("Error saving message:", error);
-		}
-	};
-
-	// Delete chat
-	const deleteChat = async (chatId) => {
-		try {
-			// Delete all messages in the chat
-			const messagesRef = collection(
-				db,
-				"users",
-				userId,
-				"chatSessions",
-				chatId,
-				"messages"
-			);
-			const messagesSnapshot = await getDocs(messagesRef);
-
-			const deletePromises = messagesSnapshot.docs.map((doc) =>
-				deleteDoc(doc.ref)
-			);
-			await Promise.all(deletePromises);
-
-			// Delete the chat session
-			const chatSessionRef = doc(db, "users", userId, "chatSessions", chatId);
-			await deleteDoc(chatSessionRef);
-
-			// If this was the current chat, start a new one
-			if (currentChatId === chatId) {
-				startNewChat();
-			}
-		} catch (error) {
-			console.error("Error deleting chat:", error);
-			Alert.alert("Error", "Failed to delete chat");
-		}
-	};
+	// Firebase handlers now provided by ../ai/ai_firebase
 
 	// Toggle sidebar
 	const toggleSidebar = () => {
@@ -303,94 +80,7 @@ const ChatPopup = ({ visible, onClose }) => {
 		}).start();
 	};
 
-	// Build conversation history for context
-	const buildConversationHistory = () => {
-		const recentMessages = messages.slice(-10);
-		const conversationParts = [
-			{
-				text: FARMER_SYSTEM_PROMPT,
-			},
-		];
-
-		recentMessages.forEach((message) => {
-			if (message.id !== "welcome") {
-				conversationParts.push({
-					text: `${message.isBot ? "Assistant" : "User"}: ${message.text}`,
-				});
-			}
-		});
-
-		return conversationParts;
-	};
-
-	// Call Gemini API with enhanced farming context
-	const callGeminiAPI = async (userMessage) => {
-		try {
-			if (!GEMINI_API_KEY) {
-				throw new Error("Gemini API key not found in environment variables");
-			}
-
-			const conversationHistory = buildConversationHistory();
-			conversationHistory.push({
-				text: `User: ${userMessage}`,
-			});
-
-			const response = await fetch(GEMINI_API_URL, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					contents: [
-						{
-							parts: conversationHistory,
-						},
-					],
-					generationConfig: {
-						temperature: 0.7,
-						topK: 40,
-						topP: 0.95,
-						maxOutputTokens: 2048,
-					},
-					safetySettings: [
-						{
-							category: "HARM_CATEGORY_HARASSMENT",
-							threshold: "BLOCK_MEDIUM_AND_ABOVE",
-						},
-						{
-							category: "HARM_CATEGORY_HATE_SPEECH",
-							threshold: "BLOCK_MEDIUM_AND_ABOVE",
-						},
-						{
-							category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-							threshold: "BLOCK_MEDIUM_AND_ABOVE",
-						},
-						{
-							category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-							threshold: "BLOCK_MEDIUM_AND_ABOVE",
-						},
-					],
-				}),
-			});
-
-			if (!response.ok) {
-				const errorData = await response.json();
-				throw new Error(
-					`Gemini API error: ${errorData.error?.message || "Unknown error"}`
-				);
-			}
-
-			const data = await response.json();
-			const responseText =
-				data.candidates?.[0]?.content?.parts?.[0]?.text ||
-				"Sorry, I couldn't generate a response. Please try asking your farming question again.";
-
-			return responseText.replace(/^Assistant:\s*/, "");
-		} catch (error) {
-			console.error("Gemini API error:", error);
-			return `🚜 Sorry, I'm having trouble connecting right now. Please check your internet connection and try again.\n\nError details: ${error.message}`;
-		}
-	};
+	// API call now uses external helper with current messages for context
 
 	const sendMessage = async () => {
 		if (!inputText.trim() || isLoading) return;
@@ -410,7 +100,7 @@ const ChatPopup = ({ visible, onClose }) => {
 		await saveMessageToFirebase(userMessage);
 
 		try {
-			const botResponseText = await callGeminiAPI(currentInput);
+			const botResponseText = await callGeminiAPIExternal(currentInput, messages);
 
 			const botResponse = {
 				id: (Date.now() + 1).toString(),
@@ -467,24 +157,21 @@ const ChatPopup = ({ visible, onClose }) => {
 					/>
 				)}
 				<View
-					className={`max-w-[80%] px-4 py-3 rounded-2xl ${
-						message.isBot
-							? "bg-lime-300/30 border border-primary rounded-tl-none"
-							: "bg-primary rounded-tr-none"
-					}`}
+					className={`max-w-[80%] px-4 py-3 rounded-2xl ${message.isBot
+						? "bg-lime-300/30 border border-primary rounded-tl-none"
+						: "bg-primary rounded-tr-none"
+						}`}
 				>
 					<Text
-						className={`text-sm leading-5 ${
-							message.isBot ? "text-gray-800" : "text-white"
-						}`}
+						className={`text-sm leading-5 ${message.isBot ? "text-gray-800" : "text-white"
+							}`}
 						selectable
 					>
 						{formatTextWithBold(message.text)}
 					</Text>
 					<Text
-						className={`text-xs mt-2 ${
-							message.isBot ? "text-gray-500" : "text-white/70"
-						}`}
+						className={`text-xs mt-2 ${message.isBot ? "text-gray-500" : "text-white/70"
+							}`}
 					>
 						{message.timestamp?.toLocaleTimeString([], {
 							hour: "2-digit",
@@ -556,9 +243,8 @@ const ChatPopup = ({ visible, onClose }) => {
 								<TouchableOpacity
 									key={chat.id}
 									onPress={() => loadChat(chat.id)}
-									className={`p-3 rounded-lg mb-2 flex-row items-center justify-between ${
-										currentChatId === chat.id ? "bg-primary/10" : "bg-white"
-									}`}
+									className={`p-3 rounded-lg mb-2 flex-row items-center justify-between ${currentChatId === chat.id ? "bg-primary/10" : "bg-white"
+										}`}
 								>
 									<View className="flex-1">
 										<Text
@@ -649,39 +335,6 @@ const ChatPopup = ({ visible, onClose }) => {
 
 						{/* Input Area */}
 						<View className="px-4 py-4 bg-primary border-t border-gray-200">
-							<View className="flex-row items-center bg-white rounded-full px-4 py-2 shadow-sm border border-gray-200">
-								<TouchableOpacity className="mr-3">
-									<Ionicons name="camera" size={20} color="#314C1C" />
-								</TouchableOpacity>
-
-								<TextInput
-									className="flex-1 text-base text-gray-800 py-2"
-									placeholder="Ask about crops, pests, soil, weather..."
-									placeholderTextColor="#9CA3AF"
-									value={inputText}
-									onChangeText={setInputText}
-									multiline
-									maxLength={1000}
-									editable={!isLoading}
-									onSubmitEditing={sendMessage}
-								/>
-
-								<TouchableOpacity
-									onPress={sendMessage}
-									className={`ml-3 rounded-full p-2 ${
-										inputText.trim() && !isLoading
-											? "bg-primary"
-											: "bg-gray-300"
-									}`}
-									disabled={!inputText.trim() || isLoading}
-								>
-									{isLoading ? (
-										<ActivityIndicator size={16} color="white" />
-									) : (
-										<Ionicons name="send" size={16} color="white" />
-									)}
-								</TouchableOpacity>
-							</View>
 
 							{/* Quick action buttons */}
 							<View className="flex-row justify-center mt-3 space-x-2">
@@ -706,6 +359,41 @@ const ChatPopup = ({ visible, onClose }) => {
 									<Text className="text-white text-xs">🌿 Soil Tips</Text>
 								</TouchableOpacity>
 							</View>
+
+							<View className="flex-row items-center bg-white rounded-full px-4 py-2 shadow-sm border border-gray-200">
+								<TouchableOpacity className="mr-3">
+									<Ionicons name="camera" size={20} color="#314C1C" />
+								</TouchableOpacity>
+
+								<TextInput
+									className="flex-1 text-base text-gray-800 py-2"
+									placeholder="Type your farm question..."
+									placeholderTextColor="#9CA3AF"
+									value={inputText}
+									onChangeText={setInputText}
+									multiline
+									maxLength={1000}
+									editable={!isLoading}
+									onSubmitEditing={sendMessage}
+								/>
+
+								<TouchableOpacity
+									onPress={sendMessage}
+									className={`ml-3 rounded-full p-2 ${inputText.trim() && !isLoading
+										? "bg-primary"
+										: "bg-gray-300"
+										}`}
+									disabled={!inputText.trim() || isLoading}
+								>
+									{isLoading ? (
+										<ActivityIndicator size={16} color="white" />
+									) : (
+										<Ionicons name="send" size={16} color="white" />
+									)}
+								</TouchableOpacity>
+							</View>
+
+
 						</View>
 					</View>
 				</KeyboardAvoidingView>
