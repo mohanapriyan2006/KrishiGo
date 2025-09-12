@@ -104,9 +104,6 @@ const FloatingAIButton = ({ isActive = false, setIsActive }) => {
     console.log('Floating AI Button Pressed');
   };
 
-
-  const rotateInterpolate = rotateAnim.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
-
   return (
     <Animated.View
       {...panResponder.panHandlers}
@@ -120,27 +117,14 @@ const FloatingAIButton = ({ isActive = false, setIsActive }) => {
       ]}
     >
 
-      <Animated.View
-        style={{
-          position: 'absolute', width: 80, height: 80, borderRadius: 40,
-          backgroundColor: 'rgba(55, 216, 0, 0.4)', transform: [{ scale: pulseAnim }], opacity: 0.5,
-        }}
-        className="absolute -top-2 -left-2 blur-md"
-      />
-      <Animated.View
-        style={{
-          position: 'absolute', width: 72, height: 72, borderRadius: 36, borderWidth: 1,
-          borderColor: 'rgba(34, 197, 94, 0.2)', transform: [{ rotate: rotateInterpolate }],
-        }}
-        className="absolute -top-2 -left-2"
-      />
-
       <View className="relative">
         <Animated.View
           style={{
-            position: 'absolute', width: 64, height: 64, borderRadius: 32, borderWidth: 2,
-            borderColor: 'rgba(34, 197, 94, 0.4)', transform: [{ scale: ringAnim }], opacity: 0.7,
+            width: 64, height: 64, borderRadius: 32, borderWidth: 2,
+            transform: [{ scale: ringAnim }], opacity: 0.7,
           }}
+          className="absolute border-lime-500 -top-1 -left-1"
+
         />
 
         <TouchableOpacity
@@ -150,13 +134,12 @@ const FloatingAIButton = ({ isActive = false, setIsActive }) => {
           style={{
             transform: [{ scale: scaleAnim }, { scale: bounceAnim }],
           }}
-          className={`w-16 h-16 bg-slate-900 border-2 rounded-full items-center justify-center ${isActive ? 'border-lime-400' : 'border-lime-500/60'}`}
+          className={`w-16 h-16 bg-lime-950 border-2 rounded-full items-center justify-center ${isActive ? 'border-lime-400' : 'border-lime-500/60'}`}
         >
           <View
-            className="absolute inset-1 rounded-full"
-            style={{ backgroundColor: isActive ? 'rgba(55, 216, 0, 0.3)' : 'rgba(55, 216, 0, 0.2)' }}
+            className={`absolute inset-1 bg-lime-400/10 rounded-full`}
           />
-          <Text className="text-lime-300 font-bold text-xl relative z-10">
+          <Text className="text-lime-100 font-bold text-xl relative z-10">
             {isActive ? 'X' : 'AI'}
           </Text>
 
