@@ -32,7 +32,8 @@ const ChatPopup = ({ visible, onClose }) => {
 	const [currentChatId, setCurrentChatId] = useState(null);
 	const [currentChatTitle, setCurrentChatTitle] = useState("New Chat");
 	const scrollViewRef = useRef();
-	const sidebarAnimation = useRef(new Animated.Value(0)).current;
+	const sidebarAnimation = useRef(new Animated.Value(-280)).current; // Start off-screen
+	const overlayAnimation = useRef(new Animated.Value(0)).current; // For backdrop overlay
 	const userId = auth.currentUser?.uid;
 
 	// Create Firebase handlers wired to this component's state
@@ -68,16 +69,30 @@ const ChatPopup = ({ visible, onClose }) => {
 
 	// Firebase handlers now provided by ../ai/ai_firebase
 
-	// Toggle sidebar
+	// Toggle sidebar with mobile-first overlay experience
 	const toggleSidebar = () => {
-		const toValue = isSidebarOpen ? 0 : 1;
 		setIsSidebarOpen(!isSidebarOpen);
 
-		Animated.timing(sidebarAnimation, {
-			toValue,
-			duration: 300,
-			useNativeDriver: false,
-		}).start();
+		// Animate sidebar slide and overlay fade
+		Animated.parallel([
+			Animated.timing(sidebarAnimation, {
+				toValue: isSidebarOpen ? -280 : 0, // Slide from left
+				duration: 300,
+				useNativeDriver: false,
+			}),
+			Animated.timing(overlayAnimation, {
+				toValue: isSidebarOpen ? 0 : 1, // Fade overlay
+				duration: 300,
+				useNativeDriver: false,
+			}),
+		]).start();
+	};
+
+	// Close sidebar when overlay is tapped
+	const closeSidebar = () => {
+		if (isSidebarOpen) {
+			toggleSidebar();
+		}
 	};
 
 	// API call now uses external helper with current messages for context
@@ -203,9 +218,9 @@ const ChatPopup = ({ visible, onClose }) => {
 		</View>
 	);
 
-	const sidebarWidth = sidebarAnimation.interpolate({
+	const overlayOpacity = overlayAnimation.interpolate({
 		inputRange: [0, 1],
-		outputRange: [0, 280],
+		outputRange: [0, 0.5],
 	});
 
 	return (
@@ -215,78 +230,11 @@ const ChatPopup = ({ visible, onClose }) => {
 			animationType="slide"
 			onRequestClose={onClose}
 		>
-			<View className="flex-1 bg-black/50">
+			<View className="flex-1 bg-white">
 				<KeyboardAvoidingView
 					behavior={Platform.OS === "ios" ? "padding" : "height"}
-					className="bg-white h-full flex-row"
+					className="flex-1"
 				>
-					{/* Sidebar */}
-					<Animated.View
-						style={{ width: sidebarWidth }}
-						className="bg-gray-50 border-r border-gray-200 h-full"
-					>
-						<View className="p-4 border-b border-gray-200">
-							<TouchableOpacity
-								onPress={startNewChat}
-								className="bg-primary rounded-lg p-3 flex-row items-center justify-center"
-							>
-								<Ionicons name="add" size={16} color="white" />
-								<Text className="text-white ml-2 font-medium">New Chat</Text>
-							</TouchableOpacity>
-						</View>
-
-						<ScrollView className="flex-1 p-2">
-							<Text className="text-gray-500 text-sm font-medium mb-3 px-2">
-								Recent Chats
-							</Text>
-							{recentChats.map((chat) => (
-								<TouchableOpacity
-									key={chat.id}
-									onPress={() => loadChat(chat.id)}
-									className={`p-3 rounded-lg mb-2 flex-row items-center justify-between ${currentChatId === chat.id ? "bg-primary/10" : "bg-white"
-										}`}
-								>
-									<View className="flex-1">
-										<Text
-											className="text-gray-800 font-medium text-sm"
-											numberOfLines={1}
-										>
-											{chat.title || "Untitled Chat"}
-										</Text>
-										<Text
-											className="text-gray-500 text-xs mt-1"
-											numberOfLines={1}
-										>
-											{chat.lastMessage}
-										</Text>
-										<Text className="text-gray-400 text-xs mt-1">
-											{chat.lastMessageTime?.toLocaleDateString()}
-										</Text>
-									</View>
-									<TouchableOpacity
-										onPress={() => {
-											Alert.alert(
-												"Delete Chat",
-												"Are you sure you want to delete this chat?",
-												[
-													{ text: "Cancel", style: "cancel" },
-													{
-														text: "Delete",
-														style: "destructive",
-														onPress: () => deleteChat(chat.id),
-													},
-												]
-											);
-										}}
-										className="ml-2"
-									>
-										<Ionicons name="trash-outline" size={16} color="#ef4444" />
-									</TouchableOpacity>
-								</TouchableOpacity>
-							))}
-						</ScrollView>
-					</Animated.View>
-
 					{/* Main Chat Area */}
 					<View className="flex-1">
 						{/* Header */}
@@ -308,7 +256,6 @@ const ChatPopup = ({ visible, onClose }) => {
 								<Ionicons name="close" size={24} color="white" />
 							</TouchableOpacity>
 						</View>
-
 						{/* Messages */}
 						<ScrollView
 							ref={scrollViewRef}
@@ -334,10 +281,9 @@ const ChatPopup = ({ visible, onClose }) => {
 						</ScrollView>
 
 						{/* Input Area */}
-						<View className="px-4 py-4 bg-primary border-t border-gray-200">
-
+						<View className="px-4 py-3 bg-primary border-t border-gray-200">
 							{/* Quick action buttons */}
-							<View className="flex-row justify-center mt-3 space-x-2">
+							<View className="flex-row justify-center mb-3 gap-2">
 								<TouchableOpacity
 									className="bg-white/20 px-3 py-2 rounded-full"
 									onPress={() => setInputText("Identify this plant disease")}
@@ -392,10 +338,115 @@ const ChatPopup = ({ visible, onClose }) => {
 									)}
 								</TouchableOpacity>
 							</View>
-
-
 						</View>
 					</View>
+
+					{/* Mobile Overlay for Sidebar */}
+					{isSidebarOpen && (
+						<>
+							{/* Backdrop */}
+							<Animated.View
+								style={{
+									position: 'absolute',
+									top: 0,
+									left: 0,
+									right: 0,
+									bottom: 0,
+									backgroundColor: 'black',
+									opacity: overlayOpacity,
+								}}
+							>
+								<TouchableOpacity
+									style={{ flex: 1 }}
+									onPress={closeSidebar}
+									activeOpacity={1}
+								/>
+							</Animated.View>
+
+							{/* Sliding Sidebar */}
+							<Animated.View
+								style={{
+									position: 'absolute',
+									left: sidebarAnimation,
+									top: 0,
+									bottom: 0,
+									width: 280,
+									backgroundColor: '#f9fafb',
+									borderRightWidth: 1,
+									borderRightColor: '#e5e7eb',
+									elevation: 16,
+									shadowColor: '#000',
+									shadowOffset: { width: 2, height: 0 },
+									shadowOpacity: 0.25,
+									shadowRadius: 8,
+								}}
+							>
+								<View className="p-4 border-b border-gray-200 bg-white">
+									<TouchableOpacity
+										onPress={startNewChat}
+										className="bg-primary rounded-lg p-3 flex-row items-center justify-center"
+									>
+										<Ionicons name="add" size={16} color="white" />
+										<Text className="text-white ml-2 font-medium">New Chat</Text>
+									</TouchableOpacity>
+								</View>
+
+								<ScrollView className="flex-1 p-2">
+									<Text className="text-gray-500 text-sm font-medium mb-3 px-2">
+										Recent Chats
+									</Text>
+									{recentChats.map((chat) => (
+										<TouchableOpacity
+											key={chat.id}
+											onPress={() => {
+												loadChat(chat.id);
+												closeSidebar(); // Close sidebar after selecting chat
+											}}
+											className={`p-3 rounded-lg mb-2 flex-row items-center justify-between ${currentChatId === chat.id ? "bg-primary/10" : "bg-white"
+												}`}
+										>
+											<View className="flex-1">
+												<Text
+													className="text-gray-800 font-medium text-sm"
+													numberOfLines={1}
+												>
+													{chat.title || "Untitled Chat"}
+												</Text>
+												<Text
+													className="text-gray-500 text-xs mt-1"
+													numberOfLines={1}
+												>
+													{chat.lastMessage}
+												</Text>
+												<Text className="text-gray-400 text-xs mt-1">
+													{chat.lastMessageTime?.toLocaleDateString()}
+												</Text>
+											</View>
+											<TouchableOpacity
+												onPress={() => {
+													Alert.alert(
+														"Delete Chat",
+														"Are you sure you want to delete this chat?",
+														[
+															{ text: "Cancel", style: "cancel" },
+															{
+																text: "Delete",
+																style: "destructive",
+																onPress: () => deleteChat(chat.id),
+															},
+														]
+													);
+												}}
+												className="ml-2"
+											>
+												<Ionicons name="trash-outline" size={16} color="#ef4444" />
+											</TouchableOpacity>
+										</TouchableOpacity>
+									))}
+								</ScrollView>
+							</Animated.View>
+						</>
+					)}
 				</KeyboardAvoidingView>
 			</View>
 		</Modal>
