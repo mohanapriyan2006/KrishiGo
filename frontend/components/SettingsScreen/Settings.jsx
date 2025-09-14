@@ -53,8 +53,7 @@ const Settings = ({ navigation }) => {
     };
 
     const handleSavedCourses = () => {
-        console.log('Saved courses pressed');
-        // Navigate to saved courses screen
+        navigation?.navigate('SavedCourses');
     };
 
     const handleAboutKrishiGo = () => {

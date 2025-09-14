@@ -247,7 +247,7 @@ const SearchCourses = ({ navigation }) => {
                 <Text className="text-2xl font-bold text-gray-900">Search Courses</Text>
                 
                 <TouchableOpacity
-                    onPress={() => console.log('View wishlist')}
+                    onPress={() => navigation?.navigate('SavedCourses')}
                     className="w-8 h-8 items-center justify-center relative"
                 >
                     <Ionicons name="heart-outline" size={24} color="#059669" />

@@ -94,19 +94,21 @@ const JourneyScreen = () => {
     const renderCourseCard = (course) => (
         <View key={course.id} className="bg-green-50 rounded-2xl p-4 mb-4 shadow-lg border border-gray-100">
             {/* Course Image and Live Indicator */}
-            <View className="relative mb-4">
-                <Image
-                    source={course.image}
-                    className="w-full h-40 rounded-xl"
-                    resizeMode="cover"
-                />
+            <TouchableOpacity onPress={() => handleResume(course.id)}>
+                <View className="relative mb-4">
+                    <Image
+                        source={course.image}
+                        className="w-full h-40 rounded-xl"
+                        resizeMode="cover"
+                    />
 
-                {/* Status Badge */}
-                <View className={`absolute bottom-3 left-3 ${course.status === 'completed' ? 'bg-green-500' : 'bg-blue-500'} px-3 py-1 rounded-full flex-row items-center`}>
-                    <Ionicons name="checkmark-circle" size={12} color="white" />
-                    <Text className="text-white text-xs font-medium ml-1">{course.status === 'completed' ? 'COMPLETED' : 'IN PROGRESS'}</Text>
+                    {/* Status Badge */}
+                    <View className={`absolute bottom-3 left-3 ${course.status === 'completed' ? 'bg-green-500' : 'bg-blue-500'} px-3 py-1 rounded-full flex-row items-center`}>
+                        <Ionicons name="checkmark-circle" size={12} color="white" />
+                        <Text className="text-white text-xs font-medium ml-1">{course.status === 'completed' ? 'COMPLETED' : 'IN PROGRESS'}</Text>
+                    </View>
                 </View>
-            </View>
+            </TouchableOpacity>
 
             {/* Course Info */}
             <View className="mb-4">
