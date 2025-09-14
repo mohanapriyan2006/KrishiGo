@@ -2,12 +2,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import {
-    Alert,
     SafeAreaView,
     ScrollView,
     Text,
     TouchableOpacity,
-    View,
+    View
 } from 'react-native';
 import ProgressLine from '../components/ProgressLine';
 
@@ -71,11 +70,8 @@ const JourneyScreen = () => {
     const displayData = activeTab === 'Ongoing' ? journeyData : completedCourses;
 
     const handleResume = (courseId) => {
-        Alert.alert(
-            'Resume Course',
-            `Resuming course ${courseId}...`,
-            [{ text: 'OK' }]
-        );
+        console.log('Resuming course:', courseId);
+        navigation.navigate('CourseDetails', { courseId });
     };
 
 
