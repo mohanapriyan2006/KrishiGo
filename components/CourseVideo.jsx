@@ -11,6 +11,7 @@ import {
     View,
 } from 'react-native';
 import YoutubePlayer from 'react-native-youtube-iframe';
+import AIChatSpace from './AIChatSpace';
 
 
 const { width } = Dimensions.get('window');
@@ -31,7 +32,7 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
 
 `;
 
-    const youtubeVideoId = 'Eq3BXhqW_Eo'; // Example video ID
+    const youtubeVideoId = 'Eq3BXhqW_Eo';
 
     const handlePlayPause = () => {
         setShowPlayer(true);
@@ -100,12 +101,6 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
                                     </View>
                                 </TouchableOpacity>
 
-                                {/* Duration Badge */}
-                                <View className="absolute bottom-4 right-4">
-                                    <View className="bg-lime-600/80 px-3 py-1 rounded">
-                                        <Text className="text-white text-sm font-semibold">{`14:00`}</Text>
-                                    </View>
-                                </View>
                             </View>
                         )}
                     </View>
@@ -146,6 +141,10 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
                 </View>
 
             </ScrollView>
+
+            {/* AI Chat Space */}
+            <AIChatSpace />
+
         </SafeAreaView>
     );
 };

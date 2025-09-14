@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
 import {
@@ -91,11 +91,11 @@ const ChallengeUpload = ({ visible, onClose, onSubmit }) => {
                             className="border-2 border-dashed border-red-300 rounded-xl p-4 mb-6 items-center justify-center min-h-[200px]"
                         >
                             {selectedImage ? (
-                                    <Image
-                                        source={{ uri: selectedImage }}
-                                        className="w-full h-[280px] scale-80 rounded-lg"
-                                        resizeMode="cover"
-                                    />
+                                <Image
+                                    source={{ uri: selectedImage }}
+                                    className="w-full h-[280px] scale-80 rounded-lg"
+                                    resizeMode="cover"
+                                />
                             ) : (
                                 <View className="items-center">
                                     <Feather name="camera" size={32} color="#9CA3AF" className="mb-2" />
@@ -150,6 +150,30 @@ const ChallengeUpload = ({ visible, onClose, onSubmit }) => {
                                 Submit Activity
                             </Text>
                         </TouchableOpacity>
+                    </View>
+
+                    {/* Guidelines */}
+                    <View className="mx-6 mb-6">
+                        <View className="bg-blue-50 rounded-xl p-4">
+                            <View className="flex-row items-start">
+                                <View className="w-6 h-6 bg-blue-100 rounded-full items-center justify-center mr-3 mt-0.5">
+                                    <Ionicons name="information" size={14} color="#3B82F6" />
+                                </View>
+                                <View className="flex-1">
+                                    <Text className="text-blue-900 font-medium text-sm mb-2">
+                                        Photo Guidelines
+                                    </Text>
+                                    <View className="gap-1">
+                                        <Text className="text-blue-700 text-xs">
+                                            • Use a clear, Geo-tagged photo of yourself
+                                        </Text>
+                                        <Text className="text-blue-700 text-xs">
+                                            • Avoid inappropriate or offensive content
+                                        </Text>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
                     </View>
                 </View>
             </View>

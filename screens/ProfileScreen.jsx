@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useState } from 'react';
 import {
     Alert,
     SafeAreaView,
@@ -8,10 +9,34 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import EditProfilePhoto from '../components/EditProfilePhoto';
+import ChangeLanguageModal from '../components/SettingsScreen/ChangeLanguageModal';
 
 const ProfileScreen = () => {
 
     const navigation = useNavigation();
+
+    // Dummy user data
+    const userProfile = null;
+
+    const [showPhotoModal, setShowPhotoModal] = useState(false);
+    const [profilePhoto, setProfilePhoto] = useState(userProfile?.photo || null);
+
+
+    const [showLanguageModal, setShowLanguageModal] = useState(false);
+    const [currentLanguage, setCurrentLanguage] = useState('English');
+
+    const handleChangeLanguage = () => {
+        setShowLanguageModal(true);
+    };
+
+    const handleLanguageChange = (newLanguage) => {
+        setCurrentLanguage(newLanguage);
+        console.log('Language changed to:', newLanguage);
+        // Here you would typically save the language preference to storage
+        // and update the app's language context
+    };
+
 
     const handleLogout = () => {
         Alert.alert(
@@ -29,11 +54,11 @@ const ProfileScreen = () => {
     };
 
     const handleSettings = () => {
-        Alert.alert('Settings', 'Settings page will be implemented here');
+        navigation.navigate('Settings');
     };
 
-    const  handleEditProfilePhoto = () => {
-        Alert.alert('Edit Profile', 'Edit profile functionality will be implemented here');
+    const handleEditProfilePhoto = () => {
+        setShowPhotoModal(true);
     };
 
     return (
@@ -55,7 +80,7 @@ const ProfileScreen = () => {
                             </View>
                             <TouchableOpacity
                                 className="absolute top-0 right-2 bg-primaryDark p-2 rounded-full border-2 border-white"
-                                onPress={ handleEditProfilePhoto}
+                                onPress={handleEditProfilePhoto}
                             >
                                 <Ionicons name="pencil" size={12} color="white" />
                             </TouchableOpacity>
@@ -131,6 +156,16 @@ const ProfileScreen = () => {
                     {/* Divider */}
                     <View className="h-px bg-gray-200 my-6" />
 
+                    {/* Change Language */}
+                    <TouchableOpacity
+                        className="bg-[#67b00019] p-4 mb-2 rounded-xl flex-row items-center"
+                        onPress={handleChangeLanguage}
+                    >
+                        <Ionicons name="language-outline" size={24} color="#374151" />
+                        <Text className="text-gray-900 font-medium text-base ml-3">Change Language</Text>
+                        <Ionicons name="chevron-forward" size={20} color="#9CA3AF" className="ml-auto" />
+                    </TouchableOpacity>
+
                     {/* Settings */}
                     <TouchableOpacity
                         className="bg-[#67b00019] p-4 mb-2 rounded-xl flex-row items-center"
@@ -154,6 +189,22 @@ const ProfileScreen = () => {
                 {/* Bottom Spacing for Tab Bar */}
                 <View className="h-24" />
             </ScrollView>
+
+            {/* Edit Profile Photo Modal */}
+            <EditProfilePhoto
+                showPhotoModal={showPhotoModal}
+                setShowPhotoModal={setShowPhotoModal}
+                currentPhoto={profilePhoto}
+                onPhotoUpdate={setProfilePhoto}
+            />
+
+            {/* Change Language Modal */}
+            <ChangeLanguageModal
+                showLanguageModal={showLanguageModal}
+                setShowLanguageModal={setShowLanguageModal}
+                currentLanguage={currentLanguage}
+                onLanguageChange={handleLanguageChange}
+            />
         </SafeAreaView>
     );
 };

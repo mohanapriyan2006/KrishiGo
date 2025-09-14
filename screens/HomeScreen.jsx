@@ -37,9 +37,9 @@ export default function Home() {
                     </TouchableOpacity>
                     <TouchableOpacity className="items-center">
                         <View className={HomeStyles.quickActions.iconView}>
-                            <Ionicons name="heart" size={30} color={HomeStyles.quickActions.iconColor} />
+                            <Ionicons name="bookmark" size={30} color={HomeStyles.quickActions.iconColor} />
                         </View>
-                        <Text className={HomeStyles.quickActions.text}>Favorite</Text>
+                        <Text className={HomeStyles.quickActions.text}>Saved</Text>
                     </TouchableOpacity>
                     <TouchableOpacity className="items-center">
                         <View className={HomeStyles.quickActions.iconView}>

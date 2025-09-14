@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import AIChatSpace from './AIChatSpace';
 
 const CourseDetails = ({ navigation }) => {
     const courseModules = [
@@ -92,10 +93,10 @@ const CourseDetails = ({ navigation }) => {
 
             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
                 {/* Course Hero Section */}
-                <View className="bg-green-50 mx-4 mt-4 p-6 rounded-2xl">
+                <View className="bg-green-50 border border border-primary mx-4 mt-4 p-6 rounded-2xl">
                     <View className="flex-row items-start justify-between">
                         <View className="flex-1 pr-4">
-                            <Text className="text-xl font-bold text-gray-900 mb-3">
+                            <Text className="text-xl font-bold mb-3">
                                 How to Harvest more effectively
                             </Text>
 
@@ -110,19 +111,20 @@ const CourseDetails = ({ navigation }) => {
                             {/* Course Stats */}
                             <View className="flex-row items-center">
                                 <View className="flex-row items-center mr-4">
-                                    <Feather name="clock" size={14} color="#6B7280" />
-                                    <Text className="text-gray-600 text-sm ml-1">7hrs</Text>
+                                    <Feather name="clock" size={14} color="gray" />
+                                    <Text className="text-gray-500 text-sm ml-1">7hrs</Text>
                                 </View>
                                 <View className="flex-row items-center">
-                                    <Feather name="book-open" size={14} color="#6B7280" />
-                                    <Text className="text-gray-600 text-sm ml-1">30 modules</Text>
+                                    <Feather name="book-open" size={14} color="gray" />
+                                    <Text className="text-gray-500 text-sm ml-1">30 modules</Text>
                                 </View>
                             </View>
                         </View>
 
                         {/* Illustration */}
-                        <Image source={require('../assets/images/course1.png')}
-                            style={{ width: 120, height: 120 ,opacity: 0.8 }}
+                        <Image
+                            source={require('../assets/images/course1.png')}
+                            style={{ width: 140, height: 120, opacity: 0.9 }}
                         />
 
                     </View>
@@ -138,13 +140,15 @@ const CourseDetails = ({ navigation }) => {
                     </Text>
 
                     {/* Certificate Badge */}
-                    <View className="bg-green-50 p-4 mx-8 rounded-xl flex-row items-center">
-                        <View className="w-10 h-10 bg-primary rounded-full items-center justify-center mr-3">
-                            <MaterialIcons name="verified" size={20} color="white" />
+                    <View className="flex items-center justify-center">
+                        <View className="bg-green-50 p-4 border-[0.5px] border-primary border-dashed rounded-xl flex-row items-center">
+                            <View className="w-10 h-10 bg-primary rounded-full items-center justify-center mr-3">
+                                <MaterialIcons name="verified" size={20} color="white" />
+                            </View>
+                            <Text className="text-gray-700">
+                                Certificate by <Text className="font-semibold text-primaryDark">KrishiGo</Text>
+                            </Text>
                         </View>
-                        <Text className="text-gray-700 flex-1">
-                            Certificate provided by <Text className="font-semibold text-primaryDark">KrishiGo</Text>
-                        </Text>
                     </View>
                 </View>
 
@@ -182,7 +186,7 @@ const CourseDetails = ({ navigation }) => {
                             </View>
 
                             {/* Module Info */}
-                            <View className=" flex-1 flex-row items-center bg-green-50 rounded-2xl h-20 px-4">
+                            <View className=" flex-1 flex-row items-center bg-green-50 border-[0.5px] border-primary rounded-xl h-20 px-4">
                                 <View className="flex-1">
                                     <View className="flex-row items-center mb-1">
                                         <Text className="text-gray-900 font-semibold text-base mr-2">
@@ -225,6 +229,10 @@ const CourseDetails = ({ navigation }) => {
                     <Text className="text-white font-semibold text-lg">Enroll now</Text>
                 </TouchableOpacity>
             </View>
+
+            {/* AI Chat Space */}
+            <AIChatSpace />
+
         </SafeAreaView>
     );
 };

@@ -125,10 +125,10 @@ const JourneyScreen = () => {
                 <View className="flex-row justify-between items-center px-6 py-3 bg-white">
                     <Text className="text-2xl font-bold text-gray-900">My journey</Text>
                     <TouchableOpacity
-                        className="w-[50px] h-[50px] bg-[#67b00019] rounded-full items-center justify-center"
+                        className="w-[40px] h-[40px] bg-[#67b00019] border border-gray-200 rounded-full items-center justify-center"
                         onPress={() => navigation.navigate('Profile')}
                     >
-                        <Ionicons name="person-outline" size={30} color="#314C1C" />
+                        <Ionicons name="person-outline" size={25} color="#314C1C" />
                     </TouchableOpacity>
                 </View>
 
@@ -140,9 +140,9 @@ const JourneyScreen = () => {
                 {/* Tab Buttons */}
                 <View className="flex-row mx-6 mt-4 mb-6">
                     <TouchableOpacity
-                        className={`px-5 py-2 border-2 border-primaryDark rounded-full mr-3 ${activeTab === 'Ongoing'
+                        className={`px-5 py-2 border border-primary rounded-full mr-3 ${activeTab === 'Ongoing'
                             ? 'bg-primary'
-                            : 'bg-gray-200'
+                            : 'bg-[#67b00019]'
                             }`}
                         onPress={() => setActiveTab('Ongoing')}
                     >
@@ -155,9 +155,9 @@ const JourneyScreen = () => {
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        className={`px-5 border-2 border-primaryDark py-2 rounded-full ${activeTab === 'Completed'
+                        className={`px-5 border border-primary py-2 rounded-full ${activeTab === 'Completed'
                             ? 'bg-primary'
-                            : 'bg-gray-200'
+                            : 'bg-[#67b00019]'
                             }`}
                         onPress={() => setActiveTab('Completed')}
                     >
