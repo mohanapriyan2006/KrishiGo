@@ -108,6 +108,7 @@ const SearchCourses = ({ navigation }) => {
     };
 
     const handleCoursePress = (course) => {
+        navigation?.navigate('CourseDetails', { courseId: course.id });
         console.log('Navigate to course details:', course.title);
         // Navigate to course details screen
     };

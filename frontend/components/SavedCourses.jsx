@@ -79,7 +79,7 @@ const SavedCourses = ({ navigation }) => {
         }
     ]);
 
-    const [selectedSort, setSelectedSort] = useState('Recent');
+    const [selectedSort, setSelectedSort] = useState('Alphabetical');
     const sortOptions = ['Alphabetical', 'Rating'];
 
     const removeCourse = (courseId, courseTitle) => {
@@ -101,8 +101,9 @@ const SavedCourses = ({ navigation }) => {
     };
 
     const handleCoursePress = (course) => {
+        navigation?.navigate('CourseDetails', { courseId: course.id });
         console.log('Navigate to course:', course.title);
-        // Navigate to course details or continue learning
+        
     };
 
     const getSortedCourses = () => {
