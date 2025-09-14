@@ -35,13 +35,15 @@ export default function Home() {
                         </View>
                         <Text className={HomeStyles.quickActions.text}>Rewards</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity className="items-center">
+                    <TouchableOpacity className="items-center"
+                        onPress={() => navigation.navigate('SavedCourses')}>
                         <View className={HomeStyles.quickActions.iconView}>
-                            <Ionicons name="bookmark" size={30} color={HomeStyles.quickActions.iconColor} />
+                            <Ionicons name="heart" size={30} color={HomeStyles.quickActions.iconColor} />
                         </View>
-                        <Text className={HomeStyles.quickActions.text}>Saved</Text>
+                        <Text className={HomeStyles.quickActions.text}>Wishlist</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity className="items-center">
+                    <TouchableOpacity className="items-center"
+                        onPress={() => navigation.navigate('SearchCourses')}>
                         <View className={HomeStyles.quickActions.iconView}>
                             <Ionicons name="search" size={30} color={HomeStyles.quickActions.iconColor} />
                         </View>

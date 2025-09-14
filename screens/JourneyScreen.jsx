@@ -78,14 +78,12 @@ const JourneyScreen = () => {
     const renderCourseCard = (course) => (
         <View key={course.id} className="bg-primary rounded-2xl p-5 mb-4 shadow-lg">
             {/* Live Indicator */}
-            {course.isLive && (
-                <View className="flex-row items-center mb-3">
-                    <View className="w-2 h-2 bg-red-500 rounded-full mr-2" />
-                    <Text className="text-white text-xs opacity-90">
-                        {course.lastOnline}
-                    </Text>
-                </View>
-            )}
+            <View className="flex-row items-center mb-3">
+                <View className="w-2 h-2 bg-red-500 rounded-full mr-2" />
+                <Text className="text-white text-xs opacity-90">
+                    {course.lastOnline}
+                </Text>
+            </View>
 
             {/* Course Title */}
             <Text className="text-white text-lg font-bold mb-2">
@@ -168,6 +166,7 @@ const JourneyScreen = () => {
                             Completed
                         </Text>
                     </TouchableOpacity>
+
                 </View>
 
                 {/* Course Cards */}
