@@ -10,18 +10,14 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import YoutubePlayer from 'react-native-youtube-iframe';
+
 
 const { width } = Dimensions.get('window');
 
 const CourseVideo = ({ navigation }) => {
     const [isPlaying, setIsPlaying] = useState(false);
-    const [currentTime, setCurrentTime] = useState('0:00');
-    const [duration, setDuration] = useState('13:20');
-
-    const handlePlayPause = () => {
-        setIsPlaying(!isPlaying);
-        // Handle video play/pause logic here
-    };
+    const [showPlayer, setShowPlayer] = useState(false);
 
     const transcript = `Efficient harvesting is a multi-stage process that begins long before the first crop is picked. It is rooted in meticulous planning and the integration of appropriate technology. The first critical step is precision timing, which involves monitoring crop maturity indicators specific to each plant—such as color, size, sugar content (Brix level), or firmness—to harvest at the exact moment of peak quality and marketable yield, ensuring the product has the best possible shelf life and nutritional value. 
     
@@ -34,6 +30,19 @@ Selling for a higher profit ratio requires a strategic shift from simply being a
 Ultimately, the highest profit margins are secured by practicing strategic pricing rather than just accepting the commodity price; this involves calculating your true cost of production to ensure profitability, creating a sense of scarcity and urgency by highlighting seasonal availability, and telling the story of your farm—your sustainable practices, your family's history, your passion—to build a brand that consumers trust and are loyal to, making them choose your product over a cheaper, anonymous alternative. By mastering the entire chain from field to customer, you effectively control both your costs and your revenue, thereby maximizing the profit ratio on every unit you sell.
 
 `;
+
+    const youtubeVideoId = 'Eq3BXhqW_Eo'; // Example video ID
+
+    const handlePlayPause = () => {
+        setShowPlayer(true);
+        setIsPlaying(true);
+    };
+
+    const onStateChange = (state) => {
+        if (state === 'ended') {
+            setIsPlaying(false);
+        }
+    };
 
     return (
         <SafeAreaView className="flex-1 bg-white">
@@ -61,38 +70,45 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
                 {/* Video Player */}
                 <View className="mx-4 mb-6">
                     <View className="bg-gray-100 overflow-hidden" style={{ aspectRatio: 16 / 9 }}>
-                        {/* Video Thumbnail with Illustration */}
-                        <View className="flex-1 border-[0.5px] border-primary rounded-xl relative">
-                            {/* Farm Illustration Background */}
-                            <Image source={require('../assets/images/course1.png')}
-                                style={{ width: width - 32, height: ((width - 32) * 9) / 16, opacity: 0.4 }}
+                        {showPlayer ? (
+                            <YoutubePlayer
+                                height={((width - 32) * 9) / 16}
+                                play={isPlaying}
+                                videoId={youtubeVideoId}
+                                onChangeState={onStateChange}
                             />
+                        ) : (
+                            <View className="flex-1 border-[0.5px] border-primary rounded-xl relative">
+                                {/* Farm Illustration Background */}
+                                <Image source={require('../assets/images/course1.png')}
+                                    style={{ width: width - 32, height: ((width - 32) * 9) / 16, opacity: 0.4 }}
+                                />
 
-                            {/* Play Button Overlay */}
-                            <TouchableOpacity
-                                onPress={handlePlayPause}
-                                className="absolute inset-0 items-center justify-center"
-                                activeOpacity={0.8}
-                            >
-                                <View className="w-14 h-14 bg-lime-600/80 rounded-full items-center justify-center">
-                                    <Feather
-                                        name={isPlaying ? "pause" : "play"}
-                                        size={28}
-                                        color="white"
-                                        style={{ marginLeft: isPlaying ? 0 : 2 }}
-                                    />
-                                </View>
-                            </TouchableOpacity>
+                                {/* Play Button Overlay */}
+                                <TouchableOpacity
+                                    onPress={handlePlayPause}
+                                    className="absolute inset-0 items-center justify-center"
+                                    activeOpacity={0.8}
+                                >
+                                    <View className="w-14 h-14 bg-lime-600/80 rounded-full items-center justify-center">
+                                        <Feather
+                                            name="play"
+                                            size={28}
+                                            color="white"
+                                            style={{ marginLeft: 2 }}
+                                        />
+                                    </View>
+                                </TouchableOpacity>
 
-                            {/* Duration Badge */}
-                            <View className="absolute bottom-4 right-4">
-                                <View className="bg-lime-600/80 px-3 py-1 rounded">
-                                    <Text className="text-white text-sm font-semibold">{duration}</Text>
+                                {/* Duration Badge */}
+                                <View className="absolute bottom-4 right-4">
+                                    <View className="bg-lime-600/80 px-3 py-1 rounded">
+                                        <Text className="text-white text-sm font-semibold">{`14:00`}</Text>
+                                    </View>
                                 </View>
                             </View>
-                        </View>
+                        )}
                     </View>
-
                 </View>
 
                 {/* Introduction Section */}
