@@ -15,6 +15,7 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import * as ImagePicker from 'expo-image-picker';
 import { callGeminiAPI as callGeminiAPIExternal } from "../ai/ai_api";
 import { createFirebaseChatHandlers } from "../ai/ai_firebase";
 import { auth, db } from "../config/firebase";
@@ -31,6 +32,8 @@ const ChatPopup = ({ visible, onClose }) => {
 	const [recentChats, setRecentChats] = useState([]);
 	const [currentChatId, setCurrentChatId] = useState(null);
 	const [currentChatTitle, setCurrentChatTitle] = useState("New Chat");
+	const [showAttachmentOptions, setShowAttachmentOptions] = useState(false);
+	const [selectedImage, setSelectedImage] = useState(null);
 	const scrollViewRef = useRef();
 	const sidebarAnimation = useRef(new Animated.Value(-280)).current; // Start off-screen
 	const overlayAnimation = useRef(new Animated.Value(0)).current; // For backdrop overlay
@@ -99,18 +102,21 @@ const ChatPopup = ({ visible, onClose }) => {
 	// API call now uses external helper with current messages for context
 
 	const sendMessage = async () => {
-		if (!inputText.trim() || isLoading) return;
+		if ((!inputText.trim() && !selectedImage) || isLoading) return;
 
 		const userMessage = {
 			id: Date.now().toString(),
-			text: inputText,
+			text: inputText || (selectedImage ? "Please analyze this image" : ""),
 			isBot: false,
 			timestamp: new Date(),
+			image: selectedImage, // Include image if attached
 		};
 
 		setMessages((prev) => [...prev, userMessage]);
 		const currentInput = inputText;
 		setInputText("");
+		setSelectedImage(null); // Clear selected image
+		setShowAttachmentOptions(false); // Close attachment options
 		setIsLoading(true);
 
 		await saveMessageToFirebase(userMessage);
@@ -136,6 +142,65 @@ const ChatPopup = ({ visible, onClose }) => {
 		} finally {
 			setIsLoading(false);
 		}
+	};
+
+	// Image picker functions
+	const requestPermissions = async () => {
+		const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
+		const { status: galleryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+		if (cameraStatus !== 'granted' || galleryStatus !== 'granted') {
+			Alert.alert(
+				'Permissions Required',
+				'Please grant camera and photo library permissions to upload images.'
+			);
+			return false;
+		}
+		return true;
+	};
+
+	const pickImageFromCamera = async () => {
+		const hasPermission = await requestPermissions();
+		if (!hasPermission) return;
+
+		try {
+			const result = await ImagePicker.launchCameraAsync({
+				mediaTypes: ImagePicker.MediaTypeOptions.Images,
+				allowsEditing: true,
+				quality: 0.8,
+			});
+
+			if (!result.canceled && result.assets[0]) {
+				setSelectedImage(result.assets[0].uri);
+				setShowAttachmentOptions(false);
+			}
+		} catch (_error) {
+			Alert.alert('Error', 'Failed to take photo. Please try again.');
+		}
+	};
+
+	const pickImageFromGallery = async () => {
+		const hasPermission = await requestPermissions();
+		if (!hasPermission) return;
+
+		try {
+			const result = await ImagePicker.launchImageLibraryAsync({
+				mediaTypes: ImagePicker.MediaTypeOptions.Images,
+				allowsEditing: true,
+				quality: 0.8,
+			});
+
+			if (!result.canceled && result.assets[0]) {
+				setSelectedImage(result.assets[0].uri);
+				setShowAttachmentOptions(false);
+			}
+		} catch (_error) {
+			Alert.alert('Error', 'Failed to select image. Please try again.');
+		}
+	};
+
+	const removeSelectedImage = () => {
+		setSelectedImage(null);
 	};
 
 	// Auto-scroll to bottom when new messages arrive
@@ -178,6 +243,15 @@ const ChatPopup = ({ visible, onClose }) => {
 						: "bg-primary rounded-tr-none"
 						}`}
 				>
+					{/* Display image if present */}
+					{message.image && (
+						<Image
+							source={{ uri: message.image }}
+							style={{ width: 200, height: 150 }}
+							className="rounded-lg mb-2"
+							resizeMode="cover"
+						/>
+					)}
 					<Text
 						className={`text-sm leading-5 ${message.isBot ? "text-gray-800" : "text-white"
 							}`}
@@ -218,11 +292,6 @@ const ChatPopup = ({ visible, onClose }) => {
 			</View>
 		</View>
 	);
-
-	const overlayOpacity = overlayAnimation.interpolate({
-		inputRange: [0, 1],
-		outputRange: [0, 0.5],
-	});
 
 	return (
 		<Modal
@@ -283,6 +352,24 @@ const ChatPopup = ({ visible, onClose }) => {
 
 						{/* Input Area */}
 						<View className="px-4 py-3 bg-primary border-t border-gray-200">
+							{/* Image Preview */}
+							{selectedImage && (
+								<View className="mb-3 bg-white rounded-lg p-3">
+									<View className="flex-row items-center justify-between mb-2">
+										<Text className="text-gray-700 font-medium">Selected Image</Text>
+										<TouchableOpacity onPress={removeSelectedImage}>
+											<Ionicons name="close-circle" size={20} color="#ef4444" />
+										</TouchableOpacity>
+									</View>
+									<Image
+										source={{ uri: selectedImage }}
+										style={{ width: '100%', height: 120 }}
+										className="rounded-lg"
+										resizeMode="cover"
+									/>
+								</View>
+							)}
+
 							{/* Quick action buttons */}
 							<View className="flex-row justify-center mb-3 gap-2">
 								<TouchableOpacity
@@ -307,9 +394,33 @@ const ChatPopup = ({ visible, onClose }) => {
 								</TouchableOpacity>
 							</View>
 
+							{/* Attachment Options Modal */}
+							{showAttachmentOptions && (
+								<View className="absolute bottom-20 left-4 bg-white rounded-xl shadow-lg border border-gray-200 p-2 z-50">
+									<TouchableOpacity
+										className="flex-row items-center px-4 py-3 rounded-lg"
+										onPress={pickImageFromCamera}
+									>
+										<Ionicons name="camera" size={20} color="#314C1C" />
+										<Text className="ml-3 text-gray-800 font-medium">Take Photo</Text>
+									</TouchableOpacity>
+									<View className="h-px bg-gray-200 mx-2" />
+									<TouchableOpacity
+										className="flex-row items-center px-4 py-3 rounded-lg"
+										onPress={pickImageFromGallery}
+									>
+										<Ionicons name="image" size={20} color="#314C1C" />
+										<Text className="ml-3 text-gray-800 font-medium">Choose from Gallery</Text>
+									</TouchableOpacity>
+								</View>
+							)}
+
 							<View className="flex-row items-center bg-white rounded-full px-4 py-2 shadow-sm border border-gray-200">
-								<TouchableOpacity className="mr-3">
-									<Ionicons name="camera" size={20} color="#314C1C" />
+								<TouchableOpacity
+									className="mr-3"
+									onPress={() => setShowAttachmentOptions(!showAttachmentOptions)}
+								>
+									<Ionicons name="attach" size={20} color="#314C1C" />
 								</TouchableOpacity>
 
 								<TextInput
@@ -326,11 +437,11 @@ const ChatPopup = ({ visible, onClose }) => {
 
 								<TouchableOpacity
 									onPress={sendMessage}
-									className={`ml-3 rounded-full p-2 ${inputText.trim() && !isLoading
+									className={`ml-3 rounded-full p-2 ${(inputText.trim() || selectedImage) && !isLoading
 										? "bg-primary"
 										: "bg-gray-300"
 										}`}
-									disabled={!inputText.trim() || isLoading}
+									disabled={!(inputText.trim() || selectedImage) || isLoading}
 								>
 									{isLoading ? (
 										<ActivityIndicator size={16} color="white" />
@@ -363,7 +474,7 @@ const ChatPopup = ({ visible, onClose }) => {
 								activeOpacity={1}
 							/>
 						</Animated.View>
-					
+
 						{/* Sliding Sidebar - Always rendered */}
 						<Animated.View
 							style={{
@@ -391,7 +502,7 @@ const ChatPopup = ({ visible, onClose }) => {
 									<Text className="text-white ml-2 font-medium">New Chat</Text>
 								</TouchableOpacity>
 							</View>
-					
+
 							<ScrollView className="flex-1 p-2">
 								<Text className="text-gray-500 text-sm font-medium mb-3 px-2">
 									Recent Chats
@@ -403,9 +514,8 @@ const ChatPopup = ({ visible, onClose }) => {
 											loadChat(chat.id);
 											closeSidebar(); // Close sidebar after selecting chat
 										}}
-										className={`p-3 rounded-lg mb-2 flex-row items-center justify-between ${
-											currentChatId === chat.id ? "bg-primary/10" : "bg-white"
-										}`}
+										className={`p-3 rounded-lg mb-2 flex-row items-center justify-between ${currentChatId === chat.id ? "bg-primary/10" : "bg-white"
+											}`}
 									>
 										<View className="flex-1">
 											<Text
