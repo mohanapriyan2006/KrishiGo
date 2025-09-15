@@ -148,7 +148,7 @@ const SearchCourses = ({ navigation }) => {
         return (
             <TouchableOpacity
                 onPress={() => handleCoursePress(item)}
-                className="bg-white rounded-2xl p-4 mx-4 mb-4 shadow-sm border border-gray-100"
+                className="bg-white rounded-2xl p-4 mx-4 mb-4 shadow-sm border border-lime-200"
                 activeOpacity={0.7}
             >
                 {/* Course Image and Wishlist */}

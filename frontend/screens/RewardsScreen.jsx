@@ -11,9 +11,11 @@ import {
     View,
 } from 'react-native';
 import RewardPopUp from '../components/RewardPopUp';
+import RedeemScreen from '../components/RedeemScreen';
 
 const RewardsScreen = () => {
     const [totalPoints, setTotalPoints] = useState(8490);
+    const [redeemScreenVisible, setRedeemScreenVisible] = useState(false);
 
     const [rewardPopUpVisible, setRewardPopUpVisible] = useState(false);
     const [rewardPoints, setRewardPoints] = useState(0);
@@ -32,18 +34,7 @@ const RewardsScreen = () => {
     ];
 
     const handleRedeemPoints = () => {
-        Alert.alert(
-            'Redeem Points',
-            `You have ${totalPoints} points available for redemption.`,
-            [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                    text: 'Redeem', onPress: () => {
-                        Alert.alert('Success', 'Points redeemed successfully!');
-                    }
-                },
-            ]
-        );
+        setRedeemScreenVisible(true);
     };
 
     const handleReferFriends = async () => {
@@ -123,7 +114,7 @@ const RewardsScreen = () => {
 
                 {/* Referral Section */}
                 <View className="mx-10 mt-4">
-                    <View className="flex-row items-center justify-between">
+                    <View className="flex-row gap-2 items-center justify-between">
                         <View>
                             <Text className="text-primaryDark text-sm font-medium">
                                 Refer your friends
@@ -132,15 +123,23 @@ const RewardsScreen = () => {
                                 Earn upto 899pts
                             </Text>
                         </View>
-                        <TouchableOpacity
-                            className="flex-row items-center bg-[#67b00019] px-3 py-2 rounded-lg"
-                            onPress={copyReferralCode}
-                        >
-                            <Text className="text-primaryDark text-sm mr-2">
-                                krishigo.in/ref-3213
-                            </Text>
-                            <Ionicons name="copy-outline" size={16} color="#314C1C" />
-                        </TouchableOpacity>
+                        <View className="flex-row gap-1">
+                            <TouchableOpacity
+                                className="flex-row items-center bg-[#67b00019] px-3 py-2 rounded-lg"
+                                onPress={copyReferralCode}
+                            >
+                                <Text className="text-primaryDark text-sm mr-2">
+                                    krishigo.in/ref-3213
+                                </Text>
+                                <Ionicons name="copy-outline" size={16} color="#314C1C" />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                className="bg-primary p-1 pt-2 rounded-lg"
+                                onPress={handleReferFriends}
+                            >
+                                <Ionicons name="share-outline" size={16} color="white" />
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
 
@@ -191,6 +190,13 @@ const RewardsScreen = () => {
 
                 {/* Reward Pop-Up */}
                 <RewardPopUp visible={rewardPopUpVisible} onClose={() => setRewardPopUpVisible(false)} points={rewardPoints} />
+
+                {/* Redeem Screen */}
+                <RedeemScreen 
+                    visible={redeemScreenVisible} 
+                    onClose={() => setRedeemScreenVisible(false)} 
+                    totalPoints={totalPoints} 
+                />
 
                 {/* Leaderboard Section */}
                 <View className="bg-white mx-6 mt-4 rounded-2xl p-6 shadow-sm">

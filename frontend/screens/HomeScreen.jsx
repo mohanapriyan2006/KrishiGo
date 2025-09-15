@@ -20,7 +20,7 @@ export default function Home() {
                 </View>
 
                 {/* Green Action Bar */}
-                <View className="flex-row bg-primary rounded-2xl py-4 px-2 justify-around mb-5 shadow">
+                <View className="flex-row bg-primary rounded-2xl py-4 px-2 justify-around mb-5 shadow-lg">
                     <TouchableOpacity className="items-center"
                         onPress={() => navigation.navigate('Journey')}>
                         <View className={HomeStyles.quickActions.iconView}>
@@ -78,17 +78,22 @@ export default function Home() {
                 </View>
 
                 {/* Invite & Earn */}
-                <View className="flex-row bg-[#67b00019] rounded-2xl p-5 mx-2 items-center">
-                    <Image source={require('../assets/images/invite.png')} style={{ width: 100, height: 90, resizeMode: 'contain', marginLeft: 10 }} />
-                    <View className="flex-1">
-                        <Text className="text-base font-bold text-[#333] mb-1">Invite & Earn</Text>
-                        <Text className="text-sm text-[#666] mb-1">Share & Collect Rewards</Text>
-                        <Text className="text-xs text-[#999]">Earn ₹/coin! | Refer Points | Make a Preorder | Grow Vegetation</Text>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('Rewards')}
+                    activeOpacity={0.7}
+                >
+                    <View className="flex-row bg-[#67b00019] rounded-2xl p-5 mx-2 items-center">
+                        <Image source={require('../assets/images/invite.png')} style={{ width: 100, height: 90, resizeMode: 'contain', marginLeft: 10 }} />
+                        <View className="flex-1">
+                            <Text className="text-base font-bold text-[#333] mb-1">Invite & Earn</Text>
+                            <Text className="text-sm text-[#666] mb-1">Share & Collect Rewards</Text>
+                            <Text className="text-xs text-[#999]">Earn ₹/coin! | Refer Points | Make a Preorder | Grow Vegetation</Text>
+                        </View>
+                        <View className="bg-primary w-10 h-10 rounded-full justify-center items-center">
+                            <Text className="text-white text-xs font-bold">₹1</Text>
+                        </View>
                     </View>
-                    <View className="bg-primary w-10 h-10 rounded-full justify-center items-center">
-                        <Text className="text-white text-xs font-bold">₹1</Text>
-                    </View>
-                </View>
+                </TouchableOpacity>
             </View>
 
         </ScrollView>

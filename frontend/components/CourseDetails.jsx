@@ -93,7 +93,7 @@ const CourseDetails = ({ navigation }) => {
 
             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
                 {/* Course Hero Section */}
-                <View className="bg-green-50 border border border-primary mx-4 mt-4 p-6 rounded-2xl">
+                <View className="bg-green-50 border border-lime-200 shadow-lg shadow-green-600 mx-4 mt-4 p-6 rounded-2xl">
                     <View className="flex-row items-start justify-between">
                         <View className="flex-1 pr-4">
                             <Text className="text-xl font-bold mb-3">
@@ -141,7 +141,7 @@ const CourseDetails = ({ navigation }) => {
 
                     {/* Certificate Badge */}
                     <View className="flex items-center justify-center">
-                        <View className="bg-green-50 p-4 border-[0.5px] border-primary border-dashed rounded-xl flex-row items-center">
+                        <View className="bg-green-50 p-4 rounded-xl flex-row items-center">
                             <View className="w-10 h-10 bg-primary rounded-full items-center justify-center mr-3">
                                 <MaterialIcons name="verified" size={20} color="white" />
                             </View>

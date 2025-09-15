@@ -92,7 +92,7 @@ const JourneyScreen = () => {
 
 
     const renderCourseCard = (course) => (
-        <View key={course.id} className="bg-green-50 rounded-2xl p-4 mb-4 shadow-lg border border-gray-100">
+        <View key={course.id} className="bg-white rounded-xl shadow-md p-4 mb-4 border border-lime-200">
             {/* Course Image and Live Indicator */}
             <TouchableOpacity onPress={() => handleResume(course.id)}>
                 <View className="relative mb-4">
