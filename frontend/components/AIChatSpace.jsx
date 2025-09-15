@@ -417,7 +417,7 @@ const ChatPopup = ({ visible, onClose }) => {
 
 							<View className="flex-row items-center bg-white rounded-full px-4 py-2 shadow-sm border border-gray-200">
 								<TouchableOpacity
-									className="mr-3"
+									className="mr-3 bg-lime-200 p-2 rounded-full"
 									onPress={() => setShowAttachmentOptions(!showAttachmentOptions)}
 								>
 									<Ionicons name="attach" size={20} color="#314C1C" />
