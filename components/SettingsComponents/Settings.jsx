@@ -1,5 +1,5 @@
 import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
     SafeAreaView,
     ScrollView,
@@ -7,12 +7,15 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { DataContext } from '../../hooks/DataContext';
 import AIChatSpace from '../AIComponents/AIChatSpace';
 import ChangeLanguageModal from './ChangeLanguageModal';
 import DeleteAccModal from './DeleteAccModal';
 import EditAccountModal from './EditAccountModal';
 
 const Settings = ({ navigation }) => {
+
+    const { userDetails } = useContext(DataContext)
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showLanguageModal, setShowLanguageModal] = useState(false);
@@ -27,6 +30,21 @@ const Settings = ({ navigation }) => {
         phoneNumber: '+91 12345-67890',
         location: 'Koomapatti',
     });
+
+
+    useEffect(() => {
+        if (userDetails) {
+            setUserProfile({
+                firstName: userDetails.firstName,
+                lastName: userDetails.lastName,
+                email: userDetails.email,
+                phoneNumber: userDetails.phoneNumber,
+                location: userDetails.city || 'Chennai',
+            });
+        }
+    }, [userDetails]);
+
+
 
     const userPhoneNumber = '1234567890';
 
@@ -85,59 +103,62 @@ const Settings = ({ navigation }) => {
 
                 {/* Profile Information Card */}
                 <View className="mx-6 my-6">
-                    <View className="bg-lime-500/10 rounded-2xl p-6 relative">
-                        {/* Edit Button */}
-                        <TouchableOpacity
-                            onPress={handleEditProfile}
-                            className="absolute top-4 right-4 flex-row bg-lime-200 px-3 py-1 rounded-full"
-                        >
-                            <Ionicons name="pencil" size={16} color="#314C1C" />
-                            <Text className="text-primaryDark text-sm font-medium">Edit</Text>
-                        </TouchableOpacity>
+                    <TouchableOpacity onPress={handleEditProfile}>
+                        <View className="bg-lime-500/10 rounded-2xl p-6 relative">
+                            {/* Edit Button */}
+                            <TouchableOpacity
+                                onPress={() => handleEditProfile()}
+                                className="absolute top-4 right-4 flex-row bg-lime-200 px-3 py-1 rounded-full"
+                            >
+                                <Ionicons name="pencil" size={16} color="#314C1C" />
+                                <Text className="text-primaryDark text-sm font-medium">Edit</Text>
+                            </TouchableOpacity>
 
-                        {/* Profile Fields */}
-                        <View className="gap-4">
-                            {/* Name Row */}
-                            <View className="flex-row gap-4">
-                                <View className="flex-1">
-                                    <Text className="text-gray-600 text-sm mb-1">First Name</Text>
-                                    <View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
-                                        <Text className="text-gray-900 font-medium text-base">Vijay</Text>
+                            {/* Profile Fields */}
+                            {/* Profile Fields */}
+                            <View className="gap-4">
+                                {/* Name Row */}
+                                <View className="flex-row gap-4">
+                                    <View className="flex-1">
+                                        <Text className="text-gray-600 text-sm mb-1">First Name</Text>
+                                        <View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
+                                            <Text className="text-gray-900 font-medium text-base">{userProfile.firstName}</Text>
+                                        </View>
+                                    </View>
+                                    <View className="flex-1">
+                                        <Text className="text-gray-600 text-sm mb-1">Last Name</Text>
+                                        <View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
+                                            <Text className="text-gray-900 font-medium text-base">{userProfile.lastName}</Text>
+                                        </View>
                                     </View>
                                 </View>
-                                <View className="flex-1">
-                                    <Text className="text-gray-600 text-sm mb-1">Last Name</Text>
+
+                                {/* Email */}
+                                <View>
+                                    <Text className="text-gray-600 text-sm mb-1">Email Address</Text>
                                     <View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
-                                        <Text className="text-gray-900 font-medium text-base">Kumar</Text>
+                                        <Text className="text-gray-900 font-medium text-base">{userProfile.email}</Text>
                                     </View>
                                 </View>
-                            </View>
 
-                            {/* Email */}
-                            <View>
-                                <Text className="text-gray-600 text-sm mb-1">Email Address</Text>
-                                <View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
-                                    <Text className="text-gray-900 font-medium text-base">tvk2026@gmail.com</Text>
+                                {/* Mobile Number */}
+                                <View>
+                                    <Text className="text-gray-600 text-sm mb-1">Mobile Number</Text>
+                                    <View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
+                                        <Text className="text-gray-900 font-medium text-base">{userProfile.phoneNumber}</Text>
+                                    </View>
                                 </View>
-                            </View>
 
-                            {/* Mobile Number */}
-                            <View>
-                                <Text className="text-gray-600 text-sm mb-1">Mobile Number</Text>
-                                <View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
-                                    <Text className="text-gray-900 font-medium text-base">+91 12345-67890</Text>
-                                </View>
-                            </View>
-
-                            {/* Location */}
-                            <View>
-                                <Text className="text-gray-600 text-sm mb-1">Location</Text>
-                                <View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
-                                    <Text className="text-gray-900 font-medium text-base">Koomapatti</Text>
+                                {/* Location */}
+                                <View>
+                                    <Text className="text-gray-600 text-sm mb-1">Location</Text>
+                                    <View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
+                                        <Text className="text-gray-900 font-medium text-base">{userProfile.location}</Text>
+                                    </View>
                                 </View>
                             </View>
                         </View>
-                    </View>
+                    </TouchableOpacity>
                 </View>
 
                 {/* Settings Options */}

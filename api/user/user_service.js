@@ -1,5 +1,5 @@
+import { addDoc, collection, doc, getDocs, setDoc } from "firebase/firestore";
 import { db } from "../../config/firebase";
-import { doc, setDoc, collection, addDoc, getDocs } from "firebase/firestore";
 
 /**
  * CREATE USER PROFILE

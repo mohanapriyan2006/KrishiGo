@@ -1,7 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useContext } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import RoundProgress from '../components/RoundProgress';
+import { DataContext } from '../hooks/DataContext';
 
 export default function Home() {
 
@@ -56,6 +58,8 @@ export default function Home() {
         }
     ];
 
+    const { userDetails } = useContext(DataContext);
+
     return (
         <ScrollView className="flex-1 bg-[#f5f5f5]">
             <View className="p-5 mb-10 pt-[50px]">
@@ -63,7 +67,7 @@ export default function Home() {
                 <View className="flex-row justify-between items-center mb-5">
                     <View className="p-8">
                         <Text className="text-base text-[#666]">Good Morning</Text>
-                        <Text className="text-3xl font-bold text-primaryDark">Vijay !</Text>
+                        <Text className="text-3xl font-bold text-primaryDark">{userDetails?.firstName || "User"} !</Text>
                     </View>
                     <Image source={require('../assets/images/welcome_img.png')} style={{ width: 180, height: 150 }} />
                 </View>
@@ -131,28 +135,28 @@ export default function Home() {
                     <View className="flex-row justify-between items-center mb-4 px-2">
                         <Text className="text-lg font-bold text-primaryDark">Latest Government Schemes</Text>
                     </View>
-                    
-                    <ScrollView 
-                        horizontal 
+
+                    <ScrollView
+                        horizontal
                         showsHorizontalScrollIndicator={false}
                         className="p-2"
                     >
                         {governmentSchemes.map((scheme) => (
-                            <TouchableOpacity 
+                            <TouchableOpacity
                                 key={scheme.id}
-                                className="bg-white p-2 rounded-2xl mr-4 shadow-lg"
+                                className="bg-white p-2 rounded-2xl mr-4"
                                 style={{ width: 280 }}
                                 activeOpacity={0.8}
                             >
                                 <View className="relative">
-                                    <Image 
-                                        source={scheme.image} 
+                                    <Image
+                                        source={scheme.image}
                                         className="w-full h-32 rounded-t-2xl"
                                         resizeMode="cover"
                                     />
-        
+
                                 </View>
-                                
+
                                 <View className="p-4">
                                     <Text className="text-base font-bold text-primaryDark mb-2" numberOfLines={2}>
                                         {scheme.title}
@@ -160,7 +164,7 @@ export default function Home() {
                                     <Text className="text-sm text-gray-600 mb-3" numberOfLines={2}>
                                         {scheme.description}
                                     </Text>
-                                    
+
                                     <View className="flex-row justify-between items-center mb-3">
                                         <View className="flex-row items-center">
                                             <Ionicons name="cash-outline" size={16} color="#78BB1B" />
@@ -171,7 +175,7 @@ export default function Home() {
                                             <Text className="text-gray-600 text-xs ml-1">{scheme.deadline}</Text>
                                         </View>
                                     </View>
-                                    
+
                                     <TouchableOpacity className="bg-primary py-2 px-4 rounded-lg">
                                         <Text className="text-white text-center font-medium text-sm">Learn More</Text>
                                     </TouchableOpacity>
@@ -186,7 +190,7 @@ export default function Home() {
                     onPress={() => navigation.navigate('Rewards')}
                     activeOpacity={0.7}
                 >
-                    <View className="flex-row bg-[#67b00019] rounded-2xl p-5 mx-2 items-center">
+                    <View className="flex-row bg-[#67b00019] rounded-2xl p-5 mx-2 mb-10 items-center">
                         <Image source={require('../assets/images/invite.png')} style={{ width: 100, height: 90, resizeMode: 'contain', marginLeft: 10 }} />
                         <View className="flex-1">
                             <Text className="text-base font-bold text-[#333] mb-1">Invite & Earn</Text>

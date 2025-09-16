@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
     Alert,
     SafeAreaView,
@@ -9,15 +9,35 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import EditProfilePhoto from '../components/SettingsComponents/EditProfilePhoto';
 import ChangeLanguageModal from '../components/SettingsComponents/ChangeLanguageModal';
+import EditProfilePhoto from '../components/SettingsComponents/EditProfilePhoto';
+import { DataContext } from '../hooks/DataContext';
 
 const ProfileScreen = () => {
 
     const navigation = useNavigation();
 
-    // Dummy user data
-    const userProfile = null;
+    const { userDetails } = useContext(DataContext)
+
+    const [userProfile, setUserProfile] = useState({
+        firstName: 'Vijay',
+        lastName: 'Kumar',
+        email: 'tvk2026@gmail.com',
+        phoneNumber: '+91 12345-67890',
+        location: 'Chennai',
+    })
+
+    useEffect(() => {
+        if (userDetails) {
+            setUserProfile({
+                firstName: userDetails.firstName || 'Vijay',
+                lastName: userDetails.lastName || 'Kumar',
+                email: userDetails.email || 'tvk2026@gmail.com',
+                phoneNumber: userDetails.phoneNumber || '+91 12345-67890',
+                location: userDetails.city || 'Chennai',
+            });
+        }
+    }, [userDetails]);
 
     const [showPhotoModal, setShowPhotoModal] = useState(false);
     const [profilePhoto, setProfilePhoto] = useState(userProfile?.photo || null);
@@ -90,7 +110,7 @@ const ProfileScreen = () => {
                         {/* User Info */}
                         <View className="flex-1">
                             <Text className="text-xl font-bold text-gray-900 mb-1">
-                                Vijay Kumar T
+                                {userProfile.firstName} {userProfile.lastName}
                             </Text>
                             <Text className="text-primaryDark font-semibold text-base mb-2">
                                 8,490 pts
@@ -127,28 +147,28 @@ const ProfileScreen = () => {
                             <View
                                 className="bg-[#67b00019] p-4 rounded-xl"
                             >
-                                <Text className="text-gray-900 font-medium">Vijay Kumar T</Text>
+                                <Text className="text-gray-900 font-medium">{userProfile.firstName} {userProfile.lastName}</Text>
                             </View>
 
                             {/* Email */}
                             <View
                                 className="bg-[#67b00019] p-4 rounded-xl"
                             >
-                                <Text className="text-gray-900 font-medium">vijaykumar.t@gmail.com</Text>
+                                <Text className="text-gray-900 font-medium">{userProfile.email}</Text>
                             </View>
 
                             {/* Phone */}
                             <View
                                 className="bg-[#67b00019] p-4 rounded-xl"
                             >
-                                <Text className="text-gray-900 font-medium">+91 12345-67890</Text>
+                                <Text className="text-gray-900 font-medium">{userProfile.phoneNumber}</Text>
                             </View>
 
                             {/* Location */}
                             <View
                                 className="bg-[#67b00019] p-4 rounded-xl"
                             >
-                                <Text className="text-gray-900 font-medium">Coimbatore, Tamil Nadu</Text>
+                                <Text className="text-gray-900 font-medium">{userProfile.location}</Text>
                             </View>
                         </View>
                     </View>

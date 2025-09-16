@@ -155,7 +155,7 @@ export async function getAllCourses() {
       ...doc.data(),
     }));
 
-    console.log("📚 All courses:", courses);
+    // console.log("📚 All courses:", courses);
     return courses;
   } catch (error) {
     console.error("❌ Error fetching courses:", error.message);

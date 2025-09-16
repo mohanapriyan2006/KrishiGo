@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 // Firebase operations are encapsulated in ../ai/ai_firebase
+import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useRef, useState } from "react";
 import {
 	ActivityIndicator,
@@ -15,7 +16,6 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import * as ImagePicker from 'expo-image-picker';
 import { callGeminiAPI as callGeminiAPIExternal } from "../../ai/ai_api";
 import { createFirebaseChatHandlers } from "../../ai/ai_firebase";
 import { auth, db } from "../../config/firebase";
@@ -94,9 +94,7 @@ const ChatPopup = ({ visible, onClose }) => {
 
 	// Close sidebar when overlay is tapped
 	const closeSidebar = () => {
-		if (isSidebarOpen) {
-			toggleSidebar();
-		}
+		toggleSidebar();
 	};
 
 	// API call now uses external helper with current messages for context
