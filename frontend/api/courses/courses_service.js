@@ -6,7 +6,7 @@ import { db } from '../../config/firebase';
 // get course details (top-level)
 export async function getCourse(courseId) {
     try {
-        const courseRef = doc(db, 'courses', courseId);
+        const courseRef = doc(db, 'courseDetails', courseId);
         const snap = await getDoc(courseRef);
         if (!snap.exists()) {
             throw new Error('Course not found');
@@ -21,7 +21,7 @@ export async function getCourse(courseId) {
 // get modules for a course, ordered
 export async function getCourseModules(courseId) {
     try {
-        const modulesCol = collection(db, 'courses', courseId, 'modules');
+        const modulesCol = collection(db, 'courseDetails', courseId, 'modules');
         // Try with order field first, if it fails, get all without ordering
         let snap;
         try {
@@ -38,17 +38,17 @@ export async function getCourseModules(courseId) {
             ...d.data() 
         }));
 
-        // If no order field exists, sort by title or creation date
-        if (modules.length > 0 && !modules[0].order) {
-            modules.sort((a, b) => {
-                // Try to sort by createdAt if available
-                if (a.createdAt && b.createdAt) {
-                    return new Date(a.createdAt) - new Date(b.createdAt);
-                }
-                // Fallback to alphabetical by title
-                return a.title.localeCompare(b.title);
-            });
-        }
+        // // If no order field exists, sort by title or creation date
+        // if (modules.length > 0 && !modules[0].order) {
+        //     modules.sort((a, b) => {
+        //         // Try to sort by createdAt if available
+        //         if (a.createdAt && b.createdAt) {
+        //             return new Date(a.createdAt) - new Date(b.createdAt);
+        //         }
+        //         // Fallback to alphabetical by title
+        //         return a.title.localeCompare(b.title);
+        //     });
+        // }
 
         return modules;
     } catch (error) {
@@ -104,7 +104,7 @@ export async function addCourseWithModulesOrdered() {
     try {
         // STEP 1: Create a course document
         const courseId = "courseId"; // You can use a generated ID if you want
-        const courseRef = doc(db, "courses", courseId);
+        const courseRef = doc(db, "courseDetails", courseId);
 
         await setDoc(courseRef, {
             title: "How to Harvest More Effectively",
@@ -199,11 +199,11 @@ export async function addCourseWithModulesOrdered() {
 // Function to get all courses (for listing)
 export async function getAllCourses() {
     try {
-        const coursesCol = collection(db, 'courses');
+        const coursesCol = collection(db, 'courseDetails');
         const snap = await getDocs(coursesCol);
         return snap.docs.map(d => ({ id: d.id, ...d.data() }));
     } catch (error) {
-        console.error('Error fetching courses:', error);
+        console.error('Error fetching courseDetails:', error);
         throw error;
     }
 }
@@ -211,7 +211,7 @@ export async function getAllCourses() {
 // Function to update existing modules with order field
 export async function addOrderToExistingModules(courseId) {
     try {
-        const modulesCol = collection(db, 'courses', courseId, 'modules');
+        const modulesCol = collection(db, 'courseDetails', courseId, 'modules');
         const snap = await getDocs(modulesCol);
         
         const modules = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -220,7 +220,7 @@ export async function addOrderToExistingModules(courseId) {
         modules.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
         
         for (let i = 0; i < modules.length; i++) {
-            const moduleRef = doc(db, 'courses', courseId, 'modules', modules[i].id);
+            const moduleRef = doc(db, 'courseDetails', courseId, 'modules', modules[i].id);
             await updateDoc(moduleRef, {
                 order: i + 1
             });
@@ -239,7 +239,7 @@ export async function addCourseWithModules() {
     try {
         // STEP 1: Create a course document
         const courseId = "courseId"; // You can use a generated ID if you want
-        const courseRef = doc(db, "courses", courseId);
+        const courseRef = doc(db, "courseDetails", courseId);
 
         await setDoc(courseRef, {
             title: "How to Harvest More Effectively",
@@ -278,7 +278,7 @@ export async function addCourseWithModules() {
                 title: "Advanced Techniques",
                 description: "Learn advanced techniques for harvesting crops.",
                 type: "video",
-                videoUrl: "eCwRVJyjKA4",
+                videoUrl: "mZXetb1TPEg",
                 duration: "12 min",
                 completed: false,
             },
