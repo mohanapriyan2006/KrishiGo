@@ -110,7 +110,7 @@ const CourseDetails = ({ navigation, route }) => {
     // Load data from API with fallback to sample data
     const loadCourseData = useCallback(async () => {
         try {
-            setLoading(pre => ({ ...pre, CourseDetails: true, Modules: true }));
+            setLoading(pre => ({ ...pre, courseDetails: true, modules: true }));
 
             let courseData = null;
             let modulesData = [];
@@ -146,7 +146,7 @@ const CourseDetails = ({ navigation, route }) => {
             setModules(sampleModules);
             setEnrollment(null);
         } finally {
-            setLoading(prev => ({ ...prev, CourseDetails: false, Modules: false }));
+            setLoading(prev => ({ ...prev, courseDetails: false, modules: false }));
         }
     }, [courseId, user]);
 
@@ -230,7 +230,7 @@ const CourseDetails = ({ navigation, route }) => {
     //     }
     // };
 
-    if (loading.CourseDetails || loading.Modules) {
+    if (loading.courseDetails || loading.modules) {
         return (
             <SafeAreaView className="flex-1 justify-center items-center bg-white">
                 <ActivityIndicator size="large" color="#78BB1B" />

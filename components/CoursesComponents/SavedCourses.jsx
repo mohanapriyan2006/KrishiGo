@@ -1,5 +1,6 @@
+import { DataContext } from '../../hooks/DataContext';
 import { Feather, Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import {
     Alert,
     FlatList,
@@ -10,74 +11,42 @@ import {
     View,
 } from 'react-native';
 
+const sampleSavedCourses = [
+    {
+        id: 1,
+        title: 'Organic Farming Basics',
+        instructor: 'Jane Doe',
+        rating: 4.5,
+        duration: '3h 20m',
+        level: 'Beginner',
+        image: require('../../assets/images/course1.png'),
+        description: 'Learn the fundamentals of organic farming and sustainable agriculture.'
+    },
+    {
+        id: 2,
+        title: 'Advanced Irrigation Techniques',
+        instructor: 'John Smith',
+        rating: 4.7,
+        duration: '4h 10m',
+        level: 'Intermediate',
+        image: require('../../assets/images/course1.png'),
+        description: 'Explore modern irrigation methods to optimize water usage in farming.'
+    },
+    {
+        id: 3,
+        title: 'Precision Agriculture with IoT',
+        instructor: 'Alice Johnson',
+        rating: 4.9,
+        duration: '5h 00m',
+        level: 'Advanced',
+        image: require('../../assets/images/course1.png'),
+        description: 'Utilize IoT technologies to enhance precision farming practices.'
+    }
+];
+
 const SavedCourses = ({ navigation }) => {
     // Sample saved courses data - in real app this would come from storage/API
-    const [savedCourses, setSavedCourses] = useState([
-        {
-            id: 1,
-            title: 'Organic Farming Basics',
-            instructor: 'Dr. Rajesh Kumar',
-            duration: '4 weeks',
-            rating: 4.8,
-            students: 1234,
-            price: 'Free',
-            image: require('../../assets/images/course1.png'),
-            category: 'Organic',
-            level: 'Beginner',
-            description: 'Learn the fundamentals of organic farming practices and sustainable agriculture.',
-            progress: 25, // percentage completed
-            lastAccessed: '2 days ago',
-            savedDate: '1 week ago'
-        },
-        {
-            id: 2,
-            title: 'Modern Irrigation Techniques',
-            instructor: 'Prof. Meera Sharma',
-            duration: '6 weeks',
-            rating: 4.9,
-            students: 856,
-            price: '₹999',
-            image: require('../../assets/images/course1.png'),
-            category: 'Technology',
-            level: 'Intermediate',
-            description: 'Master water-efficient irrigation systems and smart farming technologies.',
-            progress: 0,
-            lastAccessed: 'Not started',
-            savedDate: '3 days ago'
-        },
-        {
-            id: 3,
-            title: 'Soil Health & Nutrition',
-            instructor: 'Prof. Suresh Reddy',
-            duration: '3 weeks',
-            rating: 4.9,
-            students: 1876,
-            price: 'Free',
-            image: require('../../assets/images/course1.png'),
-            category: 'Soil',
-            level: 'Beginner',
-            description: 'Understanding soil composition, testing, and nutrient management.',
-            progress: 80,
-            lastAccessed: 'Yesterday',
-            savedDate: '2 weeks ago'
-        },
-        {
-            id: 4,
-            title: 'Precision Agriculture',
-            instructor: 'Dr. Kavita Singh',
-            duration: '7 weeks',
-            rating: 4.8,
-            students: 512,
-            price: '₹2199',
-            image: require('../../assets/images/course1.png'),
-            category: 'Technology',
-            level: 'Advanced',
-            description: 'Use AI, IoT, and data analytics for precision farming solutions.',
-            progress: 10,
-            lastAccessed: '5 days ago',
-            savedDate: '1 month ago'
-        }
-    ]);
+    const { wishlistedCourses, setWishlistedCourses } = useContext(DataContext);
 
     const [selectedSort, setSelectedSort] = useState('Alphabetical');
     const sortOptions = ['Alphabetical', 'Rating'];
@@ -92,7 +61,7 @@ const SavedCourses = ({ navigation }) => {
                     text: 'Remove',
                     style: 'destructive',
                     onPress: () => {
-                        setSavedCourses(prev => prev.filter(course => course.id !== courseId));
+                        setWishlistedCourses(prev => prev.filter(course => course.id !== courseId));
                         Alert.alert('Removed', 'Course removed from saved list');
                     }
                 }
@@ -103,11 +72,11 @@ const SavedCourses = ({ navigation }) => {
     const handleCoursePress = (course) => {
         navigation?.navigate('CourseDetails', { courseId: course.id });
         console.log('Navigate to course:', course.title);
-        
+
     };
 
     const getSortedCourses = () => {
-        const coursesCopy = [...savedCourses];
+        const coursesCopy = [...wishlistedCourses];
 
         switch (selectedSort) {
             case 'Alphabetical':
@@ -186,7 +155,7 @@ const SavedCourses = ({ navigation }) => {
                     </View>
 
                     <Text className="text-primary font-medium text-sm mb-1">
-                        by {item.instructor}
+                        by {item.instructor.name}
                     </Text>
 
                     {/* Stats Row */}
@@ -247,7 +216,7 @@ const SavedCourses = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
 
-            {savedCourses.length > 0 ? (
+            {wishlistedCourses.length > 0 ? (
                 <FlatList
                     data={getSortedCourses()}
                     renderItem={renderCourseCard}

@@ -32,10 +32,10 @@ export async function getCourseModules(courseId) {
             // Fallback: get all modules without ordering
             snap = await getDocs(modulesCol);
         }
-        
-        const modules = snap.docs.map(d => ({ 
-            id: d.id, 
-            ...d.data() 
+
+        const modules = snap.docs.map(d => ({
+            id: d.id,
+            ...d.data()
         }));
 
         // // If no order field exists, sort by title or creation date
@@ -196,36 +196,25 @@ export async function addCourseWithModulesOrdered() {
     }
 }
 
-// Function to get all courses (for listing)
-export async function getAllCourses() {
-    try {
-        const coursesCol = collection(db, 'courseDetails');
-        const snap = await getDocs(coursesCol);
-        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    } catch (error) {
-        console.error('Error fetching courseDetails:', error);
-        throw error;
-    }
-}
 
 // Function to update existing modules with order field
 export async function addOrderToExistingModules(courseId) {
     try {
         const modulesCol = collection(db, 'courseDetails', courseId, 'modules');
         const snap = await getDocs(modulesCol);
-        
+
         const modules = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        
+
         // Sort by creation date and assign order
         modules.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-        
+
         for (let i = 0; i < modules.length; i++) {
             const moduleRef = doc(db, 'courseDetails', courseId, 'modules', modules[i].id);
             await updateDoc(moduleRef, {
                 order: i + 1
             });
         }
-        
+
         console.log('Order field added to existing modules');
     } catch (error) {
         console.error('Error adding order to modules:', error);
