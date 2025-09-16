@@ -103,3 +103,136 @@ src/
     ├── screens/          # Screen tests
     └── utils/            # Utility tests
 ```
+
+--------------------------------------------------------
+
+# Backend schema
+
+### courses
+```js []
+{
+  "courses": {
+    "courseId": {
+      "title": "Introduction to Organic Farming",
+      "description": "Learn the basics of organic farming and sustainable agriculture.",
+      "category": "Agriculture",
+      "level": "Beginner",
+      "duration": 120,
+      "price": 500, 
+      "thumbnail": "https://example.com/thumbnail.jpg",
+      "videoUrl": "https://example.com/video.mp4",
+      "instructor": {
+        "name": "John Doe",
+        "bio": "An expert in organic farming with 10+ years of experience.",
+        "profilePicture": "https://example.com/johndoe.jpg"
+      },
+      "createdAt": "2025-09-14T08:00:00Z",
+      "updatedAt": "2025-09-15T09:00:00Z"
+    }
+  }
+}
+```
+
+### course details
+```js []
+{
+  "courses": {
+    "courseId": {
+      "title": "How to Harvest More Effectively",
+      "description": "Learn how to harvest crops more efficiently and sell them for higher profits.",
+      "category": "Agriculture",
+      "level": "Beginner",
+      "duration": 420, // in minutes (7 hours)
+      "price": 500, // in currency units
+      "thumbnail": "https://example.com/course-thumbnail.jpg",
+      "videoUrl": "https://example.com/course-intro.mp4",
+      "instructor": {
+        "name": "John Doe",
+        "bio": "An expert in organic farming with 10+ years of experience.",
+        "profilePicture": "https://example.com/johndoe.jpg"
+      },
+      "ratings": {
+        "average": 4.5,
+        "totalRatings": 120
+      },
+      "modules": [
+        "moduleId1": {
+            "courseId": "courseId", // Reference to the parent course
+            "title": "Introduction",
+            "description": "In this module, you will learn the basics of harvesting.",
+            "type" : "video",
+            "videoUrl": "https://example.com/module1.mp4",
+            "duration": "6 min",
+            "completed": true,
+            "createdAt": "2025-09-14T08:00:00Z",
+            "updatedAt": "2025-09-15T09:00:00Z"
+         },
+         "moduleId2": {
+            "courseId": "courseId",
+            "title": "Advanced Techniques",
+            "description": "Learn advanced techniques for harvesting crops.",
+             "type" : "video",
+            "videoUrl": "https://example.com/module2.mp4",
+            "duration": "12 min",
+            "completed": false,
+            "createdAt": "2025-09-14T08:00:00Z",
+            "updatedAt": "2025-09-15T09:00:00Z"
+         }
+         "moduleId3": {
+            "courseId": "courseId",
+            "title": "Advanced Techniques Quiz",
+            "description": "Learn advanced techniques for harvesting crops.",
+             "type" : "quiz",
+            "quizId": "jhbfjhsebuhwe",
+            "duration": "12 min",
+            "completed": false,
+            "createdAt": "2025-09-14T08:00:00Z",
+            "updatedAt": "2025-09-15T09:00:00Z"
+         }
+      ],
+      "createdAt": "2025-09-14T08:00:00Z",
+      "updatedAt": "2025-09-15T09:00:00Z"
+    }
+  }
+}
+```
+
+### quiz
+```js []
+{
+  "quizzes": {
+    "quizId1": {
+      "moduleId": "moduleId3", // Reference to the parent module
+      "title": "Quiz on Best Practices",
+      "questions": [
+        {
+          "questionId": "questionId1",
+          "question": "What is the best time to harvest crops?",
+          "options": [
+            "Early morning",
+            "Afternoon",
+            "Evening",
+            "Night"
+          ],
+          "correctAnswer": "Early morning"
+        },
+        {
+          "questionId": "questionId2",
+          "question": "Which tool is most effective for harvesting?",
+          "options": [
+            "Sickle",
+            "Shovel",
+            "Hoe",
+            "Plow"
+          ],
+          "correctAnswer": "Sickle"
+        }
+      ],
+      "createdAt": "2025-09-14T08:00:00Z",
+      "updatedAt": "2025-09-15T09:00:00Z"
+    }
+  }
+}
+```
+
+
