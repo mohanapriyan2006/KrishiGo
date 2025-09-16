@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useContext } from 'react';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import {
@@ -11,8 +11,9 @@ import {
     Alert
 } from 'react-native';
 import { getCourse, getCourseModules, enrollUserToCourse, getUserEnrollment, setModuleCompleted } from '../../api/courses/courses_service';
-import { auth } from '../../config/firebase.js';
 import AIChatSpace from '../AIComponents/AIChatSpace';
+import { DataContext } from '../../hooks/DataContext';
+import { isLoading } from 'expo-font';
 
 // ✅ Sample fallback data based on your schema
 const sampleCourse = {
@@ -95,20 +96,21 @@ const sampleModules = [
 ];
 
 const CourseDetails = ({ navigation, route }) => {
-    // const courseId = route?.params?.courseId ?? 'courseId';
-    const courseId = 'courseId';
-    const user = auth.currentUser;
 
-    const [course, setCourse] = useState(null);
-    const [modules, setModules] = useState([]);
-    const [enrollment, setEnrollment] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [enrolling, setEnrolling] = useState(false);
+    const { user, course,
+        courseId, setCourseId,
+        modules, enrollment,
+        loading, setCourse,
+        setModules, setEnrollment,
+        setLoading } = useContext(DataContext);
+
+    // const courseId = route?.params?.courseId ?? 'courseId';\
+
 
     // Load data from API with fallback to sample data
-    const loadData = useCallback(async () => {
+    const loadCourseData = useCallback(async () => {
         try {
-            setLoading(true);
+            setLoading(pre => ({ ...pre, CourseDetails: true, Modules: true }));
 
             let courseData = null;
             let modulesData = [];
@@ -144,13 +146,13 @@ const CourseDetails = ({ navigation, route }) => {
             setModules(sampleModules);
             setEnrollment(null);
         } finally {
-            setLoading(false);
+            setLoading(prev => ({ ...prev, CourseDetails: false, Modules: false }));
         }
     }, [courseId, user]);
 
     useEffect(() => {
-        loadData();
-    }, [loadData]);
+        loadCourseData();
+    }, [loadCourseData]);
 
     const handleEnrollNow = async () => {
         // if (!user) {
@@ -174,13 +176,12 @@ const CourseDetails = ({ navigation, route }) => {
 
         // // sample usage
 
-        setEnrolling(true);
+        setLoading(prev => ({ ...prev, enrolling: true }));
         setTimeout(() => {
-            setEnrolling(false);
+            setLoading(prev => ({ ...prev, enrolling: false }));
             Alert.alert('Success!', 'You are now enrolled in this course!');
         }, 1500);
     }
-
 
     const handleModulePress = (module) => {
         // if (!enrollment && course !== sampleCourse) {
@@ -190,12 +191,14 @@ const CourseDetails = ({ navigation, route }) => {
 
         if (module.type === 'quiz') {
             navigation.navigate('Quiz', {
+                courseTitle: course?.title || sampleCourse.title,
                 moduleId: module.id,
                 courseId,
                 quizId: module.quizId
             });
         } else {
             navigation.navigate('CourseVideo', {
+                courseTitle: course?.title || sampleCourse.title,
                 moduleId: module.id,
                 courseId,
                 videoUrl: module.videoUrl
@@ -210,24 +213,24 @@ const CourseDetails = ({ navigation, route }) => {
         // });
     };
 
-    const toggleModuleComplete = async (moduleId) => {
-        if (!user || !enrollment) {
-            Alert.alert('Login required', 'Please log in to track progress');
-            return;
-        }
+    // const toggleModuleComplete = async (moduleId) => {
+    //     if (!user || !enrollment) {
+    //         Alert.alert('Login required', 'Please log in to track progress');
+    //         return;
+    //     }
 
-        try {
-            const isCompleted = enrollment?.progress?.[moduleId] === true;
-            await setModuleCompleted(user.uid, courseId, moduleId, !isCompleted);
-            const updatedEnrollment = await getUserEnrollment(user.uid, courseId);
-            setEnrollment(updatedEnrollment);
-        } catch (error) {
-            console.error('Toggle complete error:', error);
-            Alert.alert('Error', 'Could not update progress. Please try again.');
-        }
-    };
+    //     try {
+    //         const isCompleted = enrollment?.progress?.[moduleId] === true;
+    //         await setModuleCompleted(user.uid, courseId, moduleId, !isCompleted);
+    //         const updatedEnrollment = await getUserEnrollment(user.uid, courseId);
+    //         setEnrollment(updatedEnrollment);
+    //     } catch (error) {
+    //         console.error('Toggle complete error:', error);
+    //         Alert.alert('Error', 'Could not update progress. Please try again.');
+    //     }
+    // };
 
-    if (loading) {
+    if (loading.CourseDetails || loading.Modules) {
         return (
             <SafeAreaView className="flex-1 justify-center items-center bg-white">
                 <ActivityIndicator size="large" color="#78BB1B" />
@@ -426,10 +429,10 @@ const CourseDetails = ({ navigation, route }) => {
                     className={`py-4 rounded-xl items-center ${isEnrolled ? 'bg-green-500' : 'bg-primary'
                         }`}
                     activeOpacity={0.8}
-                    disabled={enrolling || isEnrolled}
+                    disabled={loading.enrolling || isEnrolled}
                 >
                     <Text className="text-white font-semibold text-lg">
-                        {isEnrolled ? '✓ Enrolled' : (enrolling ? 'Enrolling...' : 'Enroll now')}
+                        {isEnrolled ? '✓ Enrolled' : (loading.enrolling ? 'Enrolling...' : 'Enroll now')}
                     </Text>
                 </TouchableOpacity>
             </View>

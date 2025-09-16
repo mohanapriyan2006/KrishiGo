@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
     Alert,
     Dimensions,
@@ -13,13 +13,23 @@ import {
 } from 'react-native';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import AIChatSpace from '../AIComponents/AIChatSpace';
-import { auth } from '../../config/firebase';
 import { getUserEnrollment, setModuleCompleted } from '../../api/courses/courses_service';
+import { DataContext } from '../../hooks/DataContext';
 
 
 const { width } = Dimensions.get('window');
 
 const CourseVideo = ({ navigation, route }) => {
+
+    const { user, modules } = useContext(DataContext);
+
+    // Get parameters from navigation
+    const moduleId = route?.params?.moduleId;
+    const courseId = route?.params?.courseId;
+    const courseTitle = route?.params?.courseTitle || "Course Title";
+
+    let youtubeVideoId = 'eCwRVJyjKA4';
+    youtubeVideoId = route?.params?.videoUrl || youtubeVideoId;
 
     const [isPlaying, setIsPlaying] = useState(false);
     const [showPlayer, setShowPlayer] = useState(false);
@@ -27,13 +37,14 @@ const CourseVideo = ({ navigation, route }) => {
     const [isCompleted, setIsCompleted] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
 
-    // Get parameters from navigation
-    const moduleId = route?.params?.moduleId;
-    const courseId = route?.params?.courseId;
-    const user = auth.currentUser;
+    const [moduleData, setModuleData] = useState(null);
 
-    let youtubeVideoId = 'eCwRVJyjKA4';
-    youtubeVideoId = route?.params?.videoUrl || youtubeVideoId;
+    useEffect(() => {
+        if (modules && moduleId) {
+            const mod = modules.find(m => m.id === moduleId);
+            setModuleData(mod);
+        }
+    }, [modules, moduleId]);
 
 
     // Check if module is already completed when component loads
@@ -138,7 +149,7 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
                 {/* Course Title */}
                 <View className="p-4 bg-white">
                     <Text className="text-xl font-bold text-gray-900 text-center leading-8">
-                        How to Harvest more effectively
+                        {courseTitle}
                     </Text>
                 </View>
 
@@ -183,10 +194,10 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
                 {/* Introduction Section */}
                 <View className="px-4 mb-4 ">
                     <Text className="text-xl text-center font-bold text-gray-900">
-                        Introduction
+                        {moduleData?.title || 'Module Title'}
                     </Text>
                     <Text className="text-gray-600 text-center leading-6">
-                        In this learning you will be learning how to harvest crops more efficiently and how sell them in a higher profit ratio
+                        {moduleData?.description || 'Module description goes here. This is a brief overview of the video content.'}
                     </Text>
                 </View>
 
@@ -207,7 +218,7 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
                 {/* Action Buttons */}
                 <View className="flex-row items-center justify-center mb-10 gap-4 px-4">
                     <TouchableOpacity
-                        className="flex-1 bg-lime-100 border-[0.5px] border-lime-500 py-4 rounded-xl items-center"
+                        className="flex-1 bg-green-50 border-[0.5px] border-lime-500 py-4 rounded-xl items-center"
                         activeOpacity={0.8}
                         onPress={() => navigation?.goBack()}
                     >
@@ -215,7 +226,7 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        className={`flex-1 py-4 rounded-xl items-center ${isCompleted ? 'bg-primary' : 'bg-lime-100 border-[0.5px] border-lime-500'
+                        className={`flex-1 py-4 rounded-xl items-center ${isCompleted ? 'bg-primary' : 'bg-green-50 border-[0.5px] border-lime-500'
                             }`}
                         activeOpacity={0.8}
                         onPress={handleMarkCompleted}
