@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
+    Alert,
     Image,
     SafeAreaView,
     ScrollView,
@@ -76,6 +77,9 @@ const QuizScreen = () => {
             setCurrentQuestion(currentQuestion + 1);
             setSelectedAnswer(null);
             setIsAnswered(false);
+        } else if (currentQuestion === quizQuestions.length) {
+            navigation.goBack();
+            Alert.alert('Quiz Completed', `Your final score is ${score} out of ${quizQuestions.length}`);
         }
     };
 
@@ -135,8 +139,8 @@ const QuizScreen = () => {
             {/* Header */}
             <View className="bg-primary px-4 h-[80px] flex-row justify-between items-end pb-3">
                 <TouchableOpacity
-                 className="w-8 h-8 bg-white/20 rounded-full items-center justify-center"
-                 onPress={() => navigation.goBack()}>
+                    className="w-8 h-8 bg-white/20 rounded-full items-center justify-center"
+                    onPress={() => navigation.goBack()}>
                     <Text className="text-white text-lg">←</Text>
                 </TouchableOpacity>
 
@@ -223,7 +227,7 @@ const QuizScreen = () => {
 
                 <TouchableOpacity
                     onPress={handleNext}
-                    disabled={!isAnswered || currentQuestion === quizQuestions.length}
+                    disabled={!isAnswered}
                     className={`flex-1 ml-2 py-4 border border-primary rounded-xl flex-row items-center justify-center ${!isAnswered ? 'bg-gray-200' : currentQuestion === quizQuestions.length ? 'bg-primary' : 'bg-lime-100'
                         }`}
                 >
