@@ -7,9 +7,58 @@ export default function Home() {
 
     const navigation = useNavigation();
 
+    // Dummy government schemes data
+    const governmentSchemes = [
+        {
+            id: 1,
+            title: "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+            description: "Direct income support of ₹6000 per year to small and marginal farmers",
+            amount: "₹6,000/year",
+            deadline: "31 Dec 2024",
+            status: "Active",
+            image: require('../assets/images/course1.png')
+        },
+        {
+            id: 2,
+            title: "Kisan Credit Card (KCC)",
+            description: "Easy access to credit for farmers at subsidized interest rates",
+            amount: "Up to ₹3 Lakh",
+            deadline: "Ongoing",
+            status: "Apply Now",
+            image: require('../assets/images/course1.png')
+        },
+        {
+            id: 3,
+            title: "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+            description: "Crop insurance scheme to protect farmers from crop losses",
+            amount: "Premium: 2-5%",
+            deadline: "15 Jan 2025",
+            status: "Limited Time",
+            image: require('../assets/images/course1.png')
+        },
+        {
+            id: 4,
+            title: "Soil Health Card Scheme",
+            description: "Free soil testing and nutrient management recommendations",
+            amount: "Free Service",
+            deadline: "Ongoing",
+            status: "Available",
+            image: require('../assets/images/course1.png')
+        },
+        {
+            id: 5,
+            title: "National Agriculture Market (e-NAM)",
+            description: "Online trading platform for agricultural commodities",
+            amount: "Better Prices",
+            deadline: "Ongoing",
+            status: "Join Now",
+            image: require('../assets/images/course1.png')
+        }
+    ];
+
     return (
         <ScrollView className="flex-1 bg-[#f5f5f5]">
-            <View className="p-5 pb-30 pt-[50px]">
+            <View className="p-5 mb-10 pt-[50px]">
                 {/* Header */}
                 <View className="flex-row justify-between items-center mb-5">
                     <View className="p-8">
@@ -75,6 +124,61 @@ export default function Home() {
                 {/* Divider */}
                 <View className="items-center mb-8">
                     <View className="w-80 h-0.5 bg-gray-300"></View>
+                </View>
+
+                {/* Government Schemes Slider Section */}
+                <View className="mb-6">
+                    <View className="flex-row justify-between items-center mb-4 px-2">
+                        <Text className="text-lg font-bold text-primaryDark">Latest Government Schemes</Text>
+                    </View>
+                    
+                    <ScrollView 
+                        horizontal 
+                        showsHorizontalScrollIndicator={false}
+                        className="p-2"
+                    >
+                        {governmentSchemes.map((scheme) => (
+                            <TouchableOpacity 
+                                key={scheme.id}
+                                className="bg-white p-2 rounded-2xl mr-4 shadow-lg"
+                                style={{ width: 280 }}
+                                activeOpacity={0.8}
+                            >
+                                <View className="relative">
+                                    <Image 
+                                        source={scheme.image} 
+                                        className="w-full h-32 rounded-t-2xl"
+                                        resizeMode="cover"
+                                    />
+        
+                                </View>
+                                
+                                <View className="p-4">
+                                    <Text className="text-base font-bold text-primaryDark mb-2" numberOfLines={2}>
+                                        {scheme.title}
+                                    </Text>
+                                    <Text className="text-sm text-gray-600 mb-3" numberOfLines={2}>
+                                        {scheme.description}
+                                    </Text>
+                                    
+                                    <View className="flex-row justify-between items-center mb-3">
+                                        <View className="flex-row items-center">
+                                            <Ionicons name="cash-outline" size={16} color="#78BB1B" />
+                                            <Text className="text-primary font-bold ml-1">{scheme.amount}</Text>
+                                        </View>
+                                        <View className="flex-row items-center">
+                                            <Ionicons name="time-outline" size={16} color="#666" />
+                                            <Text className="text-gray-600 text-xs ml-1">{scheme.deadline}</Text>
+                                        </View>
+                                    </View>
+                                    
+                                    <TouchableOpacity className="bg-primary py-2 px-4 rounded-lg">
+                                        <Text className="text-white text-center font-medium text-sm">Learn More</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
                 </View>
 
                 {/* Invite & Earn */}
