@@ -10,9 +10,9 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import UpiModal from './RedeemScreen/UpiModal';
-import CouponModal from './RedeemScreen/CouponModal';
-import GadgetsModal from './RedeemScreen/GadgetsModal';
+import UpiModal from './UpiModal';
+import CouponModal from './CouponModal';
+import GadgetsModal from './GadgetsModal';
 
 const RedeemScreen = ({ visible, onClose, totalPoints }) => {
     const [selectedCategory, setSelectedCategory] = useState('all');
@@ -129,7 +129,7 @@ const RedeemScreen = ({ visible, onClose, totalPoints }) => {
                         </TouchableOpacity>
                     </View>
                     <View className="flex-row items-center mt-2">
-                        <Image source={require('../assets/images/Coin.png')} style={{ width: 20, height: 20 }} />
+                        <Image source={require('../../assets/images/Coin.png')} style={{ width: 20, height: 20 }} />
                         <Text className="text-primary font-bold text-lg ml-2">{totalPoints?.toLocaleString()} points available</Text>
                     </View>
                 </View>

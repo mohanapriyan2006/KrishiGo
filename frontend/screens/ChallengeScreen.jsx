@@ -9,8 +9,8 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import ChallengePopup from '../components/ChallengePopup';
-import ChallengeUpload from '../components/ChallengeUpload';
+import ChallengePopup from '../components/ChallengeComponents/ChallengePopup';
+import ChallengeUpload from '../components/ChallengeComponents/ChallengeUpload';
 
 const ChallengeScreen = () => {
 

@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import AIChatSpace from '../AIChatSpace';
+import AIChatSpace from '../AIComponents/AIChatSpace';
 import ChangeLanguageModal from './ChangeLanguageModal';
 import DeleteAccModal from './DeleteAccModal';
 import EditAccountModal from './EditAccountModal';

@@ -9,8 +9,8 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import EditProfilePhoto from '../components/EditProfilePhoto';
-import ChangeLanguageModal from '../components/SettingsScreen/ChangeLanguageModal';
+import EditProfilePhoto from '../components/SettingsComponents/EditProfilePhoto';
+import ChangeLanguageModal from '../components/SettingsComponents/ChangeLanguageModal';
 
 const ProfileScreen = () => {
 

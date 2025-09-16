@@ -11,7 +11,7 @@ import {
     View,
 } from 'react-native';
 import YoutubePlayer from 'react-native-youtube-iframe';
-import AIChatSpace from './AIChatSpace';
+import AIChatSpace from '../AIComponents/AIChatSpace';
 
 
 const { width } = Dimensions.get('window');
@@ -81,7 +81,7 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
                         ) : (
                             <View className="flex-1 border-[0.5px] border-primary rounded-xl relative">
                                 {/* Farm Illustration Background */}
-                                <Image source={require('../assets/images/course1.png')}
+                                <Image source={require('../../assets/images/course1.png')}
                                     style={{ width: width - 32, height: ((width - 32) * 9) / 16, opacity: 0.4 }}
                                 />
 

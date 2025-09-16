@@ -1,11 +1,11 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import About from '../components/About';
-import CourseDetails from '../components/CourseDetails';
-import CourseVideo from '../components/CourseVideo';
+import CourseDetails from '../components/CoursesComponents/CourseDetails';
+import CourseVideo from '../components/CoursesComponents/CourseVideo';
 import { QuizScreen } from '../components/Quiz';
-import SavedCourses from '../components/SavedCourses';
-import SearchCourses from '../components/SearchCourses';
-import Settings from '../components/SettingsScreen/Settings';
+import SavedCourses from '../components/CoursesComponents/SavedCourses';
+import SearchCourses from '../components/CoursesComponents/SearchCourses';
+import Settings from '../components/SettingsComponents/Settings';
 import TermsAndConditions from '../components/TremsAndConditions';
 import '../global.css';
 import Login from '../screens/LoginScreen/Login';

@@ -16,9 +16,9 @@ import {
 	View,
 } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
-import { callGeminiAPI as callGeminiAPIExternal } from "../ai/ai_api";
-import { createFirebaseChatHandlers } from "../ai/ai_firebase";
-import { auth, db } from "../config/firebase";
+import { callGeminiAPI as callGeminiAPIExternal } from "../../ai/ai_api";
+import { createFirebaseChatHandlers } from "../../ai/ai_firebase";
+import { auth, db } from "../../config/firebase";
 import FloatingAIButton from "./FloatingAIButton";
 
 // API functions and system prompt now come from ../ai/ai_api
@@ -232,7 +232,7 @@ const ChatPopup = ({ visible, onClose }) => {
 			<View className="flex-col">
 				{message.isBot && (
 					<Image
-						source={require("../assets/images/AI.png")}
+						source={require("../../assets/images/AI.png")}
 						style={{ width: 60, height: 60 }}
 						className="-mb-6 -ml-6"
 					/>
@@ -277,7 +277,7 @@ const ChatPopup = ({ visible, onClose }) => {
 		<View className="mb-3 items-start">
 			<View className="flex-col">
 				<Image
-					source={require("../assets/images/AI.png")}
+					source={require("../../assets/images/AI.png")}
 					style={{ width: 60, height: 60 }}
 					className="-mb-6 -ml-6"
 				/>

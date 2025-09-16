@@ -11,7 +11,7 @@ import {
     View,
 } from 'react-native';
 import RewardPopUp from '../components/RewardPopUp';
-import RedeemScreen from '../components/RedeemScreen';
+import RedeemScreen from '../components/RedeemComponents/RedeemScreen';
 
 const RewardsScreen = () => {
     const [totalPoints, setTotalPoints] = useState(8490);

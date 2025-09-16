@@ -23,7 +23,7 @@ const SearchCourses = ({ navigation }) => {
             instructor: 'Dr. Rajesh Kumar',
             duration: '4 weeks',
             rating: 4.8,
-            image: require('../assets/images/course1.png'),
+            image: require('../../assets/images/course1.png'),
             category: 'Organic',
             level: 'Beginner',
             description: 'Learn the fundamentals of organic farming practices and sustainable agriculture.'
@@ -34,7 +34,7 @@ const SearchCourses = ({ navigation }) => {
             instructor: 'Prof. Meera Sharma',
             duration: '6 weeks',
             rating: 4.9,
-            image: require('../assets/images/course1.png'),
+            image: require('../../assets/images/course1.png'),
             category: 'Technology',
             level: 'Intermediate',
             description: 'Master water-efficient irrigation systems and smart farming technologies.'
@@ -45,7 +45,7 @@ const SearchCourses = ({ navigation }) => {
             instructor: 'Dr. Anil Verma',
             duration: '5 weeks',
             rating: 4.7,
-            image: require('../assets/images/course1.png'),
+            image: require('../../assets/images/course1.png'),
             category: 'Health',
             level: 'Advanced',
             description: 'Identify, prevent, and treat common crop diseases using sustainable methods.'
@@ -56,7 +56,7 @@ const SearchCourses = ({ navigation }) => {
             instructor: 'Dr. Priya Patel',
             duration: '8 weeks',
             rating: 4.6,
-            image: require('../assets/images/course1.png'),
+            image: require('../../assets/images/course1.png'),
             category: 'Livestock',
             level: 'Intermediate',
             description: 'Ethical and sustainable practices for modern livestock management.'
@@ -67,7 +67,7 @@ const SearchCourses = ({ navigation }) => {
             instructor: 'Prof. Suresh Reddy',
             duration: '3 weeks',
             rating: 4.9,
-            image: require('../assets/images/course1.png'),
+            image: require('../../assets/images/course1.png'),
             category: 'Soil',
             level: 'Beginner',
             description: 'Understanding soil composition, testing, and nutrient management.'
@@ -78,7 +78,7 @@ const SearchCourses = ({ navigation }) => {
             instructor: 'Dr. Kavita Singh',
             duration: '7 weeks',
             rating: 4.8,
-            image: require('../assets/images/course1.png'),
+            image: require('../../assets/images/course1.png'),
             category: 'Technology',
             level: 'Advanced',
             description: 'Use AI, IoT, and data analytics for precision farming solutions.'

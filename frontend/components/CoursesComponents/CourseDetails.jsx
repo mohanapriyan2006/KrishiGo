@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import AIChatSpace from './AIChatSpace';
+import AIChatSpace from '../AIComponents/AIChatSpace';
 
 const CourseDetails = ({ navigation }) => {
     const courseModules = [
@@ -123,7 +123,7 @@ const CourseDetails = ({ navigation }) => {
 
                         {/* Illustration */}
                         <Image
-                            source={require('../assets/images/course1.png')}
+                            source={require('../../assets/images/course1.png')}
                             style={{ width: 140, height: 120, opacity: 0.9 }}
                         />
 

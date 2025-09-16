@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet, View } from 'react-native';
 
 
-import AIChatSpace from '../components/AIChatSpace.jsx';
+import AIChatSpace from '../components/AIComponents/AIChatSpace.jsx';
 import ChallengeScreen from '../screens/ChallengeScreen.jsx';
 import HomeScreen from '../screens/HomeScreen.jsx';
 import JourneyScreen from '../screens/JourneyScreen.jsx';
