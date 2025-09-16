@@ -168,6 +168,7 @@ export async function addCourseWithModules() {
     }
 }
 
-(async () => {
-  await addCourseWithModules();
-})();
+// // Run Create once to add a quiz
+// (async () => {
+//     await addCourseWithModules();
+// })();
