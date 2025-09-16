@@ -309,7 +309,10 @@ export async function addCourseWithModules() {
     }
 }
 
-// Uncomment and run this once to fix existing data
+// // Run Create once to add a quiz
+// (async () => {
+//     await addCourseWithModules();
+// })();
 
 // (async () => {
 //     await addOrderToExistingModules('courseId');
