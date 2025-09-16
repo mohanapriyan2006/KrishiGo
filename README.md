@@ -108,6 +108,62 @@ src/
 
 # Backend schema
 
+### userDetails
+```js []
+{
+  "users": {
+    "userId": {
+      "authId": "authId123", // Firebase Authentication UID
+      "email": "user@example.com",
+      "fullName": "John Doe",
+      "profilePicture": "https://example.com/profile-picture.jpg",
+      "phoneNumber": "+1234567890",
+      "address": {
+        "street": "123 Main Street",
+        "city": "New York",
+        "state": "NY",
+        "zipCode": "10001",
+        "country": "USA"
+      },
+      "rewards": {
+        "totalPoints": 8490,
+        "redeemedPoints": 2000
+      },
+      "enrolledCourses": [
+        {
+          "courseId": "courseId1",
+          "progress": 50, // Progress in percentage
+          "completedModules": ["moduleId1", "moduleId2"],
+          "enrolledAt": "2025-09-10T08:00:00Z",
+          "lastAccessed": "2025-09-15T09:00:00Z"
+        },
+        {
+          "courseId": "courseId2",
+          "progress": 100,
+          "completedModules": ["moduleId1", "moduleId2", "moduleId3"],
+          "enrolledAt": "2025-08-01T08:00:00Z",
+          "lastAccessed": "2025-08-20T09:00:00Z"
+        }
+      ],
+      "achievements": [
+        {
+          "achievementId": "achievement1",
+          "title": "First Course Completed",
+          "description": "Completed your first course on KrishiGo.",
+          "earnedAt": "2025-08-20T09:00:00Z"
+        }
+      ],
+      "preferences": {
+        "language": "en", // Preferred language (e.g., "en" for English)
+        "notificationsEnabled": true
+      },
+      "createdAt": "2025-09-01T08:00:00Z",
+      "updatedAt": "2025-09-15T09:00:00Z"
+    }
+  }
+}
+```
+
 ### courses
 ```js []
 {
@@ -235,4 +291,43 @@ src/
 }
 ```
 
-
+### redeemReward
+```js []
+{
+  "rewards": {
+    "rewardId1": {
+      "category": "money", // Category: money, coupons, or gadgets
+      "title": "UPI Transfer",
+      "description": "Direct UPI money transfer",
+      "pointsRequired": 1000, // Points needed to redeem
+      "value": "₹100", // Reward value
+      "type": "upi", // Type of reward (e.g., upi, amazon, earbuds)
+      "icon": "cash-outline", // Icon name for UI
+      "createdAt": "2025-09-14T08:00:00Z",
+      "updatedAt": "2025-09-15T09:00:00Z"
+    },
+    "rewardId2": {
+      "category": "coupons",
+      "title": "Amazon Voucher",
+      "description": "₹500 Amazon gift card",
+      "pointsRequired": 4500,
+      "value": "₹500",
+      "type": "amazon",
+      "icon": "bag-outline",
+      "createdAt": "2025-09-14T08:00:00Z",
+      "updatedAt": "2025-09-15T09:00:00Z"
+    },
+    "rewardId3": {
+      "category": "gadgets",
+      "title": "Wireless Earbuds",
+      "description": "Bluetooth 5.0 earbuds",
+      "pointsRequired": 15000,
+      "value": "₹1500",
+      "type": "earbuds",
+      "icon": "headset-outline",
+      "createdAt": "2025-09-14T08:00:00Z",
+      "updatedAt": "2025-09-15T09:00:00Z"
+    }
+  }
+}
+```
