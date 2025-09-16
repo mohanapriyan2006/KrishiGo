@@ -1,5 +1,5 @@
+import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { db } from "../../config/firebase";
-import { doc, setDoc, getDoc, collection, getDocs } from "firebase/firestore";
 
 // Sample course data with prices
 const allCourses = [

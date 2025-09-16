@@ -1,6 +1,6 @@
+import { createContext, useEffect, useState } from 'react';
 import { getAllCourses } from '../api/courses/all_courses_service';
 import { auth } from '../config/firebase';
-import { createContext, useEffect, useState } from 'react'
 
 export const DataContext = createContext();
 
@@ -205,7 +205,6 @@ const DataProvider = ({ children }) => {
     const [course, setCourse] = useState(null);
     const [modules, setModules] = useState([]);
     const [enrollment, setEnrollment] = useState(null);
-
 
 
     return (
