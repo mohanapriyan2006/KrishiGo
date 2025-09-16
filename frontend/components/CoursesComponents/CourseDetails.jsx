@@ -172,6 +172,8 @@ const CourseDetails = ({ navigation, route }) => {
         //     setEnrolling(false);
         // }
 
+        // // sample usage
+
         setEnrolling(true);
         setTimeout(() => {
             setEnrolling(false);
@@ -186,25 +188,26 @@ const CourseDetails = ({ navigation, route }) => {
         //     return;
         // }
 
-        // if (module.type === 'quiz') {
-        //     navigation.navigate('Quiz', {
-        //         moduleId: module.id,
-        //         courseId,
-        //         quizId: module.quizId
-        //     });
-        // } else {
-        //     navigation.navigate('CourseVideo', {
-        //         moduleId: module.id,
-        //         courseId,
-        //         videoUrl: module.videoUrl
-        //     });
-        // }
+        if (module.type === 'quiz') {
+            navigation.navigate('Quiz', {
+                moduleId: module.id,
+                courseId,
+                quizId: module.quizId
+            });
+        } else {
+            navigation.navigate('CourseVideo', {
+                moduleId: module.id,
+                courseId,
+                videoUrl: module.videoUrl
+            });
+        }
 
-        navigation.navigate('CourseVideo', {
-            moduleId: module.id,
-            courseId,
-            videoUrl: module.videoUrl
-        });
+        // // // For sample usage
+        // navigation.navigate('CourseVideo', {
+        //     moduleId: module.id,
+        //     courseId,
+        //     videoUrl: module.videoUrl
+        // });
     };
 
     const toggleModuleComplete = async (moduleId) => {
@@ -359,7 +362,6 @@ const CourseDetails = ({ navigation, route }) => {
                                 {/* Module Number/Status */}
                                 <View className="items-center justify-center bg-gray-100 border-[0.5px] border-primary rounded-2xl h-20 px-2 mr-2">
                                     <TouchableOpacity
-                                        onPress={() => toggleModuleComplete(module.id)}
                                         className="w-8 h-8 rounded-full items-center justify-center"
                                         disabled={!isEnrolled}
                                     >
