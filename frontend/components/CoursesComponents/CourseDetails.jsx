@@ -1,246 +1,3 @@
-// import { Feather, MaterialIcons } from '@expo/vector-icons';
-
-
-// import { Image } from 'expo-image';
-// import {
-//     SafeAreaView,
-//     ScrollView,
-//     Text,
-//     TouchableOpacity,
-//     View
-// } from 'react-native';
-// import AIChatSpace from '../AIComponents/AIChatSpace';
-
-// const CourseDetails = ({ navigation }) => {
-//     const courseModules = [
-//         {
-//             id: 1,
-//             title: 'Introduction',
-//             duration: '6 min',
-//             description: 'In this learning you will be learning how to harvest...',
-//             completed: true,
-//         },
-//         {
-//             id: 2,
-//             title: 'Advanced Techniques',
-//             duration: '12 min',
-//             description: 'In this learning you will be learning how to harvest...',
-//             completed: false,
-//         },
-//         {
-//             id: 3,
-//             title: 'Best Practices',
-//             duration: 'Quiz',
-//             description: 'In this learning you will be learning how to harvest...',
-//             completed: false,
-//         },
-//         {
-//             id: 4,
-//             title: 'Advanced Techniques',
-//             duration: '12 min',
-//             description: 'In this learning you will be learning how to harvest...',
-//             completed: false,
-//         },
-//         {
-//             id: 5,
-//             title: 'Best Practices',
-//             duration: 'Quiz',
-//             description: 'In this learning you will be learning how to harvest...',
-//             completed: false,
-//         },
-//         {
-//             id: 6,
-//             title: 'Advanced Techniques',
-//             duration: '12 min',
-//             description: 'In this learning you will be learning how to harvest...',
-//             completed: false,
-//         },
-//         {
-//             id: 7,
-//             title: 'Best Practices',
-//             duration: '8 min',
-//             description: 'In this learning you will be learning how to harvest...',
-//             completed: false,
-//         },
-//     ];
-
-//     const handleEnrollNow = () => {
-//         // Handle enrollment logic here
-//         console.log('Enrolling in course...');
-//     };
-
-//     const handleModulePress = (moduleId) => {
-//         // Handle module navigation
-//         console.log('Opening module:', moduleId);
-//         const isQuiz = courseModules.find(m => m.id === moduleId)?.duration === 'Quiz';
-//         if (isQuiz) {
-//             navigation.navigate('Quiz', { moduleId });
-//             return;
-//         }
-//         navigation.navigate('CourseVideo', { moduleId });
-//     };
-
-//     return (
-//         <SafeAreaView className="flex-1 bg-white">
-//             {/* Header */}
-//             <View className="flex-row items-center justify-center px-4 py-3 mt-10 relative">
-//                 <TouchableOpacity
-//                     onPress={() => navigation?.goBack()}
-//                     className="w-8 h-8 rounded-full bg-primary absolute left-5 items-center justify-center mr-4"
-//                 >
-//                     <Feather name="chevron-left" size={20} color="white" />
-//                 </TouchableOpacity>
-//                 <Text className=" text-lg font-semibold">Course details</Text>
-//             </View>
-
-//             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-//                 {/* Course Hero Section */}
-//                 <View className="bg-green-50 border border-lime-200 shadow-lg shadow-green-600 mx-4 mt-4 p-6 rounded-2xl">
-//                     <View className="flex-row items-start justify-between">
-//                         <View className="flex-1 pr-4">
-//                             <Text className="text-xl font-bold mb-3">
-//                                 How to Harvest more effectively
-//                             </Text>
-
-//                             {/* Points Badge */}
-//                             <View className="flex-row items-center mb-4">
-//                                 <View className="bg-yellow-500 px-3 py-1 rounded-full flex-row items-center">
-//                                     <MaterialIcons name="stars" size={16} color="white" />
-//                                     <Text className="text-white text-sm font-semibold ml-1">1000+ pts</Text>
-//                                 </View>
-//                             </View>
-
-//                             {/* Course Stats */}
-//                             <View className="flex-row items-center">
-//                                 <View className="flex-row items-center mr-4">
-//                                     <Feather name="clock" size={14} color="gray" />
-//                                     <Text className="text-gray-500 text-sm ml-1">7hrs</Text>
-//                                 </View>
-//                                 <View className="flex-row items-center">
-//                                     <Feather name="book-open" size={14} color="gray" />
-//                                     <Text className="text-gray-500 text-sm ml-1">30 modules</Text>
-//                                 </View>
-//                             </View>
-//                         </View>
-
-//                         {/* Illustration */}
-//                         <Image
-//                             source={require('../../assets/images/course1.png')}
-//                             style={{ width: 140, height: 120, opacity: 0.9 }}
-//                         />
-
-//                     </View>
-//                 </View>
-
-//                 {/* About Section */}
-//                 <View className="px-4 mt-6">
-//                     <Text className="text-xl font-bold text-gray-900 mb-3">
-//                         About this course
-//                     </Text>
-//                     <Text className="text-gray-600 leading-6 mb-4">
-//                         In this learning you will be learning how to harvest crops more efficiently and how sell them in a higher profit ratio
-//                     </Text>
-
-//                     {/* Certificate Badge */}
-//                     <View className="flex items-center justify-center">
-//                         <View className="bg-green-50 p-4 rounded-xl flex-row items-center">
-//                             <View className="w-10 h-10 bg-primary rounded-full items-center justify-center mr-3">
-//                                 <MaterialIcons name="verified" size={20} color="white" />
-//                             </View>
-//                             <Text className="text-gray-700">
-//                                 Certificate by <Text className="font-semibold text-primaryDark">KrishiGo</Text>
-//                             </Text>
-//                         </View>
-//                     </View>
-//                 </View>
-
-//                 {/* Divider */}
-//                 <View className="items-center mt-4">
-//                     <View className="w-80 h-0.5 bg-gray-300"></View>
-//                 </View>
-
-//                 {/* Course Modules */}
-//                 <View className="px-4 mt-4">
-//                     <Text className="text-xl font-bold text-gray-900 mb-4">
-//                         Course modules
-//                     </Text>
-
-//                     {courseModules.map((module, index) => (
-//                         <TouchableOpacity
-//                             key={module.id}
-//                             onPress={() => handleModulePress(module.id)}
-//                             className=" mb-3 mx-2 flex-row items-center"
-//                             activeOpacity={0.7}
-//                         >
-//                             {/* Module Number/Status */}
-//                             <View className="items-center justify-center bg-gray-100 border-[0.5px] border-primary rounded-2xl h-20 px-2 mr-2">
-//                                 <View className="w-8 h-8 rounded-full items-center justify-center">
-//                                     {module.completed ? (
-//                                         <View className="w-8 h-8 bg-primary rounded-full items-center justify-center">
-//                                             <Feather name="check" size={16} color="white" />
-//                                         </View>
-//                                     ) : (
-//                                         <View className="w-8 h-8 border-2 border-gray-300 rounded-full items-center justify-center">
-//                                             <Text className="text-gray-600 font-semibold">{index + 1}</Text>
-//                                         </View>
-//                                     )}
-//                                 </View>
-//                             </View>
-
-//                             {/* Module Info */}
-//                             <View className=" flex-1 flex-row items-center bg-green-50 border-[0.5px] border-primary rounded-xl h-20 px-4">
-//                                 <View className="flex-1">
-//                                     <View className="flex-row items-center mb-1">
-//                                         <Text className="text-gray-900 font-semibold text-base mr-2">
-//                                             {module.title}
-//                                         </Text>
-//                                         <View className={`px-2 py-1 rounded-full ${module.duration === 'Quiz' ? 'bg-yellow-500/50' : 'bg-green-100'}`}>
-//                                             <Text className={`${module.duration === 'Quiz' ? 'text-yellow-700' : 'text-lime-700'} text-xs font-medium`}>
-//                                                 {module.duration}
-//                                             </Text>
-//                                         </View>
-//                                     </View>
-//                                     <Text className="text-gray-600 text-sm">
-//                                         {module.description.split(' ').slice(0, 10).join(' ')}...
-//                                     </Text>
-//                                 </View>
-
-//                                 {/* Play Button or Quiz Button */}
-//                                 <TouchableOpacity
-//                                     className={`w-8 h-8 ${module.duration === 'Quiz' ? 'bg-yellow-500' : 'bg-primary'} rounded-full items-center justify-center ml-3`}
-//                                     onPress={() => handleModulePress(module.id)}
-//                                 >
-//                                     <Feather name={module.duration === 'Quiz' ? "zap" : "play"} size={14} color="white" />
-//                                 </TouchableOpacity>
-//                             </View>
-//                         </TouchableOpacity>
-//                     ))}
-//                 </View>
-
-//                 {/* Spacer for bottom button */}
-//                 <View className="h-10" />
-//             </ScrollView>
-
-//             {/* Enroll Button */}
-//             <View className="px-4 pb-6 bg-white border-t border-gray-100">
-//                 <TouchableOpacity
-//                     onPress={handleEnrollNow}
-//                     className="bg-primary py-4 rounded-xl items-center"
-//                     activeOpacity={0.8}
-//                 >
-//                     <Text className="text-white font-semibold text-lg">Enroll now</Text>
-//                 </TouchableOpacity>
-//             </View>
-
-//             {/* AI Chat Space */}
-//             <AIChatSpace />
-
-//         </SafeAreaView>
-//     );
-// };
-
-// export default CourseDetails;
-
 import React, { useEffect, useState, useCallback } from 'react';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
@@ -255,42 +12,91 @@ import {
 } from 'react-native';
 import { getCourse, getCourseModules, enrollUserToCourse, getUserEnrollment, setModuleCompleted } from '../../api/courses/courses_service';
 import { auth } from '../../config/firebase.js';
+import AIChatSpace from '../AIComponents/AIChatSpace';
 
-// ✅ Dummy fallback data
-const dummyCourse = {
-    title: "How to Harvest more effectively",
-    points: 1000,
+// ✅ Sample fallback data based on your schema
+const sampleCourse = {
+    title: "How to Harvest More Effectively",
+    description: "Learn how to harvest crops more efficiently and sell them for higher profits.",
+    category: "Agriculture",
+    level: "Beginner",
     duration: 420, // 7 hours in minutes
-    description: "In this learning you will be learning how to harvest crops more efficiently and how to sell them for a higher profit.",
-    thumbnail: require("../../assets/images/course1.png") // placeholder image
+    price: 500,
+    thumbnail: "https://example.com/course-thumbnail.jpg",
+    videoUrl: "https://example.com/course-intro.mp4",
+    instructor: {
+        name: "John Doe",
+        bio: "An expert in organic farming with 10+ years of experience.",
+        profilePicture: "https://example.com/johndoe.jpg"
+    },
+    ratings: {
+        average: 4.5,
+        totalRatings: 120
+    },
+    points: 1000
 };
 
-const dummyModules = [
+const sampleModules = [
     {
-        id: "1",
+        id: "moduleId1",
+        courseId: "courseId",
         title: "Introduction",
+        description: "In this module, you will learn the basics of harvesting.",
         type: "video",
+        videoUrl: "https://example.com/module1.mp4",
         duration: "6 min",
-        description: "Introduction to harvesting techniques",
+        completed: true,
+        order: 1
     },
     {
-        id: "2",
+        id: "moduleId2",
+        courseId: "courseId",
         title: "Advanced Techniques",
+        description: "Learn advanced techniques for harvesting crops.",
         type: "video",
+        videoUrl: "https://example.com/module2.mp4",
         duration: "12 min",
-        description: "Learn advanced harvesting methods for better yield",
+        completed: false,
+        order: 2
     },
     {
-        id: "3",
-        title: "Final Quiz",
+        id: "moduleId3",
+        courseId: "courseId",
+        title: "Advanced Techniques Quiz",
+        description: "Test your knowledge with a comprehensive quiz.",
         type: "quiz",
+        quizId: "jhbfjhsebuhwe",
         duration: "Quiz",
-        description: "Test your harvesting knowledge",
+        completed: false,
+        order: 3
+    },
+    {
+        id: "moduleId4",
+        courseId: "courseId",
+        title: "Best Practices",
+        description: "Learn the best practices for effective harvesting.",
+        type: "video",
+        videoUrl: "https://example.com/module4.mp4",
+        duration: "8 min",
+        completed: false,
+        order: 4
+    },
+    {
+        id: "moduleId5",
+        courseId: "courseId",
+        title: "Final dtfg",
+        description: "Complete the final quiz to earn your certificate.",
+        type: "quiz",
+        quizId: "finalquizid123",
+        duration: "Quiz",
+        completed: false,
+        order: 5
     }
 ];
 
 const CourseDetails = ({ navigation, route }) => {
-    const courseId = route?.params?.courseId ?? 'courseId';
+    // const courseId = route?.params?.courseId ?? 'courseId';
+    const courseId = 'courseId';
     const user = auth.currentUser;
 
     const [course, setCourse] = useState(null);
@@ -299,30 +105,44 @@ const CourseDetails = ({ navigation, route }) => {
     const [loading, setLoading] = useState(true);
     const [enrolling, setEnrolling] = useState(false);
 
-    // Load data
+    // Load data from API with fallback to sample data
     const loadData = useCallback(async () => {
         try {
             setLoading(true);
-            const [c, mods] = await Promise.all([
-                getCourse(courseId),
-                getCourseModules(courseId)
-            ]);
 
-            // ✅ Use dummy data if Firebase returns null or empty
-            setCourse(c ?? dummyCourse);
-            setModules((mods && mods.length > 0) ? mods : dummyModules);
+            let courseData = null;
+            let modulesData = [];
 
-            if (user) {
-                const enroll = await getUserEnrollment(user.uid, courseId);
-                setEnrollment(enroll);
+            try {
+                // Try to fetch from API
+                courseData = await getCourse(courseId);
+                modulesData = await getCourseModules(courseId);
+                // console.log('Fetched course data from API', courseData);
+                // console.log('Fetched modules data from API', modulesData);
+            } catch (apiError) {
+                console.log('API Error, using sample data:', apiError.message);
             }
-        } catch (err) {
-            console.error(err);
-            Alert.alert('Error', err.message || 'Failed to load course');
 
-            // ✅ If there is an error, fallback to dummy data
-            setCourse(dummyCourse);
-            setModules(dummyModules);
+            // Use API data if available, otherwise use sample data
+            setCourse(courseData || sampleCourse);
+            setModules((modulesData && modulesData.length > 0) ? modulesData : sampleModules);
+
+            // Try to get enrollment data if user is logged in
+            if (user) {
+                try {
+                    const enrollmentData = await getUserEnrollment(user.uid, courseId);
+                    setEnrollment(enrollmentData);
+                } catch (enrollError) {
+                    console.log('Enrollment fetch error:', enrollError.message);
+                    setEnrollment(null);
+                }
+            }
+        } catch (error) {
+            console.error('Load data error:', error);
+            // Even on error, provide sample data
+            setCourse(sampleCourse);
+            setModules(sampleModules);
+            setEnrollment(null);
         } finally {
             setLoading(false);
         }
@@ -333,59 +153,92 @@ const CourseDetails = ({ navigation, route }) => {
     }, [loadData]);
 
     const handleEnrollNow = async () => {
-        if (!user) {
-            Alert.alert('Login required', 'Please log in to enroll');
-            navigation.navigate('Auth');
-            return;
-        }
+        // if (!user) {
+        //     Alert.alert('Login required', 'Please log in to enroll in this course');
+        //     navigation.navigate('Login');
+        //     return;
+        // }
+
+        // setEnrolling(true);
+        // try {
+        //     await enrollUserToCourse(user.uid, courseId);
+        //     const enrollmentData = await getUserEnrollment(user.uid, courseId);
+        //     setEnrollment(enrollmentData);
+        //     Alert.alert('Success!', 'You are now enrolled in this course!');
+        // } catch (error) {
+        //     console.error('Enrollment error:', error);
+        //     Alert.alert('Error', error.message || 'Failed to enroll. Please try again.');
+        // } finally {
+        //     setEnrolling(false);
+        // }
+
         setEnrolling(true);
-        try {
-            await enrollUserToCourse(user.uid, courseId);
-            const enroll = await getUserEnrollment(user.uid, courseId);
-            setEnrollment(enroll);
-            Alert.alert('Enrolled', 'You are now enrolled in this course!');
-        } catch (err) {
-            console.error(err);
-            Alert.alert('Error', err.message || 'Enrollment failed');
-        } finally {
+        setTimeout(() => {
             setEnrolling(false);
-        }
-    };
+            Alert.alert('Success!', 'You are now enrolled in this course!');
+        }, 1500);
+    }
+
 
     const handleModulePress = (module) => {
-        if (module.type === 'quiz') {
-            navigation.navigate('Quiz', { moduleId: module.id, courseId });
-        } else {
-            navigation.navigate('CourseVideo', { moduleId: module.id, courseId });
-        }
+        // if (!enrollment && course !== sampleCourse) {
+        //     Alert.alert('Enrollment Required', 'Please enroll in this course to access modules');
+        //     return;
+        // }
+
+        // if (module.type === 'quiz') {
+        //     navigation.navigate('Quiz', {
+        //         moduleId: module.id,
+        //         courseId,
+        //         quizId: module.quizId
+        //     });
+        // } else {
+        //     navigation.navigate('CourseVideo', {
+        //         moduleId: module.id,
+        //         courseId,
+        //         videoUrl: module.videoUrl
+        //     });
+        // }
+
+        navigation.navigate('CourseVideo', {
+            moduleId: module.id,
+            courseId,
+            videoUrl: module.videoUrl
+        });
     };
 
-    const toggleComplete = async (moduleId) => {
-        if (!user) {
-            Alert.alert('Login required', 'Please log in to update progress');
+    const toggleModuleComplete = async (moduleId) => {
+        if (!user || !enrollment) {
+            Alert.alert('Login required', 'Please log in to track progress');
             return;
         }
+
         try {
-            const isDone = enrollment?.progress?.[moduleId] === true;
-            await setModuleCompleted(user.uid, courseId, moduleId, !isDone);
-            const updated = await getUserEnrollment(user.uid, courseId);
-            setEnrollment(updated);
-        } catch (err) {
-            console.error(err);
-            Alert.alert('Error', 'Could not update progress');
+            const isCompleted = enrollment?.progress?.[moduleId] === true;
+            await setModuleCompleted(user.uid, courseId, moduleId, !isCompleted);
+            const updatedEnrollment = await getUserEnrollment(user.uid, courseId);
+            setEnrollment(updatedEnrollment);
+        } catch (error) {
+            console.error('Toggle complete error:', error);
+            Alert.alert('Error', 'Could not update progress. Please try again.');
         }
     };
 
     if (loading) {
         return (
-            <SafeAreaView className="flex-1 justify-center items-center">
-                <ActivityIndicator size="large" />
+            <SafeAreaView className="flex-1 justify-center items-center bg-white">
+                <ActivityIndicator size="large" color="#78BB1B" />
+                <Text className="mt-4 text-gray-600">Loading course details...</Text>
             </SafeAreaView>
         );
     }
 
-    const enrolled = !!enrollment;
+    const isEnrolled = !!enrollment;
     const totalModules = modules.length;
+    const completedModules = enrollment ?
+        Object.values(enrollment.progress || {}).filter(Boolean).length : 0;
+    const progressPercentage = totalModules > 0 ?
+        Math.round((completedModules / totalModules) * 100) : 0;
 
     return (
         <SafeAreaView className="flex-1 bg-white">
@@ -397,7 +250,7 @@ const CourseDetails = ({ navigation, route }) => {
                 >
                     <Feather name="chevron-left" size={20} color="white" />
                 </TouchableOpacity>
-                <Text className=" text-lg font-semibold">Course details</Text>
+                <Text className="text-lg font-semibold">Course Details</Text>
             </View>
 
             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
@@ -405,73 +258,111 @@ const CourseDetails = ({ navigation, route }) => {
                 <View className="bg-green-50 border border-lime-200 shadow-lg mx-4 mt-4 p-6 rounded-2xl">
                     <View className="flex-row items-start justify-between">
                         <View className="flex-1 pr-4">
-                            <Text className="text-xl font-bold mb-3">{course?.title}</Text>
+                            <Text className="text-xl font-bold mb-3">
+                                {course?.title}
+                            </Text>
+
+                            {/* Points Badge */}
                             <View className="flex-row items-center mb-4">
                                 <View className="bg-yellow-500 px-3 py-1 rounded-full flex-row items-center">
                                     <MaterialIcons name="stars" size={16} color="white" />
                                     <Text className="text-white text-sm font-semibold ml-1">
-                                        {course?.points ?? '1000+'} pts
+                                        {course?.points || '1000+'} pts
                                     </Text>
                                 </View>
                             </View>
+
+                            {/* Course Stats */}
                             <View className="flex-row items-center">
                                 <View className="flex-row items-center mr-4">
                                     <Feather name="clock" size={14} color="gray" />
                                     <Text className="text-gray-500 text-sm ml-1">
-                                        {Math.ceil((course?.duration ?? 0) / 60)}hrs
+                                        {Math.ceil((course?.duration || 420) / 60)}hrs
                                     </Text>
                                 </View>
                                 <View className="flex-row items-center">
                                     <Feather name="book-open" size={14} color="gray" />
-                                    <Text className="text-gray-500 text-sm ml-1">
-                                        {totalModules} modules
-                                    </Text>
+                                    <Text className="text-gray-500 text-sm ml-1">{totalModules} modules</Text>
                                 </View>
                             </View>
+
+                            {/* Progress Bar (only if enrolled) */}
+                            {isEnrolled && (
+                                <View className="mt-4">
+                                    <View className="flex-row justify-between items-center mb-1">
+                                        <Text className="text-sm text-gray-600">Progress</Text>
+                                        <Text className="text-sm font-semibold text-primary">
+                                            {progressPercentage}%
+                                        </Text>
+                                    </View>
+                                    <View className="w-full bg-gray-200 rounded-full h-2">
+                                        <View
+                                            className="bg-primary h-2 rounded-full"
+                                            style={{ width: `${progressPercentage}%` }}
+                                        />
+                                    </View>
+                                </View>
+                            )}
                         </View>
 
-                        {course?.thumbnail ? (
-                            <Image source={course.thumbnail} style={{ width: 140, height: 120, opacity: 0.9 }} />
-                        ) : <Image
+                        {/* Course Image */}
+                        <Image
+                            // source={course?.thumbnail ? { uri: course.thumbnail } : require('../../assets/images/course1.png')}
                             source={require('../../assets/images/course1.png')}
                             style={{ width: 140, height: 120, opacity: 0.9 }}
-                        />}
+                        />
                     </View>
                 </View>
 
-                {/* About */}
+                {/* About Section */}
                 <View className="px-4 mt-6">
-                    <Text className="text-xl font-bold text-gray-900 mb-3">About this course</Text>
-                    <Text className="text-gray-600 leading-6 mb-4">{course?.description}</Text>
-                </View>
+                    <Text className="text-xl font-bold text-gray-900 mb-3">
+                        About this course
+                    </Text>
+                    <Text className="text-gray-600 leading-6 mb-4">
+                        {course?.description}
+                    </Text>
 
-                {/* Certificate Badge */}
-                <View className="flex items-center justify-center">
-                    <View className="bg-green-50 p-4 rounded-xl flex-row items-center">
-                        <View className="w-10 h-10 bg-primary rounded-full items-center justify-center mr-3">
-                            <MaterialIcons name="verified" size={20} color="white" />
+                    {/* Certificate Badge */}
+                    <View className="flex items-center justify-center">
+                        <View className="bg-green-50 p-4 rounded-xl flex-row items-center">
+                            <View className="w-10 h-10 bg-primary rounded-full items-center justify-center mr-3">
+                                <MaterialIcons name="verified" size={20} color="white" />
+                            </View>
+                            <Text className="text-gray-700">
+                                Certificate by <Text className="font-semibold text-primaryDark">KrishiGo</Text>
+                            </Text>
                         </View>
-                        <Text className="text-gray-700">
-                            Certificate by <Text className="font-semibold text-primaryDark">KrishiGo</Text>
-                        </Text>
                     </View>
                 </View>
 
-                {/* Modules */}
-                <View className="px-4 mt-4">
-                    <Text className="text-xl font-bold text-gray-900 mb-4">Course modules</Text>
+                {/* Divider */}
+                <View className="items-center mt-6">
+                    <View className="w-80 h-0.5 bg-gray-300"></View>
+                </View>
 
-                    {Array.isArray(modules) && modules.map((module, index) => {
+                {/* Course Modules */}
+                <View className="px-4 mt-6">
+                    <Text className="text-xl font-bold text-gray-900 mb-4">
+                        Course modules
+                    </Text>
+
+                    {modules.map((module, index) => {
                         const isCompleted = enrollment?.progress?.[module.id] === true;
                         return (
                             <TouchableOpacity
                                 key={module.id}
                                 onPress={() => handleModulePress(module)}
-                                className=" mb-3 mx-2 flex-row items-center"
+                                className="mb-3 mx-2 flex-row items-center"
                                 activeOpacity={0.7}
                             >
+                                {/* Module Number/Status */}
                                 <View className="items-center justify-center bg-gray-100 border-[0.5px] border-primary rounded-2xl h-20 px-2 mr-2">
-                                    <View className="w-8 h-8 rounded-full items-center justify-center">
+                                    <TouchableOpacity
+                                        onPress={() => toggleModuleComplete(module.id)}
+                                        className="w-8 h-8 rounded-full items-center justify-center"
+                                        disabled={!isEnrolled}
+                                    >
                                         {isCompleted ? (
                                             <View className="w-8 h-8 bg-primary rounded-full items-center justify-center">
                                                 <Feather name="check" size={16} color="white" />
@@ -481,50 +372,68 @@ const CourseDetails = ({ navigation, route }) => {
                                                 <Text className="text-gray-600 font-semibold">{index + 1}</Text>
                                             </View>
                                         )}
-                                    </View>
+                                    </TouchableOpacity>
                                 </View>
 
-                                <View className=" flex-1 flex-row items-center bg-green-50 border-[0.5px] border-primary rounded-xl h-20 px-4">
+                                {/* Module Info */}
+                                <View className="flex-1 flex-row items-center bg-green-50 border-[0.5px] border-primary rounded-xl h-20 px-4">
                                     <View className="flex-1">
                                         <View className="flex-row items-center mb-1">
-                                            <Text className="text-gray-900 font-semibold text-base mr-2">{module.title}</Text>
-                                            <View className={`px-2 py-1 rounded-full ${module.type === 'quiz' ? 'bg-yellow-500/50' : 'bg-green-100'}`}>
-                                                <Text className={`${module.type === 'quiz' ? 'text-yellow-700' : 'text-lime-700'} text-xs font-medium`}>
+                                            <Text className="text-gray-900 font-semibold text-base mr-2">
+                                                {module.title}
+                                            </Text>
+                                            <View className={`px-2 py-1 rounded-full ${module.type === 'quiz' ? 'bg-yellow-500/50' : 'bg-green-100'
+                                                }`}>
+                                                <Text className={`${module.type === 'quiz' ? 'text-yellow-700' : 'text-lime-700'
+                                                    } text-xs font-medium`}>
                                                     {module.duration}
                                                 </Text>
                                             </View>
                                         </View>
                                         <Text className="text-gray-600 text-sm">
-                                            {module.description?.split(' ').slice(0, 10).join(' ')}...
+                                            {module.description?.split(' ').slice(0, 8).join(' ')}...
                                         </Text>
                                     </View>
 
+                                    {/* Play Button or Quiz Button */}
                                     <TouchableOpacity
-                                        className={`w-8 h-8 ${module.type === 'quiz' ? 'bg-yellow-500' : 'bg-primary'} rounded-full items-center justify-center ml-3`}
+                                        className={`w-8 h-8 ${module.type === 'quiz' ? 'bg-yellow-500' : 'bg-primary'
+                                            } rounded-full items-center justify-center ml-3`}
                                         onPress={() => handleModulePress(module)}
                                     >
-                                        <Feather name={module.type === 'quiz' ? "zap" : "play"} size={14} color="white" />
+                                        <Feather
+                                            name={module.type === 'quiz' ? "zap" : "play"}
+                                            size={14}
+                                            color="white"
+                                        />
                                     </TouchableOpacity>
                                 </View>
                             </TouchableOpacity>
                         );
                     })}
                 </View>
+
+                {/* Spacer for bottom button */}
+                <View className="h-20" />
             </ScrollView>
 
             {/* Enroll Button */}
             <View className="px-4 pb-6 bg-white border-t border-gray-100">
                 <TouchableOpacity
                     onPress={handleEnrollNow}
-                    className="bg-primary py-4 rounded-xl items-center"
+                    className={`py-4 rounded-xl items-center ${isEnrolled ? 'bg-green-500' : 'bg-primary'
+                        }`}
                     activeOpacity={0.8}
-                    disabled={enrolling || enrolled}
+                    disabled={enrolling || isEnrolled}
                 >
                     <Text className="text-white font-semibold text-lg">
-                        {enrolled ? 'Enrolled' : (enrolling ? 'Enrolling...' : 'Enroll now')}
+                        {isEnrolled ? '✓ Enrolled' : (enrolling ? 'Enrolling...' : 'Enroll now')}
                     </Text>
                 </TouchableOpacity>
             </View>
+
+            {/* AI Chat Space */}
+            <AIChatSpace />
         </SafeAreaView>
     );
 };

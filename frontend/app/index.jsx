@@ -1,6 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import About from '../components/About';
-import CourseDetails from '../components/CoursesComponents/CourseDetails';
 import CourseVideo from '../components/CoursesComponents/CourseVideo';
 import { QuizScreen } from '../components/Quiz';
 import SavedCourses from '../components/CoursesComponents/SavedCourses';
@@ -11,6 +10,7 @@ import '../global.css';
 import Login from '../screens/LoginScreen/Login';
 import Register from '../screens/LoginScreen/Register';
 import RootLayout from './MainLayout';
+import CourseDetails from '../components/CoursesComponents/CourseDetails';
 
 const Stack = createNativeStackNavigator();
 

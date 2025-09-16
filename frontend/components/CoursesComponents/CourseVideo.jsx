@@ -32,7 +32,7 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
 
 `;
 
-    const youtubeVideoId = 'Eq3BXhqW_Eo';
+    const youtubeVideoId = 'eCwRVJyjKA4';
 
     const handlePlayPause = () => {
         setShowPlayer(true);
@@ -135,8 +135,9 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
                     <TouchableOpacity
                         className="bg-primary py-4 rounded-xl items-center"
                         activeOpacity={0.8}
+                        onPress={() => navigation?.goBack()}
                     >
-                        <Text className="text-white font-semibold text-lg">Next</Text>
+                        <Text className="text-white font-semibold text-lg">Back</Text>
                     </TouchableOpacity>
                 </View>
 
