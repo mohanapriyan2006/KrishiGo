@@ -1,54 +1,57 @@
-import {
-    GoogleAuthProvider,
-    signInWithCredential,
-} from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import * as Google from "expo-auth-session/providers/google";
-import * as WebBrowser from "expo-web-browser";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import { Alert } from "react-native";
-import Constants from "expo-constants";
 
-WebBrowser.maybeCompleteAuthSession();
+export const handleRegister = async ({
+	auth,
+	db,
+	formData,
+	validateForm,
+	setLoading,
+	navigation,
+	setErrors,
+}) => {
+	const isValid = await validateForm();
+	if (!isValid) return;
 
-const {
-    EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-    EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
-    EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
-} = Constants.expoConfig.extra || process.env;
+	setLoading(true);
+	try {
+		// Create user in Firebase Auth
+		const userCredential = await createUserWithEmailAndPassword(
+			auth,
+			formData.email,
+			formData.password
+		);
+		const user = userCredential.user;
 
-// Google Registration (Expo + .env)
-export const handleGoogleRegister = ({ auth, db, navigation }) => {
-    const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-        clientId: EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-        iosClientId: EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
-        androidClientId: EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
-    });
+		// Save user data in Firestore
+		await setDoc(doc(db, "users", user.uid), {
+			authId: user.uid,
+			firstName: formData.firstName,
+			lastName: formData.lastName,
+			email: formData.email,
+			phoneNumber: formData.phoneNumber,
+			address: {
+				street: formData.street,
+				city: formData.city,
+				state: formData.state,
+				zipCode: formData.zipCode,
+				country: formData.country,
+			},
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString(),
+		});
 
-    const signIn = async () => {
-        try {
-            const result = await promptAsync();
-
-            if (result.type === "success") {
-                const { id_token } = result.params;
-                const credential = GoogleAuthProvider.credential(id_token);
-                const userCredential = await signInWithCredential(auth, credential);
-                const user = userCredential.user;
-
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (!userDoc.exists()) {
-                    await saveGoogleUserToFirestore(db, user);
-                }
-
-                Alert.alert("Success", "Google registration successful!");
-                navigation.navigate("Main");
-            } else {
-                Alert.alert("Cancelled", "Google sign-in was cancelled.");
-            }
-        } catch (error) {
-            console.error("Google sign-in error:", error);
-            Alert.alert("Error", "Google registration failed. Please try again.");
-        }
-    };
-
-    return { signIn, request, response };
+		Alert.alert("Success", "Account created successfully!");
+		navigation.navigate("Main");
+	} catch (error) {
+		console.error("Registration error:", error);
+		if (error.code === "auth/email-already-in-use") {
+			Alert.alert("Error", "Email is already in use.");
+		} else {
+			Alert.alert("Error", "Registration failed. Please try again.");
+		}
+	} finally {
+		setLoading(false);
+	}
 };
