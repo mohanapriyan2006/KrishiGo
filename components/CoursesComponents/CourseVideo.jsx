@@ -1,7 +1,8 @@
 import { Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
+    Alert,
     Dimensions,
     SafeAreaView,
     ScrollView,
@@ -12,13 +13,98 @@ import {
 } from 'react-native';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import AIChatSpace from '../AIComponents/AIChatSpace';
+import { getUserEnrollment, setModuleCompleted } from '../../api/courses/courses_service';
+import { DataContext } from '../../hooks/DataContext';
 
 
 const { width } = Dimensions.get('window');
 
-const CourseVideo = ({ navigation }) => {
+const CourseVideo = ({ navigation, route }) => {
+
+    const { user, modules } = useContext(DataContext);
+
+    // Get parameters from navigation
+    const moduleId = route?.params?.moduleId;
+    const courseId = route?.params?.courseId;
+    const courseTitle = route?.params?.courseTitle || "Course Title";
+
+    let youtubeVideoId = 'eCwRVJyjKA4';
+    youtubeVideoId = route?.params?.videoUrl || youtubeVideoId;
+
     const [isPlaying, setIsPlaying] = useState(false);
     const [showPlayer, setShowPlayer] = useState(false);
+
+    const [isCompleted, setIsCompleted] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
+
+    const [moduleData, setModuleData] = useState(null);
+
+    useEffect(() => {
+        if (modules && moduleId) {
+            const mod = modules.find(m => m.id === moduleId);
+            setModuleData(mod);
+        }
+    }, [modules, moduleId]);
+
+
+    // Check if module is already completed when component loads
+    useEffect(() => {
+        const checkModuleCompletion = async () => {
+            if (user && courseId && moduleId) {
+                try {
+                    const enrollment = await getUserEnrollment(user.uid, courseId);
+                    if (enrollment?.progress?.[moduleId]) {
+                        setIsCompleted(true);
+                    }
+                } catch (error) {
+                    console.error('Error checking module completion:', error);
+                }
+            }
+        };
+
+        checkModuleCompletion();
+    }, [user, courseId, moduleId]);
+
+    // Handle marking module as completed
+    const handleMarkCompleted = async () => {
+        if (!user) {
+            Alert.alert('Login Required', 'Please log in to track your progress');
+            return;
+        }
+
+        if (!courseId || !moduleId) {
+            Alert.alert('Error', 'Course or module information is missing');
+            return;
+        }
+
+        setIsUpdating(true);
+        try {
+            const newCompletedState = !isCompleted;
+            await setModuleCompleted(user.uid, courseId, moduleId, newCompletedState);
+            setIsCompleted(newCompletedState);
+
+            Alert.alert(
+                'Success!',
+                newCompletedState ? 'Module marked as completed!' : 'Module marked as incomplete',
+                [
+                    {
+                        text: 'Continue Learning',
+                        onPress: () => navigation?.goBack()
+                    },
+                    {
+                        text: 'Stay Here',
+                        style: 'cancel'
+                    }
+                ]
+            );
+        } catch (error) {
+            console.error('Error updating module completion:', error);
+            Alert.alert('Error', 'Failed to update progress. Please try again.');
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
 
     const transcript = `Efficient harvesting is a multi-stage process that begins long before the first crop is picked. It is rooted in meticulous planning and the integration of appropriate technology. The first critical step is precision timing, which involves monitoring crop maturity indicators specific to each plant—such as color, size, sugar content (Brix level), or firmness—to harvest at the exact moment of peak quality and marketable yield, ensuring the product has the best possible shelf life and nutritional value. 
     
@@ -32,7 +118,6 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
 
 `;
 
-    const youtubeVideoId = 'Eq3BXhqW_Eo';
 
     const handlePlayPause = () => {
         setShowPlayer(true);
@@ -64,7 +149,7 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
                 {/* Course Title */}
                 <View className="p-4 bg-white">
                     <Text className="text-xl font-bold text-gray-900 text-center leading-8">
-                        How to Harvest more effectively
+                        {courseTitle}
                     </Text>
                 </View>
 
@@ -109,10 +194,10 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
                 {/* Introduction Section */}
                 <View className="px-4 mb-4 ">
                     <Text className="text-xl text-center font-bold text-gray-900">
-                        Introduction
+                        {moduleData?.title || 'Module Title'}
                     </Text>
                     <Text className="text-gray-600 text-center leading-6">
-                        In this learning you will be learning how to harvest crops more efficiently and how sell them in a higher profit ratio
+                        {moduleData?.description || 'Module description goes here. This is a brief overview of the video content.'}
                     </Text>
                 </View>
 
@@ -130,15 +215,34 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
                 </View>
 
 
-                {/* Next Button */}
-                <View className="px-4 pb-6 bg-white border-t border-gray-100">
+                {/* Action Buttons */}
+                <View className="flex-row items-center justify-center mb-10 gap-4 px-4">
                     <TouchableOpacity
-                        className="bg-primary py-4 rounded-xl items-center"
+                        className="flex-1 bg-green-50 border-[0.5px] border-lime-500 py-4 rounded-xl items-center"
                         activeOpacity={0.8}
+                        onPress={() => navigation?.goBack()}
                     >
-                        <Text className="text-white font-semibold text-lg">Next</Text>
+                        <Text className="text-primaryDark font-semibold ">Back</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        className={`flex-1 py-4 rounded-xl items-center ${isCompleted ? 'bg-primary' : 'bg-green-50 border-[0.5px] border-lime-500'
+                            }`}
+                        activeOpacity={0.8}
+                        onPress={handleMarkCompleted}
+                        disabled={isUpdating}
+                    >
+                        <Text className={`${isCompleted ? 'text-white' : 'text-primaryDark'} font-semibold`}>
+                            {isUpdating
+                                ? 'Updating...'
+                                : isCompleted
+                                    ? '✓ Completed'
+                                    : 'Mark as completed'
+                            }
+                        </Text>
                     </TouchableOpacity>
                 </View>
+
 
             </ScrollView>
 

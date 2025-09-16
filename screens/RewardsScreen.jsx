@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import {
     Alert,
+    Clipboard,
     Image,
     SafeAreaView,
     ScrollView,
@@ -26,11 +27,12 @@ const RewardsScreen = () => {
     ]);
 
     const leaderboardData = [
-        { rank: 119, name: 'You', points: 11501, isCurrentUser: true },
-        { rank: 1, name: 'Vimal', points: 85010, isCurrentUser: false },
-        { rank: 2, name: 'Kamal', points: 85010, isCurrentUser: false },
-        { rank: 3, name: 'Anand', points: 85010, isCurrentUser: false },
+        { rank: 119, name: 'You', points: 91501, isCurrentUser: true },
+        { rank: 1, name: 'Vimal', points: 85050, isCurrentUser: false },
+        { rank: 2, name: 'Kamal', points: 85030, isCurrentUser: false },
+        { rank: 3, name: 'Anand', points: 85020, isCurrentUser: false },
         { rank: 4, name: 'Ajith', points: 85010, isCurrentUser: false },
+        { rank: 5, name: 'Rajini', points: 85000, isCurrentUser: false },
     ];
 
     const handleRedeemPoints = () => {
@@ -66,6 +68,7 @@ const RewardsScreen = () => {
     };
 
     const copyReferralCode = () => {
+        Clipboard.setString('krishigo.in/ref-3213');
         Alert.alert(
             'Referral Code Copied',
             'krishigo.in/ref-3213 has been copied to clipboard',
@@ -192,10 +195,10 @@ const RewardsScreen = () => {
                 <RewardPopUp visible={rewardPopUpVisible} onClose={() => setRewardPopUpVisible(false)} points={rewardPoints} />
 
                 {/* Redeem Screen */}
-                <RedeemScreen 
-                    visible={redeemScreenVisible} 
-                    onClose={() => setRedeemScreenVisible(false)} 
-                    totalPoints={totalPoints} 
+                <RedeemScreen
+                    visible={redeemScreenVisible}
+                    onClose={() => setRedeemScreenVisible(false)}
+                    totalPoints={totalPoints}
                 />
 
                 {/* Leaderboard Section */}
