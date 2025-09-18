@@ -239,7 +239,8 @@ const DataProvider = ({ children }) => {
     const [courseId, setCourseId] = useState("courseId"); // Replace with actual course ID or get from props/context
     const [course, setCourse] = useState(null);
     const [modules, setModules] = useState([]);
-    const [enrollment, setEnrollment] = useState(null);
+    // const [enrollment, setEnrollment] = useState(null);
+    const [enrollment, setEnrollment] = useState(false);
 
 
     return (

@@ -1,19 +1,18 @@
-import React, { useEffect, useState, useCallback, useContext } from 'react';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
+import { useCallback, useContext, useEffect } from 'react';
 import {
+    ActivityIndicator,
+    Alert,
     SafeAreaView,
     ScrollView,
     Text,
     TouchableOpacity,
-    View,
-    ActivityIndicator,
-    Alert
+    View
 } from 'react-native';
-import { getCourse, getCourseModules, enrollUserToCourse, getUserEnrollment, setModuleCompleted } from '../../api/courses/courses_service';
-import AIChatSpace from '../AIComponents/AIChatSpace';
+import { getCourse, getCourseModules, getUserEnrollment } from '../../api/courses/courses_service';
 import { DataContext } from '../../hooks/DataContext';
-import { isLoading } from 'expo-font';
+import AIChatSpace from '../AIComponents/AIChatSpace';
 
 // ✅ Sample fallback data based on your schema
 const sampleCourse = {
@@ -179,6 +178,7 @@ const CourseDetails = ({ navigation, route }) => {
         setLoading(prev => ({ ...prev, enrolling: true }));
         setTimeout(() => {
             setLoading(prev => ({ ...prev, enrolling: false }));
+            setEnrollment(true);
             Alert.alert('Success!', 'You are now enrolled in this course!');
         }, 1500);
     }
@@ -426,7 +426,7 @@ const CourseDetails = ({ navigation, route }) => {
             <View className="px-4 pb-6 bg-white border-t border-gray-100">
                 <TouchableOpacity
                     onPress={handleEnrollNow}
-                    className={`py-4 rounded-xl items-center ${isEnrolled ? 'bg-green-500' : 'bg-primary'
+                    className={`py-4 rounded-xl items-center ${isEnrolled ? 'hidden' : 'block bg-primary'
                         }`}
                     activeOpacity={0.8}
                     disabled={loading.enrolling || isEnrolled}

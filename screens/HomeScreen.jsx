@@ -198,7 +198,7 @@ export default function Home() {
                             <Text className="text-xs text-[#999]">Earn ₹/coin! | Refer Points | Make a Preorder | Grow Vegetation</Text>
                         </View>
                         <View className="bg-primary w-10 h-10 rounded-full justify-center items-center">
-                            <Text className="text-white text-xs font-bold">₹1</Text>
+                            <Text className="text-white text-xs font-bold">₹50</Text>
                         </View>
                     </View>
                 </TouchableOpacity>

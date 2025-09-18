@@ -2,19 +2,18 @@ import { Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useContext, useEffect, useState } from 'react';
 import {
-    Alert,
     Dimensions,
     SafeAreaView,
     ScrollView,
     StatusBar,
     Text,
     TouchableOpacity,
-    View,
+    View
 } from 'react-native';
 import YoutubePlayer from 'react-native-youtube-iframe';
-import AIChatSpace from '../AIComponents/AIChatSpace';
-import { getUserEnrollment, setModuleCompleted } from '../../api/courses/courses_service';
+import { getUserEnrollment } from '../../api/courses/courses_service';
 import { DataContext } from '../../hooks/DataContext';
+import AIChatSpace from '../AIComponents/AIChatSpace';
 
 
 const { width } = Dimensions.get('window');
@@ -67,42 +66,44 @@ const CourseVideo = ({ navigation, route }) => {
 
     // Handle marking module as completed
     const handleMarkCompleted = async () => {
-        if (!user) {
-            Alert.alert('Login Required', 'Please log in to track your progress');
-            return;
-        }
+        // if (!user) {
+        //     Alert.alert('Login Required', 'Please log in to track your progress');
+        //     return;
+        // }
 
-        if (!courseId || !moduleId) {
-            Alert.alert('Error', 'Course or module information is missing');
-            return;
-        }
+        // if (!courseId || !moduleId) {
+        //     Alert.alert('Error', 'Course or module information is missing');
+        //     return;
+        // }
 
-        setIsUpdating(true);
-        try {
-            const newCompletedState = !isCompleted;
-            await setModuleCompleted(user.uid, courseId, moduleId, newCompletedState);
-            setIsCompleted(newCompletedState);
+        // setIsUpdating(true);
+        // try {
+        //     const newCompletedState = !isCompleted;
+        //     await setModuleCompleted(user.uid, courseId, moduleId, newCompletedState);
+        //     setIsCompleted(newCompletedState);
 
-            Alert.alert(
-                'Success!',
-                newCompletedState ? 'Module marked as completed!' : 'Module marked as incomplete',
-                [
-                    {
-                        text: 'Continue Learning',
-                        onPress: () => navigation?.goBack()
-                    },
-                    {
-                        text: 'Stay Here',
-                        style: 'cancel'
-                    }
-                ]
-            );
-        } catch (error) {
-            console.error('Error updating module completion:', error);
-            Alert.alert('Error', 'Failed to update progress. Please try again.');
-        } finally {
-            setIsUpdating(false);
-        }
+        //     Alert.alert(
+        //         'Success!',
+        //         newCompletedState ? 'Module marked as completed!' : 'Module marked as incomplete',
+        //         [
+        //             {
+        //                 text: 'Continue Learning',
+        //                 onPress: () => navigation?.goBack()
+        //             },
+        //             {
+        //                 text: 'Stay Here',
+        //                 style: 'cancel'
+        //             }
+        //         ]
+        //     );
+        // } catch (error) {
+        //     console.error('Error updating module completion:', error);
+        //     Alert.alert('Error', 'Failed to update progress. Please try again.');
+        // } finally {
+        //     setIsUpdating(false);
+        // }
+
+        navigation?.goBack();
     };
 
 
