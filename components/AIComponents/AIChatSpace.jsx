@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 // Firebase operations are encapsulated in ../ai/ai_firebase
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 import { useEffect, useRef, useState } from "react";
 import {
 	ActivityIndicator,
@@ -120,7 +120,10 @@ const ChatPopup = ({ visible, onClose }) => {
 		await saveMessageToFirebase(userMessage);
 
 		try {
-			const botResponseText = await callGeminiAPIExternal(currentInput, messages);
+			const botResponseText = await callGeminiAPIExternal(
+				currentInput,
+				messages
+			);
 
 			const botResponse = {
 				id: (Date.now() + 1).toString(),
@@ -144,13 +147,15 @@ const ChatPopup = ({ visible, onClose }) => {
 
 	// Image picker functions
 	const requestPermissions = async () => {
-		const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
-		const { status: galleryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+		const { status: cameraStatus } =
+			await ImagePicker.requestCameraPermissionsAsync();
+		const { status: galleryStatus } =
+			await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-		if (cameraStatus !== 'granted' || galleryStatus !== 'granted') {
+		if (cameraStatus !== "granted" || galleryStatus !== "granted") {
 			Alert.alert(
-				'Permissions Required',
-				'Please grant camera and photo library permissions to upload images.'
+				"Permissions Required",
+				"Please grant camera and photo library permissions to upload images."
 			);
 			return false;
 		}
@@ -173,7 +178,7 @@ const ChatPopup = ({ visible, onClose }) => {
 				setShowAttachmentOptions(false);
 			}
 		} catch (_error) {
-			Alert.alert('Error', 'Failed to take photo. Please try again.');
+			Alert.alert("Error", "Failed to take photo. Please try again.");
 		}
 	};
 
@@ -193,7 +198,7 @@ const ChatPopup = ({ visible, onClose }) => {
 				setShowAttachmentOptions(false);
 			}
 		} catch (_error) {
-			Alert.alert('Error', 'Failed to select image. Please try again.');
+			Alert.alert("Error", "Failed to select image. Please try again.");
 		}
 	};
 
@@ -236,10 +241,11 @@ const ChatPopup = ({ visible, onClose }) => {
 					/>
 				)}
 				<View
-					className={`max-w-[80%] px-4 py-3 rounded-2xl ${message.isBot
-						? "bg-lime-300/30 border border-primary rounded-tl-none"
-						: "bg-primary rounded-tr-none"
-						}`}
+					className={`max-w-[80%] px-4 py-3 rounded-2xl ${
+						message.isBot
+							? "bg-lime-300/30 border border-primary rounded-tl-none"
+							: "bg-primary rounded-tr-none"
+					}`}
 				>
 					{/* Display image if present */}
 					{message.image && (
@@ -251,15 +257,17 @@ const ChatPopup = ({ visible, onClose }) => {
 						/>
 					)}
 					<Text
-						className={`text-sm leading-5 ${message.isBot ? "text-gray-800" : "text-white"
-							}`}
+						className={`text-sm leading-5 ${
+							message.isBot ? "text-gray-800" : "text-white"
+						}`}
 						selectable
 					>
 						{formatTextWithBold(message.text)}
 					</Text>
 					<Text
-						className={`text-xs mt-2 ${message.isBot ? "text-gray-500" : "text-white/70"
-							}`}
+						className={`text-xs mt-2 ${
+							message.isBot ? "text-gray-500" : "text-white/70"
+						}`}
 					>
 						{message.timestamp?.toLocaleTimeString([], {
 							hour: "2-digit",
@@ -354,14 +362,16 @@ const ChatPopup = ({ visible, onClose }) => {
 							{selectedImage && (
 								<View className="mb-3 bg-white rounded-lg p-3">
 									<View className="flex-row items-center justify-between mb-2">
-										<Text className="text-gray-700 font-medium">Selected Image</Text>
+										<Text className="text-gray-700 font-medium">
+											Selected Image
+										</Text>
 										<TouchableOpacity onPress={removeSelectedImage}>
 											<Ionicons name="close-circle" size={20} color="#ef4444" />
 										</TouchableOpacity>
 									</View>
 									<Image
 										source={{ uri: selectedImage }}
-										style={{ width: '100%', height: 120 }}
+										style={{ width: "100%", height: 120 }}
 										className="rounded-lg"
 										resizeMode="cover"
 									/>
@@ -400,7 +410,9 @@ const ChatPopup = ({ visible, onClose }) => {
 										onPress={pickImageFromCamera}
 									>
 										<Ionicons name="camera" size={20} color="#314C1C" />
-										<Text className="ml-3 text-gray-800 font-medium">Take Photo</Text>
+										<Text className="ml-3 text-gray-800 font-medium">
+											Take Photo
+										</Text>
 									</TouchableOpacity>
 									<View className="h-px bg-gray-200 mx-2" />
 									<TouchableOpacity
@@ -408,7 +420,9 @@ const ChatPopup = ({ visible, onClose }) => {
 										onPress={pickImageFromGallery}
 									>
 										<Ionicons name="image" size={20} color="#314C1C" />
-										<Text className="ml-3 text-gray-800 font-medium">Choose from Gallery</Text>
+										<Text className="ml-3 text-gray-800 font-medium">
+											Choose from Gallery
+										</Text>
 									</TouchableOpacity>
 								</View>
 							)}
@@ -416,7 +430,9 @@ const ChatPopup = ({ visible, onClose }) => {
 							<View className="flex-row items-center bg-white rounded-full px-4 py-2 shadow-sm border border-gray-200">
 								<TouchableOpacity
 									className="mr-3 bg-lime-200 p-2 rounded-full"
-									onPress={() => setShowAttachmentOptions(!showAttachmentOptions)}
+									onPress={() =>
+										setShowAttachmentOptions(!showAttachmentOptions)
+									}
 								>
 									<Ionicons name="attach" size={20} color="#314C1C" />
 								</TouchableOpacity>
@@ -435,10 +451,11 @@ const ChatPopup = ({ visible, onClose }) => {
 
 								<TouchableOpacity
 									onPress={sendMessage}
-									className={`ml-3 rounded-full p-2 ${(inputText.trim() || selectedImage) && !isLoading
-										? "bg-primary"
-										: "bg-gray-300"
-										}`}
+									className={`ml-3 rounded-full p-2 ${
+										(inputText.trim() || selectedImage) && !isLoading
+											? "bg-primary"
+											: "bg-gray-300"
+									}`}
 									disabled={!(inputText.trim() || selectedImage) || isLoading}
 								>
 									{isLoading ? (
@@ -456,14 +473,14 @@ const ChatPopup = ({ visible, onClose }) => {
 						{/* Backdrop */}
 						<Animated.View
 							style={{
-								position: 'absolute',
+								position: "absolute",
 								top: 0,
 								left: 0,
 								right: 0,
 								bottom: 0,
-								backgroundColor: '#0101014e',
+								backgroundColor: "#0101014e",
 								opacity: overlayAnimation,
-								pointerEvents: isSidebarOpen ? 'auto' : 'none',
+								pointerEvents: isSidebarOpen ? "auto" : "none",
 							}}
 						>
 							<TouchableOpacity
@@ -476,16 +493,16 @@ const ChatPopup = ({ visible, onClose }) => {
 						{/* Sliding Sidebar - Always rendered */}
 						<Animated.View
 							style={{
-								position: 'absolute',
+								position: "absolute",
 								left: sidebarAnimation,
 								top: 0,
 								bottom: 0,
 								width: 280,
-								backgroundColor: '#f9fafb',
+								backgroundColor: "#f9fafb",
 								borderRightWidth: 1,
-								borderRightColor: '#e5e7eb',
+								borderRightColor: "#e5e7eb",
 								elevation: 16,
-								shadowColor: '#000',
+								shadowColor: "#000",
 								shadowOffset: { width: 2, height: 0 },
 								shadowOpacity: 0.25,
 								shadowRadius: 8,
@@ -512,8 +529,9 @@ const ChatPopup = ({ visible, onClose }) => {
 											loadChat(chat.id);
 											closeSidebar(); // Close sidebar after selecting chat
 										}}
-										className={`p-3 rounded-lg mb-2 flex-row items-center justify-between ${currentChatId === chat.id ? "bg-primary/10" : "bg-white"
-											}`}
+										className={`p-3 rounded-lg mb-2 flex-row items-center justify-between ${
+											currentChatId === chat.id ? "bg-primary/10" : "bg-white"
+										}`}
 									>
 										<View className="flex-1">
 											<Text
@@ -549,7 +567,11 @@ const ChatPopup = ({ visible, onClose }) => {
 											}}
 											className="ml-2"
 										>
-											<Ionicons name="trash-outline" size={16} color="#ef4444" />
+											<Ionicons
+												name="trash-outline"
+												size={16}
+												color="#ef4444"
+											/>
 										</TouchableOpacity>
 									</TouchableOpacity>
 								))}
