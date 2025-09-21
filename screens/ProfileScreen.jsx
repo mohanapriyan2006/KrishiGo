@@ -1,15 +1,19 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { useContext, useEffect, useState } from 'react';
+import * as MediaLibrary from 'expo-media-library';
+import * as Sharing from 'expo-sharing';
+import { useContext, useEffect, useRef, useState } from 'react';
 import {
     Alert,
     Image,
     SafeAreaView,
     ScrollView,
+    Share,
     Text,
     TouchableOpacity,
     View
 } from 'react-native';
+import ViewShot from 'react-native-view-shot';
 import RoundProgress from '../components/RoundProgress';
 import ChangeLanguageModal from '../components/SettingsComponents/ChangeLanguageModal';
 import EditProfilePhoto from '../components/SettingsComponents/EditProfilePhoto';
@@ -19,6 +23,11 @@ import { DataContext } from '../hooks/DataContext';
 const ProfileScreen = () => {
     const navigation = useNavigation();
     const { userDetails } = useContext(DataContext);
+    const viewShotRef = useRef();
+
+    const [showProfileForCapture, setShowProfileForCapture] = useState(false);
+
+    // User profile state
 
     const [userProfile, setUserProfile] = useState({
         firstName: 'Vijay',
@@ -82,10 +91,6 @@ const ProfileScreen = () => {
         }
     ];
 
-    const handleEditProfilePhoto = () => {
-        setShowPhotoModal(true);
-    };
-
     useEffect(() => {
         if (userDetails) {
             setUserProfile(prev => ({
@@ -119,6 +124,70 @@ const ProfileScreen = () => {
         );
     };
 
+    const handleShareProfile = async () => {
+        try {
+
+            await setShowProfileForCapture(true);
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second to ensure rendering
+            console.log('Starting image capture...');
+
+            // Check if ref exists
+            if (!viewShotRef.current) {
+                Alert.alert('Error', 'Unable to capture profile image');
+                return;
+            }
+
+            // Request media library permissions
+            const { status } = await MediaLibrary.requestPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permission needed', 'Please grant media library permission to save and share images');
+                return;
+            }
+
+            // Capture the view as image
+            const uri = await viewShotRef.current.capture({
+                format: 'png',
+                quality: 0.9,
+                result: 'tmpfile'
+            });
+
+            console.log('Image captured successfully:', uri);
+
+            // Create a better filename with timestamp (optional; not required when using MediaLibrary URIs)
+            // const timestamp = new Date().getTime();
+            // const filename = `KrishiGo_Profile_${timestamp}.png`;
+
+            // Save to device's Photos/Gallery to obtain a share-friendly URI (content:// on Android)
+            const asset = MediaLibrary.createAssetAsync(uri);
+            try {
+                await MediaLibrary.createAlbumAsync('KrishiGo', asset, false);
+            } catch (e) {
+                // Album may already exist; ignore
+                console.log('Album create skipped/failed:', e?.message);
+            }
+
+            console.log('Image saved to gallery successfully');
+
+            // Prefer expo-sharing for direct file sharing (WhatsApp/Telegram/etc.)
+            const shareUri = await asset?.uri || uri;
+            if (await Sharing.isAvailableAsync()) {
+                await Sharing.shareAsync(shareUri, {
+                    mimeType: 'image/png',
+                    UTI: 'public.png',
+                    dialogTitle: 'Share my KrishiGo Profile',
+                });
+            } else {
+                // Fallback to RN Share
+                await Share.share({ url: shareUri, message: 'My KrishiGo Profile' });
+            }
+        } catch (error) {
+            console.error('Share error:', error);
+            Alert.alert('Error', `Unable to share profile: ${error.message}`);
+        } finally {
+            setShowProfileForCapture(false);
+        }
+    };
+
     const getRankIcon = (rank) => {
         if (rank === 1) return '🥇';
         if (rank === 2) return '🥈';
@@ -126,26 +195,180 @@ const ProfileScreen = () => {
         return `#${rank}`;
     };
 
-    const getSustainabilityLevel = (score) => {
-        if (score >= 90) return { level: 'Eco Master', emoji: '🌍', color: 'text-green-700' };
-        if (score >= 80) return { level: 'Sustainability Pro', emoji: '🌱', color: 'text-green-600' };
-        if (score >= 70) return { level: 'Green Enthusiast', emoji: '🍃', color: 'text-green-500' };
-        if (score >= 60) return { level: 'Earth Friendly', emoji: '🌿', color: 'text-yellow-600' };
-        return { level: 'Getting Started', emoji: '🌱', color: 'text-orange-500' };
-    };
+    const viewProfileForCapture = () => {
+        return (
+            <ViewShot
+                ref={viewShotRef}
+                options={{
+                    fileName: 'KrishiGo-Profile',
+                    format: 'png',
+                    quality: 0.8,
+                    result: 'tmpfile'
+                }
+                }
+                style={{ backgroundColor: 'white' }
+                }
+            >
+                <View className="p-4">
+                    {/* App Branding */}
+                    <View className="items-center mb-4">
+                        <Text className="text-2xl font-bold text-primaryDark">KrishiGo</Text>
+                        <Text className="text-gray-600 text-sm">Growing Together for Sustainable Future</Text>
+                    </View>
 
-    const sustainabilityInfo = getSustainabilityLevel(userProfile.sustainabilityScore);
+                    {/* Hero Profile Card */}
+                    <View className="bg-primary mx-4 mt-4 rounded-3xl p-6 shadow-lg relative">
+                        <View className="flex-row items-center">
+                            {/* Profile Avatar */}
+                            <View>
+                                <View className=" bg-green-50 rounded-full items-center justify-center mr-4 p-4">
+                                    <Ionicons name="person" size={50} color="#314C1C" />
+                                </View>
+                            </View>
+
+                            {/* User Info */}
+                            <View className="flex-1">
+                                <Text className="text-xl font-bold text-white mb-1">
+                                    {userProfile.firstName} {userProfile.lastName}
+                                </Text>
+                                <Text className="text-white font-semibold text-base mb-2">
+                                    {userProfile.points.toLocaleString()} pts  <Text className="text-yellow-400 font-semibold text-base">
+                                        {getRankIcon(userProfile.rank)}
+                                    </Text>
+                                </Text>
+
+                                {/* Stats Row */}
+                                <View className="flex-row">
+                                    {/* Hours */}
+                                    <View className="bg-green-50 px-3 py-1 rounded-lg mr-3">
+                                        <Text className="text-primaryDark text-xs font-semibold">{userProfile.activeHours} hrs</Text>
+                                        <Text className="text-primaryDark text-xs">Active hours</Text>
+                                    </View>
+
+                                    {/* Courses */}
+                                    <View className="bg-green-50 px-3 py-1 rounded-lg">
+                                        <Text className="text-primaryDark text-xs font-semibold">{userProfile.coursesCompleted} courses</Text>
+                                        <Text className="text-primaryDark text-xs">Completed</Text>
+                                    </View>
+                                </View>
+                            </View>
+
+                            {/* Streak Badge */}
+                            <View className="absolute top-2 right-2">
+                                <View className="bg-orange-500 px-3 py-2 rounded-full flex-row items-center">
+                                    <Ionicons name="flame" size={16} color="white" />
+                                    <Text className="text-white font-bold text-sm ml-1">
+                                        {userProfile.streakDays}
+                                    </Text>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+
+                    {/* Sustainability Score */}
+                    <View className="flex-row p-4 bg-white border-dashed border border-primary mx-4 mt-6 rounded-2xl shadow-sm items-center">
+                        <View className="mr-6 ml-2 flex-1/3 items-center justify-center">
+                            {/* Simple Progress Circle */}
+                            <RoundProgress
+                                progress={userProfile.sustainabilityScore}
+                                size={100}
+                                duration={100}
+                                showPercentage={true}
+                                className="mb-2"
+                            />
+                        </View>
+                        <View className="flex-2/3 justify-center">
+                            <Text className="text-base text-[#333] mb-1">Sustainability Score</Text>
+                            <Text className="text-[12px] font-bold text-black mb-1">Best : 70 - 100%</Text>
+                            <Text className="text-sm font-medium text-primary mb-2">Growing Strong 🌱</Text>
+                        </View>
+                    </View>
+
+                    {/* Badges Preview */}
+                    <View className="bg-white mx-4 mt-6 rounded-2xl p-4 shadow-sm">
+                        <View className="flex-row items-center justify-between mb-4">
+                            <View>
+                                <Text className="text-lg font-bold text-primaryDark">Achievement Badges</Text>
+                                <Text className="text-gray-500 text-sm">{userBadges.length} badges earned</Text>
+                            </View>
+                            <View className="bg-primary/10 px-3 py-1 rounded-full">
+                                <Text className="text-primary text-sm font-bold">🏆</Text>
+                            </View>
+                        </View>
+
+                        <View className="flex-row justify-center">
+                            {userBadges.slice(0, 3).map((badge) => (
+                                <View
+                                    key={badge.id}
+                                    className="bg-white rounded-full mr-2 border border-primary/20 items-center shadow-sm"
+                                >
+                                    <View className="bg-primary/10 p-2 rounded-full">
+                                        <Image
+                                            source={badge.image}
+                                            className="w-12 h-12"
+                                            resizeMode="contain"
+                                        />
+                                    </View>
+                                </View>
+                            ))}
+                            {userBadges.length > 3 && (
+                                <View className="bg-gray-100 rounded-full w-16 h-16 items-center justify-center">
+                                    <Text className="text-gray-600 font-bold">+{userBadges.length - 3}</Text>
+                                </View>
+                            )}
+                        </View>
+                    </View>
+
+                    {/* Leaderboard Position */}
+                    <View className="bg-white mx-4 mt-4 rounded-2xl p-4 shadow-sm">
+                        <Text className="text-lg font-bold text-gray-900 mb-3 text-center">
+                            Leaderboard Position
+                        </Text>
+
+                        <View className="bg-gradient-to-r from-primary/20 to-primary/10 border-2 border-primary/30 py-4 px-4 rounded-2xl">
+                            <View className="flex-row items-center justify-between">
+                                <View className="flex-row items-center">
+                                    <Text className="text-2xl mr-3">👨‍🌾</Text>
+                                    <View>
+                                        <Text className="font-bold text-primaryDark text-lg">You</Text>
+                                        <Text className="text-gray-600 text-sm">Rank #{userProfile.rank}</Text>
+                                    </View>
+                                </View>
+                                <Text className="text-green-600 font-bold text-lg">
+                                    {userProfile.points.toLocaleString()} pts
+                                </Text>
+                            </View>
+                        </View>
+                    </View>
+
+                    {/* Footer */}
+                    <View className="items-center mt-6 mb-2">
+                        <Text className="text-gray-600 text-sm">Join KrishiGo - Growing Together! 🌱</Text>
+                    </View>
+                </View>
+            </ViewShot >
+
+        )
+    };
 
     return (
         <SafeAreaView className="flex-1 bg-gray-50">
             <ScrollView className="flex-1 pt-10" showsVerticalScrollIndicator={false}>
-                {/* Header */}
+
+                {/* Regular Header (Not captured in image) */}
                 <View className="flex-row justify-between items-center px-6 py-4 bg-white">
                     <Text className="text-2xl font-bold text-primaryDark">My Profile</Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-                        <Ionicons name="settings" size={24} color="#314C1C" />
-                    </TouchableOpacity>
+                    <View className="flex-row items-center gap-3">
+                        <TouchableOpacity disabled={showProfileForCapture} onPress={handleShareProfile}>
+                            <Ionicons name="share-outline" size={24} color="#314C1C" />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+                            <Ionicons name="settings" size={24} color="#314C1C" />
+                        </TouchableOpacity>
+                    </View>
                 </View>
+
+                {/* Interactive Content Below - Not captured in image */}
 
                 {/* Hero Profile Card */}
                 <View className="bg-primary mx-4 mt-4 rounded-3xl p-6 shadow-lg relative">
@@ -157,7 +380,7 @@ const ProfileScreen = () => {
                             </View>
                             <TouchableOpacity
                                 className="absolute top-0 right-2 bg-primaryDark p-2 rounded-full border-2 border-white"
-                                onPress={handleEditProfilePhoto}
+                                onPress={() => setShowPhotoModal(true)}
                             >
                                 <Ionicons name="pencil" size={12} color="white" />
                             </TouchableOpacity>
@@ -218,11 +441,11 @@ const ProfileScreen = () => {
                     </View>
                 </View>
 
-                {/* Achievement Badges Section */}
+                {/* Achievement Badges Section - Interactive */}
                 <View className="bg-white mx-4 mt-6 rounded-2xl p-6 shadow-sm">
                     <View className="flex-row items-center justify-between mb-6">
                         <View>
-                            <Text className="text-lg font-bold text-primaryDark">Achievement Badges</Text>
+                            <Text className="text-lg font-bold text-primaryDark">All Achievement Badges</Text>
                             <Text className="text-gray-500 text-sm">{userBadges.length} badges earned</Text>
                         </View>
                         <View className="bg-primary/10 px-3 py-1 rounded-full">
@@ -262,7 +485,7 @@ const ProfileScreen = () => {
                 </View>
 
 
-                {/* Leaderboard Section */}
+                {/* Leaderboard Section - Interactive */}
                 <View className="bg-white mx-6 mt-4 rounded-2xl p-6 shadow-sm">
                     <Text className="text-lg font-bold text-gray-900 mb-4">
                         Leaderboard
@@ -345,6 +568,9 @@ const ProfileScreen = () => {
 
                 {/* Bottom Spacing */}
                 <View className="h-24" />
+
+                {/* View Profile for Capture */}
+                {showProfileForCapture && viewProfileForCapture()}
             </ScrollView>
 
             {/* Modals */}
@@ -361,6 +587,7 @@ const ProfileScreen = () => {
                 currentLanguage={currentLanguage}
                 onLanguageChange={setCurrentLanguage}
             />
+
         </SafeAreaView >
     );
 };

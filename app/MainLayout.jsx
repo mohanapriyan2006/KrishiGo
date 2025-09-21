@@ -8,7 +8,6 @@ import ChallengeScreen from '../screens/ChallengeScreen.jsx';
 import HomeScreen from '../screens/HomeScreen.jsx';
 import JourneyScreen from '../screens/JourneyScreen.jsx';
 import ProfileScreen from '../screens/ProfileScreen.jsx';
-import ProfileScreenCopy from '../screens/ProfileScreenCopy.jsx';
 import RewardsScreen from '../screens/RewardsScreen.jsx';
 
 const Tab = createBottomTabNavigator();
@@ -70,7 +69,7 @@ export default function RootLayout() {
         <Tab.Screen name="Challenge" component={ChallengeScreen} />
         <Tab.Screen name="Rewards" component={RewardsScreen} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
-        <Tab.Screen name="ProfileCopy" component={ProfileScreenCopy} />
+        {/* <Tab.Screen name="ProfileCopy" component={ProfileScreenCopy} /> */}
       </Tab.Navigator>
 
       {/* AI Chat Space */}
