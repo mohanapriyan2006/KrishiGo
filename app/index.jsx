@@ -1,17 +1,17 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import About from "../components/About";
-import CourseDetails from "../components/CoursesComponents/CourseDetails";
 import CourseVideo from "../components/CoursesComponents/CourseVideo";
+import { QuizScreen } from "../components/Quiz";
 import SavedCourses from "../components/CoursesComponents/SavedCourses";
 import SearchCourses from "../components/CoursesComponents/SearchCourses";
-import { QuizScreen } from "../components/Quiz";
 import Settings from "../components/SettingsComponents/Settings";
 import TermsAndConditions from "../components/TremsAndConditions";
 import "../global.css";
-import DataProvider from "../hooks/DataContext";
 import Login from "../screens/LoginScreen/Login";
 import Register from "../screens/LoginScreen/Register";
 import RootLayout from "./MainLayout";
+import CourseDetails from "../components/CoursesComponents/CourseDetails";
+import DataProvider from "../hooks/DataContext";
 
 const Stack = createNativeStackNavigator();
 

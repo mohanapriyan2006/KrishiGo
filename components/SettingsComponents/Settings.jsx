@@ -20,7 +20,6 @@ const Settings = ({ navigation }) => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showLanguageModal, setShowLanguageModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
-    const [phoneNumber, setPhoneNumber] = useState('');
 
     const [currentLanguage, setCurrentLanguage] = useState('English');
     const [userProfile, setUserProfile] = useState({
@@ -44,9 +43,6 @@ const Settings = ({ navigation }) => {
         }
     }, [userDetails]);
 
-
-
-    const userPhoneNumber = '1234567890';
 
 
     const handleEditProfile = () => {
@@ -263,9 +259,7 @@ const Settings = ({ navigation }) => {
             <DeleteAccModal
                 showDeleteModal={showDeleteModal}
                 setShowDeleteModal={setShowDeleteModal}
-                phoneNumber={phoneNumber}
-                setPhoneNumber={setPhoneNumber}
-                userPhoneNumber={userPhoneNumber}
+                userEmail={userProfile.email}
             />
 
             <AIChatSpace />

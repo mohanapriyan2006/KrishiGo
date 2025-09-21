@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDocs, setDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
 import { db } from "../../config/firebase";
 
 /**
@@ -13,7 +13,8 @@ export async function createUserProfile() {
     await setDoc(userRef, {
       authId: "authId123", // Firebase Authentication UID
       email: "user@example.com",
-      fullName: "John Doe",
+      firstName: "John",
+      lastName: "Doe",
       profilePicture: "https://example.com/profile-picture.jpg",
       phoneNumber: "+1234567890",
       address: {
@@ -25,6 +26,7 @@ export async function createUserProfile() {
       },
       rewards: {
         totalPoints: 8490,
+        currentPoints: 6490,
         redeemedPoints: 2000,
       },
       preferences: {
@@ -99,17 +101,17 @@ export async function getAllUsers() {
   try {
     const usersSnapshot = await getDocs(collection(db, "users"));
     const users = [];
-
+    
     for (const userDoc of usersSnapshot.docs) {
       const userData = { id: userDoc.id, ...userDoc.data() };
-
+      
       // Fetch enrolled courses for this user
       const enrolledCoursesSnapshot = await getDocs(collection(userDoc.ref, "enrolledCourses"));
       const enrolledCourses = enrolledCoursesSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-
+      
       // Fetch achievements for this user
       const achievementsSnapshot = await getDocs(collection(userDoc.ref, "achievements"));
       const achievements = achievementsSnapshot.docs.map((doc) => ({
@@ -127,6 +129,55 @@ export async function getAllUsers() {
     return [];
   }
 }
+
+
+/**
+ *  UPDATE REWARDS POINTS FOR A USER
+ */
+export async function updateUserRewards(userId, pointsToAdd=0 , redeemedPointsToAdd=0) {
+  try {
+    const userRef = doc(db, "users", userId);
+    const userSnap = await getDocs(query(collection(db, "users"), where("authId", "==", userId)));
+   if (!userSnap.empty) {
+     const userData = userSnap.docs[0].data();
+
+     await setDoc(userRef, {
+       rewards: {
+         totalPoints: (userData.rewards.totalPoints || 0) + pointsToAdd,
+         currentPoints: (userData.rewards.currentPoints || 0) + pointsToAdd,
+         redeemedPoints: (userData.rewards.redeemedPoints || 0) + redeemedPointsToAdd,
+       },
+     }, { merge: true });
+
+     console.log("✅ User rewards updated successfully!");
+   } else {
+     console.log("❌ User not found.");
+   }
+  } catch (error) {
+    console.error("❌ Error updating user rewards:", error.message);
+  }
+}
+
+/**
+ *  GET ENROLLED COURSES FOR A USER
+ */
+export async function getUserEnrolledCourses(userId) {
+  try {
+    const userRef = doc(db, "users", userId);
+    const enrolledCoursesSnapshot = await getDocs(collection(userRef, "enrollments"));
+    const enrolledCourses = enrolledCoursesSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return enrolledCourses;
+  } catch (error) {
+    console.error("❌ Error fetching enrolled courses:", error.message);
+    return [];
+  }
+}
+
+
+
 
 // // Run once to test
 // (async () => {

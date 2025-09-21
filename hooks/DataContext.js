@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import { doc, getDoc } from 'firebase/firestore';
 import { createContext, useEffect, useState } from 'react';
 import { getAllCourses } from '../api/courses/all_courses_service';
@@ -157,7 +158,10 @@ const sampleAllCourses = [
 
 const DataProvider = ({ children }) => {
 
+    const navigation = useNavigation();
+
     const user = auth.currentUser;
+
 
     const [loading, setLoading] = useState({
         courseDetails: true,
@@ -168,18 +172,20 @@ const DataProvider = ({ children }) => {
 
     const [wishlistedCourses, setWishlistedCourses] = useState([]);
 
-
     const [userDetails, setUserDetails] = useState(null);
 
     const fetchUserDetails = async () => {
         try {
             const user = auth.currentUser;
-            if (!user) return;
+            if (!user) {
+                return;
+            }
 
             const userDoc = await getDoc(doc(db, "users", user.uid));
             if (userDoc.exists()) {
                 const userData = userDoc.data();
                 setUserDetails(userData);
+                console.log("Fetched user details:", userData);
             } else {
                 // Fallback to display name from auth if no Firestore doc exists
                 setUserDetails({
@@ -236,7 +242,7 @@ const DataProvider = ({ children }) => {
     // -------------  Course Details State & Methods -------------
     // -----------------------------------------------------------------------------
 
-    const [courseId, setCourseId] = useState("courseId"); // Replace with actual course ID or get from props/context
+
     const [course, setCourse] = useState(null);
     const [modules, setModules] = useState([]);
     // const [enrollment, setEnrollment] = useState(null);
@@ -250,7 +256,7 @@ const DataProvider = ({ children }) => {
                 userDetails, setUserDetails, fetchUserDetails,
                 allCourses, setAllCourses,
                 wishlistedCourses, setWishlistedCourses,
-                course, modules, enrollment, courseId, setCourseId,
+                course, modules, enrollment,
                 setCourse, setModules, setEnrollment,
             }}
         >
