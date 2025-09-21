@@ -158,6 +158,25 @@ export async function updateUserRewards(userId, pointsToAdd=0 , redeemedPointsTo
   }
 }
 
+/**
+ *  GET ENROLLED COURSES FOR A USER
+ */
+export async function getUserEnrolledCourses(userId) {
+  try {
+    const userRef = doc(db, "users", userId);
+    const enrolledCoursesSnapshot = await getDocs(collection(userRef, "enrollments"));
+    const enrolledCourses = enrolledCoursesSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return enrolledCourses;
+  } catch (error) {
+    console.error("❌ Error fetching enrolled courses:", error.message);
+    return [];
+  }
+}
+
+
 
 
 // // Run once to test

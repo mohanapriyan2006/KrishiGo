@@ -177,7 +177,7 @@ const DataProvider = ({ children }) => {
     const fetchUserDetails = async () => {
         try {
             const user = auth.currentUser;
-            if (!user){
+            if (!user) {
                 return;
             }
 
@@ -242,7 +242,7 @@ const DataProvider = ({ children }) => {
     // -------------  Course Details State & Methods -------------
     // -----------------------------------------------------------------------------
 
-    const [courseId, setCourseId] = useState("courseId"); // Replace with actual course ID or get from props/context
+
     const [course, setCourse] = useState(null);
     const [modules, setModules] = useState([]);
     // const [enrollment, setEnrollment] = useState(null);
@@ -256,7 +256,7 @@ const DataProvider = ({ children }) => {
                 userDetails, setUserDetails, fetchUserDetails,
                 allCourses, setAllCourses,
                 wishlistedCourses, setWishlistedCourses,
-                course, modules, enrollment, courseId, setCourseId,
+                course, modules, enrollment,
                 setCourse, setModules, setEnrollment,
             }}
         >

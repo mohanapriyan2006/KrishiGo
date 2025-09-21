@@ -1,5 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
     Alert,
     Image,
@@ -10,12 +9,18 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import { setModuleCompleted } from '../api/courses/courses_service';
+import { DataContext } from '../hooks/DataContext';
 import ProgressLine from './ProgressLine';
 
 
-const QuizScreen = () => {
+const QuizScreen = ({navigation, route}) => {
 
-    const navigation = useNavigation();
+
+    const {user} = useContext(DataContext)
+    const moduleId = route?.params?.moduleId;
+    const courseId = route?.params?.courseId;
+    const quizId = route?.params?.quizId;
 
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [currentQuestion, setCurrentQuestion] = useState(1);
@@ -72,12 +77,13 @@ const QuizScreen = () => {
         }
     };
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (currentQuestion < quizQuestions.length) {
             setCurrentQuestion(currentQuestion + 1);
             setSelectedAnswer(null);
             setIsAnswered(false);
         } else if (currentQuestion === quizQuestions.length) {
+            await setModuleCompleted(user.uid, courseId, moduleId)
             navigation.goBack();
             Alert.alert('Quiz Completed', `Your final score is ${score} out of ${quizQuestions.length}`);
         }
