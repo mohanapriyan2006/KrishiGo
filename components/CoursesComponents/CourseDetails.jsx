@@ -13,6 +13,7 @@ import {
 import { getCourse, getCourseModules, getUserEnrollment } from '../../api/courses/courses_service';
 import { DataContext } from '../../hooks/DataContext';
 import AIChatSpace from '../AIComponents/AIChatSpace';
+import ProgressLine from '../ProgressLine';
 
 // ✅ Sample fallback data based on your schema
 const sampleCourse = {
@@ -292,23 +293,6 @@ const CourseDetails = ({ navigation, route }) => {
                                 </View>
                             </View>
 
-                            {/* Progress Bar (only if enrolled) */}
-                            {isEnrolled && (
-                                <View className="mt-4">
-                                    <View className="flex-row justify-between items-center mb-1">
-                                        <Text className="text-sm text-gray-600">Progress</Text>
-                                        <Text className="text-sm font-semibold text-primary">
-                                            {progressPercentage}%
-                                        </Text>
-                                    </View>
-                                    <View className="w-full bg-gray-200 rounded-full h-2">
-                                        <View
-                                            className="bg-primary h-2 rounded-full"
-                                            style={{ width: `${progressPercentage}%` }}
-                                        />
-                                    </View>
-                                </View>
-                            )}
                         </View>
 
                         {/* Course Image */}
@@ -317,6 +301,13 @@ const CourseDetails = ({ navigation, route }) => {
                             source={require('../../assets/images/course1.png')}
                             style={{ width: 140, height: 120, opacity: 0.9 }}
                         />
+
+                        {/* Progress Bar (only if enrolled) */}
+                        {isEnrolled && (
+                            <View className="absolute -bottom-3 left-2 right-2">
+                                <ProgressLine progress={progressPercentage} color='#78BB1B' bg='#E0F2F1' />
+                            </View>
+                        )}
                     </View>
                 </View>
 

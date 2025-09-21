@@ -1,5 +1,5 @@
 // src/firebase/courseService.js
-import { doc, collection, getDoc, getDocs, query, orderBy, addDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 
 

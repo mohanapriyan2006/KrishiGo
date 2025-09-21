@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
     Alert,
     KeyboardAvoidingView,
@@ -25,11 +25,10 @@ const loginSchema = yup.object().shape({
         .required("Email or Phone number is required")
         .test(
             "email-or-phone",
-            "Enter a valid email or phone number",
+            "Enter a valid email address",
             function (value) {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                const phoneRegex = /^[0-9]{10}$/;
-                return emailRegex.test(value) || phoneRegex.test(value);
+                return emailRegex.test(value);
             }
         ),
     password: yup.string().required("Password is required").min(6),
@@ -44,6 +43,16 @@ const Login = () => {
     const [errors, setErrors] = useState({});
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const checkUserLogined = auth.onAuthStateChanged((user) => {
+            if (user) {
+                fetchUserDetails();
+                navigation.navigate("Main");
+            }
+        });
+        return checkUserLogined;
+    }, []);
 
     const handleInputChange = (field, value) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
@@ -134,7 +143,7 @@ const Login = () => {
                             {/* Email/Phone */}
                             <View className="mb-2">
                                 <Text className="text-gray-600 text-sm mb-2 font-medium">
-                                    Email or Phone
+                                    Email
                                 </Text>
                                 <TextInput
                                     className={`w-full bg-white rounded-xl px-4 py-4 text-base border ${errors.emailOrPhone ? "border-red-500" : "border-gray-200"

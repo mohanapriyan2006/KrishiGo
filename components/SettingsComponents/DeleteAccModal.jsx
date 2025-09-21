@@ -1,4 +1,8 @@
 import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
+import { deleteDoc, doc } from 'firebase/firestore';
+import { useContext, useState } from 'react';
 import {
     Alert, Modal,
     Text,
@@ -6,16 +10,46 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { auth, db } from '../../config/firebase';
+import { DataContext } from '../../hooks/DataContext';
 
-const DeleteAccModal = ({ showDeleteModal, setShowDeleteModal, phoneNumber, setPhoneNumber, userPhoneNumber }) => {
+const DeleteAccModal = ({ showDeleteModal, setShowDeleteModal, userEmail }) => {
 
-    const confirmDeleteAccount = () => {
-        const normalizedUserPhone = userPhoneNumber.replace(/[\s-]/g, '');
-        const normalizedInputPhone = phoneNumber.replace(/[\s-]/g, '');
+    const { userDetails } = useContext(DataContext);
 
-        if (normalizedInputPhone === normalizedUserPhone) {
+    const [password, setPassword] = useState('');
+
+    const user = auth.currentUser;
+
+    const navigation = useNavigation();
+
+    const handleDeleteAccount = async () => {
+        try {
+            await deleteDoc(doc(db, "users", user.uid));
+            await user.delete();
+            console.log('User account deleted');
+            Alert.alert('Account Deleted', 'Your account has been successfully deleted.');
+            navigation.navigate('Login');
+        } catch (error) {
+            console.error('Error deleting user account:', error);
+            Alert.alert('Error', 'There was an issue deleting your account. Please try again later.');
+        }
+    }
+
+    const confirmDeleteAccount = async () => {
+        if (!password.trim()) {
+            Alert.alert('Error', 'Please enter your password.');
+            return;
+        }
+
+        try {
+            // Reauthenticate user before deletion
+            const credential = EmailAuthProvider.credential(userEmail, password);
+            await reauthenticateWithCredential(user, credential);
+
+            // If reauthentication successful, proceed with deletion
             setShowDeleteModal(false);
-            setPhoneNumber('');
+            setPassword('');
             Alert.alert(
                 'Account Deleted',
                 'Your account has been successfully deleted.',
@@ -23,17 +57,16 @@ const DeleteAccModal = ({ showDeleteModal, setShowDeleteModal, phoneNumber, setP
                     {
                         text: 'OK',
                         onPress: () => {
-                            console.log('Account deletion confirmed');
-                            // Handle account deletion logic here
-                            // Navigate to login screen or perform logout
+                            handleDeleteAccount();
                         },
                     },
                 ]
             );
-        } else {
+        } catch (error) {
+            console.error('Reauthentication failed:', error);
             Alert.alert(
-                'Phone Number Mismatch',
-                'The phone number you entered does not match your registered phone number.',
+                'Authentication Failed',
+                'The password you entered is incorrect. Please try again.',
                 [{ text: 'Try Again' }]
             );
         }
@@ -58,22 +91,22 @@ const DeleteAccModal = ({ showDeleteModal, setShowDeleteModal, phoneNumber, setP
 
                     {/* Warning Text */}
                     <Text className="text-gray-600 text-center mb-6">
-                        To confirm account deletion, please enter your phone number:
+                        To confirm account deletion, please enter your password:
                     </Text>
 
-                    {/* Phone Number Input */}
+                    {/* Password Input */}
                     <View className="mb-6">
-                        <Text className="text-gray-700 font-medium mb-2">Phone Number</Text>
+                        <Text className="text-gray-700 font-medium mb-2">Password</Text>
                         <TextInput
-                            value={phoneNumber}
-                            onChangeText={setPhoneNumber}
-                            placeholder="Enter your phone number"
-                            keyboardType="phone-pad"
+                            value={password}
+                            onChangeText={setPassword}
+                            placeholder="Enter your password"
+                            secureTextEntry={true}
                             className="border border-gray-300 rounded-xl px-4 py-3 text-base"
                             autoFocus={true}
                         />
                         <Text className="text-gray-500 text-sm mt-1">
-                            Registered: {userPhoneNumber}
+                            Account: {userEmail}
                         </Text>
                     </View>
 
@@ -82,7 +115,7 @@ const DeleteAccModal = ({ showDeleteModal, setShowDeleteModal, phoneNumber, setP
                         <TouchableOpacity
                             onPress={() => {
                                 setShowDeleteModal(false);
-                                setPhoneNumber('');
+                                setPassword('');
                             }}
                             className="flex-1 bg-gray-200 py-3 rounded-xl"
                         >
@@ -91,7 +124,7 @@ const DeleteAccModal = ({ showDeleteModal, setShowDeleteModal, phoneNumber, setP
                         <TouchableOpacity
                             onPress={confirmDeleteAccount}
                             className="flex-1 bg-red-600 py-3 rounded-xl"
-                            disabled={!phoneNumber.trim()}
+                            disabled={!password.trim()}
                         >
                             <Text className="text-white font-semibold text-center">Delete</Text>
                         </TouchableOpacity>
