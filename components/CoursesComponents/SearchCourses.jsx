@@ -11,13 +11,14 @@ import {
     View
 } from 'react-native';
 
+import { addCourseToWishlist, removeCourseFromWishlist } from '../../api/user/user_service';
 import { DataContext } from '../../hooks/DataContext';
 
 
 
 const SearchCourses = ({ navigation }) => {
 
-    const { allCourses, loading, wishlistedCourses, setWishlistedCourses } = useContext(DataContext);
+    const {user, allCourses, loading, wishlistedCourses, setWishlistedCourses } = useContext(DataContext);
 
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedFilter, setSelectedFilter] = useState('All');
@@ -43,18 +44,17 @@ const SearchCourses = ({ navigation }) => {
         );
     }
 
-    const toggleWishlist = (courseId) => {
-        setWishlistedCourses(prev => {
-            const isWishlisted = prev.includes(courseId);
-            if (isWishlisted) {
-                return prev.filter(prev => prev.id !== courseId);
-            } else {
-                const courseToAdd = allCourses.find(course => course.id === courseId);
-                if (courseToAdd) {
-                    return [...prev, courseToAdd];
-                }
-            }
-        });
+    const toggleWishlist = async (courseId) => {
+        // toggle wishlisted course to user api
+        const course = allCourses.find(course => course.id === courseId);
+        const isWishlisted = wishlistedCourses.includes(courseId);
+        if (isWishlisted) {
+            await removeCourseFromWishlist(user.uid, courseId);
+            setWishlistedCourses(wishlistedCourses.filter(id => id !== courseId));
+        } else if (course) {
+            await addCourseToWishlist(user.uid, courseId);
+            setWishlistedCourses([...wishlistedCourses, courseId]);
+        }
     };
 
     const handleCoursePress = (course) => {
@@ -242,7 +242,7 @@ const SearchCourses = ({ navigation }) => {
             <FlatList
                 data={filteredCourses}
                 renderItem={renderCourseCard}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item) => item.id}
                 showsVerticalScrollIndicator={false}
                 ListEmptyComponent={renderEmptyState}
                 contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}

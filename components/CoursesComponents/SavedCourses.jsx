@@ -1,4 +1,3 @@
-import { DataContext } from '../../hooks/DataContext';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { useContext, useState } from 'react';
 import {
@@ -10,6 +9,8 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { removeCourseFromWishlist } from '../../api/user/user_service';
+import { DataContext } from '../../hooks/DataContext';
 
 const sampleSavedCourses = [
     {
@@ -46,12 +47,12 @@ const sampleSavedCourses = [
 
 const SavedCourses = ({ navigation }) => {
     // Sample saved courses data - in real app this would come from storage/API
-    const { wishlistedCourses, setWishlistedCourses } = useContext(DataContext);
+    const { user, wishlistedCourses, setWishlistedCourses } = useContext(DataContext);
 
     const [selectedSort, setSelectedSort] = useState('Alphabetical');
     const sortOptions = ['Alphabetical', 'Rating'];
 
-    const removeCourse = (courseId, courseTitle) => {
+    const removeCourse = async (courseId, courseTitle) => {
         Alert.alert(
             'Remove Course',
             `Remove "${courseTitle}" from your saved courses?`,
@@ -60,7 +61,8 @@ const SavedCourses = ({ navigation }) => {
                 {
                     text: 'Remove',
                     style: 'destructive',
-                    onPress: () => {
+                    onPress: async () => {
+                        await removeCourseFromWishlist(user.uid, courseId);
                         setWishlistedCourses(prev => prev.filter(course => course.id !== courseId));
                         Alert.alert('Removed', 'Course removed from saved list');
                     }
@@ -237,3 +239,4 @@ const SavedCourses = ({ navigation }) => {
 };
 
 export default SavedCourses;
+

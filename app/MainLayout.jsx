@@ -68,6 +68,7 @@ export default function RootLayout() {
         <Tab.Screen name="Challenge" component={ChallengeScreen} />
         <Tab.Screen name="Rewards" component={RewardsScreen} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
+        {/* <Tab.Screen name="ProfileCopy" component={ProfileScreenCopy} /> */}
       </Tab.Navigator>
 
       {/* AI Chat Space */}

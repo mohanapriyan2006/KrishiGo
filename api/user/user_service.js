@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, query, setDoc, where, writeBatch } from "firebase/firestore";
 import { db } from "../../config/firebase";
 
 /**
@@ -176,8 +176,64 @@ export async function getUserEnrolledCourses(userId) {
   }
 }
 
+/** * ADD COURSE TO WISHLIST FOR A USER
+ */
+export async function addCourseToWishlist(userId, courseId) {
+  try {
+    const userRef = doc(db, "users", userId);
+    const wishlistRef = collection(userRef, "wishlist");
+
+    await addDoc(wishlistRef, {
+      courseId,
+      addedAt: new Date().toISOString(),
+    });
+
+    console.log("✅ Course added to wishlist successfully!");
+  } catch (error) {
+    console.error("❌ Error adding course to wishlist:", error.message);
+  }
+}
 
 
+/** * REMOVE COURSE FROM WISHLIST FOR A USER
+ */
+export async function removeCourseFromWishlist(userId, courseId) {
+  try {
+    const userRef = doc(db, "users", userId);
+    const wishlistRef = collection(userRef, "wishlist");
+
+    const querySnapshot = await getDocs(query(wishlistRef, where("courseId", "==", courseId)));
+    const batch = writeBatch(db);
+
+    querySnapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+    console.log("✅ Course removed from wishlist successfully!");
+  } catch (error) {
+    console.error("❌ Error removing course from wishlist:", error.message);
+  }
+}
+
+
+/** * GET WISHLIST FOR A USER
+ */
+export async function getUserWishlist(userId) {
+  try {
+    const userRef = doc(db, "users", userId);
+    const wishlistRef = collection(userRef, "wishlist");
+    const wishlistSnapshot = await getDocs(wishlistRef);
+    const wishlist = wishlistSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return wishlist;
+  } catch (error) {
+    console.error("❌ Error fetching user wishlist:", error.message);
+    return [];
+  }
+}
 
 // // Run once to test
 // (async () => {

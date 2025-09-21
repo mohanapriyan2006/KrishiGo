@@ -1,12 +1,14 @@
 import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useContext, useEffect, useState } from 'react';
 import {
+    Alert,
     SafeAreaView,
     ScrollView,
     Text,
     TouchableOpacity,
     View,
 } from 'react-native';
+import { auth } from '../../config/firebase';
 import { DataContext } from '../../hooks/DataContext';
 import AIChatSpace from '../AIComponents/AIChatSpace';
 import ChangeLanguageModal from './ChangeLanguageModal';
@@ -76,6 +78,24 @@ const Settings = ({ navigation }) => {
 
     const handleTermsAndConditions = () => {
         navigation?.navigate('TermsAndConditions');
+    };
+
+
+    const handleLogout = () => {
+        Alert.alert(
+            'Logout',
+            'Are you sure you want to logout?',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Logout', style: 'destructive', onPress: () => {
+                        auth.signOut();
+                        // AsyncStorage.removeItem('userData');
+                        navigation.navigate('Login');
+                    }
+                },
+            ]
+        );
     };
 
     const handleDeleteAccount = () => {
@@ -219,10 +239,19 @@ const Settings = ({ navigation }) => {
                         <Feather name="chevron-right" size={20} color="#6B7280" />
                     </TouchableOpacity>
 
+                    {/* Logout */}
+                    <TouchableOpacity
+                        className="bg-red-50 p-4 rounded-xl flex-row items-center"
+                        onPress={handleLogout}
+                    >
+                        <Ionicons name="log-out-outline" size={24} color="red" />
+                        <Text className="text-red-700 font-medium text-base ml-3">Logout</Text>
+                    </TouchableOpacity>
+
                     {/* Delete Account */}
                     <TouchableOpacity
                         onPress={handleDeleteAccount}
-                        className="bg-red-50 p-4 rounded-xl flex-row items-center justify-between"
+                        className="bg-red-200 p-4 rounded-xl flex-row items-center justify-between"
                         activeOpacity={0.7}
                     >
                         <View className="flex-row items-center">

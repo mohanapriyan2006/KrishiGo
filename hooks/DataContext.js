@@ -1,8 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
 import { doc, getDoc } from 'firebase/firestore';
 import { createContext, useEffect, useState } from 'react';
-import { getAllCourses } from '../api/courses/all_courses_service';
+import { getAllCourses, getCourseById } from '../api/courses/all_courses_service';
+import { getUserWishlist } from '../api/user/user_service';
 import { auth, db } from '../config/firebase';
+
 
 export const DataContext = createContext();
 
@@ -185,7 +187,7 @@ const DataProvider = ({ children }) => {
             if (userDoc.exists()) {
                 const userData = userDoc.data();
                 setUserDetails(userData);
-                console.log("Fetched user details:", userData);
+                // console.log("Fetched user details:", userData);
             } else {
                 // Fallback to display name from auth if no Firestore doc exists
                 setUserDetails({
@@ -204,10 +206,31 @@ const DataProvider = ({ children }) => {
         }
     };
 
+    const fetchWishlist = async (userId) => {
+        try {
+            const wishlists = await getUserWishlist(userId);
+            const coursesForWishlist = [];
+            for(const wl of wishlists) {
+                const course = await getCourseById(wl.courseId);
+                if (course) {
+                    coursesForWishlist.push(course);
+                }
+            }
+            setWishlistedCourses(coursesForWishlist);
+        } catch (error) {
+            console.error("Error fetching user wishlist:", error);
+        }
+    };
+
     useEffect(() => {
         fetchUserDetails();
     }, []);
-
+    
+    useEffect(() => {
+        if (user) {
+            fetchWishlist(user.uid);
+        }
+    }, [user , navigation]);
 
     // -----------------------------------------------------------------------------
     // ------------- All Course State & Methods -------------
