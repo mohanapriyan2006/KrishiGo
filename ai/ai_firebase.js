@@ -1,6 +1,3 @@
-// -------------------- ai_firebase.js (local inline helper) --------------------
-// Place in ../../ai/ai_firebase.js if needed. This shows pagination for messages.
-
 import {
 	addDoc,
 	collection,

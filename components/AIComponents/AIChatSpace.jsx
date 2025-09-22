@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-// Firebase operations are encapsulated in ../ai/ai_firebase
+import { S3 } from "aws-sdk";
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -21,7 +21,14 @@ import { createFirebaseChatHandlers } from "../../ai/ai_firebase";
 import { auth, db } from "../../config/firebase";
 import FloatingAIButton from "./FloatingAIButton";
 
-// API functions and system prompt now come from ../ai/ai_api
+// Configure AWS S3 for Cloudflare R2
+const s3 = new S3({
+	endpoint: `https://${process.env.EXPO_PUBLIC_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+	accessKeyId: process.env.EXPO_PUBLIC_R2_ACCESS_KEY_ID,
+	secretAccessKey: process.env.EXPO_PUBLIC_R2_SECRET_ACCESS_KEY,
+	signatureVersion: "v4",
+	region: "auto",
+});
 
 const ChatPopup = ({ visible, onClose }) => {
 	const [messages, setMessages] = useState([]);
@@ -34,12 +41,13 @@ const ChatPopup = ({ visible, onClose }) => {
 	const [currentChatTitle, setCurrentChatTitle] = useState("New Chat");
 	const [showAttachmentOptions, setShowAttachmentOptions] = useState(false);
 	const [selectedImage, setSelectedImage] = useState(null);
+	const [uploadingImage, setUploadingImage] = useState(false);
 	const scrollViewRef = useRef();
-	const sidebarAnimation = useRef(new Animated.Value(-280)).current; // Start off-screen
-	const overlayAnimation = useRef(new Animated.Value(0)).current; // For backdrop overlay
+	const sidebarAnimation = useRef(new Animated.Value(-280)).current;
+	const overlayAnimation = useRef(new Animated.Value(0)).current;
 	const userId = auth.currentUser?.uid;
 
-	// Create Firebase handlers wired to this component's state
+	// Create Firebase handlers
 	const {
 		loadRecentChats,
 		startNewChat,
@@ -70,59 +78,102 @@ const ChatPopup = ({ visible, onClose }) => {
 		}
 	}, [visible, userId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-	// Firebase handlers now provided by ../ai/ai_firebase
-
-	// Toggle sidebar with mobile-first overlay experience
 	const toggleSidebar = () => {
 		const willBeOpen = !isSidebarOpen;
 		setIsSidebarOpen(willBeOpen);
 
-		// Animate sidebar slide and overlay fade
 		Animated.parallel([
 			Animated.timing(sidebarAnimation, {
-				toValue: willBeOpen ? 0 : -280, // Slide from left (0 = visible, -280 = hidden)
+				toValue: willBeOpen ? 0 : -280,
 				duration: 300,
 				useNativeDriver: false,
 			}),
 			Animated.timing(overlayAnimation, {
-				toValue: willBeOpen ? 1 : 0, // Fade overlay (1 = visible, 0 = hidden)
+				toValue: willBeOpen ? 1 : 0,
 				duration: 300,
 				useNativeDriver: false,
 			}),
 		]).start();
 	};
 
-	// Close sidebar when overlay is tapped
 	const closeSidebar = () => {
 		toggleSidebar();
 	};
 
-	// API call now uses external helper with current messages for context
+	// Upload image to Cloudflare R2
+	const uploadImageToR2 = async (imageUri) => {
+		try {
+			setUploadingImage(true);
+
+			// Generate unique filename
+			const filename = `user-${userId}-${Date.now()}.jpg`;
+			const response = await fetch(imageUri);
+			const blob = await response.blob();
+
+			const params = {
+				Bucket: process.env.EXPO_PUBLIC_R2_BUCKET_NAME,
+				Key: filename,
+				Body: blob,
+				ContentType: "image/jpeg",
+				ACL: "public-read",
+			};
+
+			await s3.upload(params).promise();
+
+			// Return the public URL
+			return `${process.env.EXPO_PUBLIC_R2_PUBLIC_URL}/${filename}`;
+		} catch (error) {
+			console.error("Error uploading image to R2:", error);
+			throw new Error("Failed to upload image");
+		} finally {
+			setUploadingImage(false);
+		}
+	};
 
 	const sendMessage = async () => {
-		if ((!inputText.trim() && !selectedImage) || isLoading) return;
+		if ((!inputText.trim() && !selectedImage) || isLoading || uploadingImage)
+			return;
+
+		let imageUrl = null;
+
+		// Upload image if selected
+		if (selectedImage) {
+			try {
+				imageUrl = await uploadImageToR2(selectedImage);
+			} catch (error) {
+				Alert.alert(
+					"Upload Error",
+					"Failed to upload image. Please try again.",
+					error
+				);
+				return;
+			}
+		}
 
 		const userMessage = {
 			id: Date.now().toString(),
 			text: inputText || (selectedImage ? "Please analyze this image" : ""),
 			isBot: false,
 			timestamp: new Date(),
-			image: selectedImage, // Include image if attached
+			image: selectedImage, // Local URI for display
+			imageUrl: imageUrl, // Cloudflare R2 URL for API
 		};
 
 		setMessages((prev) => [...prev, userMessage]);
 		const currentInput = inputText;
 		setInputText("");
-		setSelectedImage(null); // Clear selected image
-		setShowAttachmentOptions(false); // Close attachment options
+		setSelectedImage(null);
+		setShowAttachmentOptions(false);
 		setIsLoading(true);
 
 		await saveMessageToFirebase(userMessage);
 
 		try {
+			// Pass both text and image URL to Gemini API
 			const botResponseText = await callGeminiAPIExternal(
 				currentInput,
-				messages
+				messages,
+				imageUrl // Pass the Cloudflare R2 image URL
 			);
 
 			const botResponse = {
@@ -143,9 +194,35 @@ const ChatPopup = ({ visible, onClose }) => {
 		} finally {
 			setIsLoading(false);
 		}
+
+		try {
+			console.log("Sending to Gemini with:", {
+				text: currentInput,
+				hasImage: !!imageUrl,
+				imageUrl: imageUrl,
+			});
+
+			// Pass both text and image URL to Gemini API
+			const botResponseText = await callGeminiAPIExternal(
+				currentInput,
+				messages,
+				imageUrl // Pass the Cloudflare R2 image URL
+			);
+
+			console.log("Received response from Gemini", { botResponseText });
+			// ... rest of the code ...
+		} catch (error) {
+			console.error("Error sending message:", error);
+			Alert.alert(
+				"Connection Error",
+				error.message.includes("image")
+					? "Failed to analyze the image. Please try again or describe what you see."
+					: "Failed to get farming advice. Please check your internet connection and try again."
+			);
+		}
 	};
 
-	// Image picker functions
+	// Image picker functions (unchanged)
 	const requestPermissions = async () => {
 		const { status: cameraStatus } =
 			await ImagePicker.requestCameraPermissionsAsync();
@@ -215,7 +292,7 @@ const ChatPopup = ({ visible, onClose }) => {
 		}
 	}, [messages]);
 
-	// Format text with bold styling for **text**
+	// Format text with bold styling
 	const formatTextWithBold = (text) => {
 		const parts = text.split(/(\*\*.*?\*\*)/g);
 		return parts.map((part, index) => {
@@ -291,7 +368,9 @@ const ChatPopup = ({ visible, onClose }) => {
 					<View className="flex-row items-center">
 						<ActivityIndicator size="small" color="#314C1C" />
 						<Text className="text-gray-800 text-sm ml-2">
-							Analyzing your farming question...
+							{uploadingImage
+								? "Uploading image..."
+								: "Analyzing your farming question..."}
 						</Text>
 					</View>
 				</View>
@@ -351,7 +430,7 @@ const ChatPopup = ({ visible, onClose }) => {
 									{messages.map((message) => (
 										<MessageBubble key={message.id} message={message} />
 									))}
-									{isLoading && <LoadingBubble />}
+									{(isLoading || uploadingImage) && <LoadingBubble />}
 								</>
 							)}
 						</ScrollView>
@@ -363,10 +442,17 @@ const ChatPopup = ({ visible, onClose }) => {
 								<View className="mb-3 bg-white rounded-lg p-3">
 									<View className="flex-row items-center justify-between mb-2">
 										<Text className="text-gray-700 font-medium">
-											Selected Image
+											Selected Image {uploadingImage && "(Uploading...)"}
 										</Text>
-										<TouchableOpacity onPress={removeSelectedImage}>
-											<Ionicons name="close-circle" size={20} color="#ef4444" />
+										<TouchableOpacity
+											onPress={removeSelectedImage}
+											disabled={uploadingImage}
+										>
+											<Ionicons
+												name="close-circle"
+												size={20}
+												color={uploadingImage ? "#ccc" : "#ef4444"}
+											/>
 										</TouchableOpacity>
 									</View>
 									<Image
@@ -433,8 +519,13 @@ const ChatPopup = ({ visible, onClose }) => {
 									onPress={() =>
 										setShowAttachmentOptions(!showAttachmentOptions)
 									}
+									disabled={uploadingImage}
 								>
-									<Ionicons name="attach" size={20} color="#314C1C" />
+									<Ionicons
+										name="attach"
+										size={20}
+										color={uploadingImage ? "#ccc" : "#314C1C"}
+									/>
 								</TouchableOpacity>
 
 								<TextInput
@@ -445,20 +536,26 @@ const ChatPopup = ({ visible, onClose }) => {
 									onChangeText={setInputText}
 									multiline
 									maxLength={1000}
-									editable={!isLoading}
+									editable={!isLoading && !uploadingImage}
 									onSubmitEditing={sendMessage}
 								/>
 
 								<TouchableOpacity
 									onPress={sendMessage}
 									className={`ml-3 rounded-full p-2 ${
-										(inputText.trim() || selectedImage) && !isLoading
+										(inputText.trim() || selectedImage) &&
+										!isLoading &&
+										!uploadingImage
 											? "bg-primary"
 											: "bg-gray-300"
 									}`}
-									disabled={!(inputText.trim() || selectedImage) || isLoading}
+									disabled={
+										!(inputText.trim() || selectedImage) ||
+										isLoading ||
+										uploadingImage
+									}
 								>
-									{isLoading ? (
+									{isLoading || uploadingImage ? (
 										<ActivityIndicator size={16} color="white" />
 									) : (
 										<Ionicons name="send" size={16} color="white" />
@@ -468,7 +565,7 @@ const ChatPopup = ({ visible, onClose }) => {
 						</View>
 					</View>
 
-					{/* Mobile Overlay for Sidebar - Always render but control visibility with animation */}
+					{/* Mobile Overlay for Sidebar */}
 					<>
 						{/* Backdrop */}
 						<Animated.View
@@ -490,7 +587,7 @@ const ChatPopup = ({ visible, onClose }) => {
 							/>
 						</Animated.View>
 
-						{/* Sliding Sidebar - Always rendered */}
+						{/* Sliding Sidebar */}
 						<Animated.View
 							style={{
 								position: "absolute",
@@ -527,7 +624,7 @@ const ChatPopup = ({ visible, onClose }) => {
 										key={chat.id}
 										onPress={() => {
 											loadChat(chat.id);
-											closeSidebar(); // Close sidebar after selecting chat
+											closeSidebar();
 										}}
 										className={`p-3 rounded-lg mb-2 flex-row items-center justify-between ${
 											currentChatId === chat.id ? "bg-primary/10" : "bg-white"

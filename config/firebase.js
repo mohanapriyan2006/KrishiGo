@@ -1,9 +1,9 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import { initializeApp } from "firebase/app";
-
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getReactNativePersistence, initializeAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getFunctions } from "firebase/functions";
 
 // Get env variables safely
 const extra = Constants.expoConfig?.extra || {};
@@ -25,6 +25,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+export const functions = getFunctions(app);
 export const auth = initializeAuth(app, {
 	persistence: getReactNativePersistence(AsyncStorage),
 });
