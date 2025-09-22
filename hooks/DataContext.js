@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { doc, getDoc } from 'firebase/firestore';
 import { createContext, useEffect, useState } from 'react';
-import { getAllCourses, getCourseById } from '../api/courses/all_courses_service';
+import { getAllCourses } from '../api/courses/all_courses_service';
 import { getUserWishlist } from '../api/user/user_service';
 import { auth, db } from '../config/firebase';
 
@@ -209,28 +209,23 @@ const DataProvider = ({ children }) => {
     const fetchWishlist = async (userId) => {
         try {
             const wishlists = await getUserWishlist(userId);
-            const coursesForWishlist = [];
-            for(const wl of wishlists) {
-                const course = await getCourseById(wl.courseId);
-                if (course) {
-                    coursesForWishlist.push(course);
-                }
-            }
-            setWishlistedCourses(coursesForWishlist);
+            const courseIdsForWishlist = wishlists.map(wl => wl.courseId);
+            setWishlistedCourses(courseIdsForWishlist);
         } catch (error) {
             console.error("Error fetching user wishlist:", error);
+            setWishlistedCourses([]);
         }
     };
 
     useEffect(() => {
         fetchUserDetails();
     }, []);
-    
+
     useEffect(() => {
         if (user) {
             fetchWishlist(user.uid);
         }
-    }, [user , navigation]);
+    }, [user , wishlistedCourses.length]);
 
     // -----------------------------------------------------------------------------
     // ------------- All Course State & Methods -------------
@@ -238,23 +233,22 @@ const DataProvider = ({ children }) => {
 
     const [allCourses, setAllCourses] = useState([]);
 
+    const loadAllCourses = async () => {
+        try {
+            setLoading(prev => ({ ...prev, allCourses: true }));
+            getAllCourses().then(courses => {
+                setAllCourses(courses);
+            }).catch(err => {
+                console.error("Error fetching all courses:", err);
+                setAllCourses(sampleAllCourses); // Fallback to sample courses on error
+            });
+        } catch (error) {
+            console.error("Error loading all courses:", error);
+        } finally {
+            setLoading(prev => ({ ...prev, allCourses: false }));
+        }
+    };
     useEffect(() => {
-        const loadAllCourses = async () => {
-            try {
-                setLoading(prev => ({ ...prev, allCourses: true }));
-                getAllCourses().then(courses => {
-                    setAllCourses(courses);
-                }).catch(err => {
-                    console.error("Error fetching all courses:", err);
-                    setAllCourses(sampleAllCourses); // Fallback to sample courses on error
-                });
-            } catch (error) {
-                console.error("Error loading all courses:", error);
-            } finally {
-                setLoading(prev => ({ ...prev, allCourses: false }));
-            }
-        };
-
         loadAllCourses();
     }, []);
 
@@ -277,8 +271,8 @@ const DataProvider = ({ children }) => {
             value={{
                 user, loading, setLoading,
                 userDetails, setUserDetails, fetchUserDetails,
-                allCourses, setAllCourses,
-                wishlistedCourses, setWishlistedCourses,
+                allCourses, setAllCourses, loadAllCourses,
+                wishlistedCourses, setWishlistedCourses, fetchWishlist,
                 course, modules, enrollment,
                 setCourse, setModules, setEnrollment,
             }}

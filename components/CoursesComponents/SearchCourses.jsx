@@ -18,11 +18,11 @@ import { DataContext } from '../../hooks/DataContext';
 
 const SearchCourses = ({ navigation }) => {
 
-    const {user, allCourses, loading, wishlistedCourses, setWishlistedCourses } = useContext(DataContext);
+    const { user, allCourses , loadAllCourses, loading, wishlistedCourses, setWishlistedCourses, fetchWishlist } = useContext(DataContext);
 
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedFilter, setSelectedFilter] = useState('All');
-
+    const [wishlistLoading, setWishlistLoading] = useState(false);
 
     const categories = ['All', 'Organic', 'Technology', 'Health', 'Livestock', 'Soil'];
 
@@ -45,17 +45,38 @@ const SearchCourses = ({ navigation }) => {
     }
 
     const toggleWishlist = async (courseId) => {
-        // toggle wishlisted course to user api
-        const course = allCourses.find(course => course.id === courseId);
+        if (wishlistLoading) return; // Prevent multiple clicks during operation
+        if (!user?.uid) {
+            alert('Please log in to manage your wishlist.');
+            return;
+        }
+
         const isWishlisted = wishlistedCourses.includes(courseId);
-        if (isWishlisted) {
-            await removeCourseFromWishlist(user.uid, courseId);
-            setWishlistedCourses(wishlistedCourses.filter(id => id !== courseId));
-        } else if (course) {
-            await addCourseToWishlist(user.uid, courseId);
-            setWishlistedCourses([...wishlistedCourses, courseId]);
+        setWishlistLoading(true);
+
+        try {
+            if (isWishlisted) {
+                await removeCourseFromWishlist(user.uid, courseId);
+                setWishlistedCourses(prev => prev.filter(id => id !== courseId));
+                console.log(`Removed ${courseId} from wishlist`);
+            } else {
+                await addCourseToWishlist(user.uid, courseId);
+                setWishlistedCourses(prev => [...prev, courseId]);
+                console.log(`Added ${courseId} to wishlist`);
+            }
+            
+            // Refresh wishlist from server to ensure consistency
+            await fetchWishlist(user.uid);
+        } catch (error) {
+            console.error('Error toggling wishlist:', error);
+            // Revert optimistic update on error
+            await fetchWishlist(user.uid);
+            alert('Failed to update wishlist. Please try again.');
+        } finally {
+            setWishlistLoading(false);
         }
     };
+
 
     const handleCoursePress = (course) => {
         navigation?.navigate('CourseDetails', { courseId: course.id });
@@ -111,14 +132,20 @@ const SearchCourses = ({ navigation }) => {
                     {/* Wishlist Button */}
                     <TouchableOpacity
                         onPress={() => toggleWishlist(item.id)}
-                        className={`absolute top-3 right-3 w-10 h-10 rounded-full items-center justify-center ${isWishlisted ? 'bg-red-500' : 'bg-gray-100'
-                            }`}
+                        disabled={wishlistLoading} // Disable during loading
+                        className={`absolute top-3 right-3 w-10 h-10 rounded-full items-center justify-center ${
+                            isWishlisted ? 'bg-red-500' : 'bg-gray-100'
+                        } ${wishlistLoading ? 'opacity-50' : ''}`} // Visual feedback for loading
                     >
-                        <Ionicons
-                            name={isWishlisted ? "heart" : "heart-outline"}
-                            size={20}
-                            color={isWishlisted ? "white" : "#EF4444"}
-                        />
+                        {wishlistLoading ? (
+                            <ActivityIndicator size="small" color="white" />
+                        ) : (
+                            <Ionicons
+                                name={isWishlisted ? "heart" : "heart-outline"}
+                                size={20}
+                                color={isWishlisted ? "white" : "#EF4444"}
+                            />
+                        )}
                     </TouchableOpacity>
 
                     {/* Level Badge */}
@@ -252,3 +279,5 @@ const SearchCourses = ({ navigation }) => {
 };
 
 export default SearchCourses;
+
+

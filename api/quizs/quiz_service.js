@@ -1,17 +1,18 @@
+import { addDoc, collection, doc, getDocs, setDoc } from "firebase/firestore";
 import { db } from "../../config/firebase";
-import { doc, setDoc, collection, addDoc, getDocs } from "firebase/firestore";
 
 /**
  * CREATE QUIZ WITH QUESTIONS
  */
 export async function createQuiz() {
   try {
-    // STEP 1: Create a quiz document
-    const quizId = "quizId1"; // You can also use auto-generated IDs
+    // Generate a unique quiz ID
+    const quizId = doc(collection(db, 'quizzes')).id;
     const quizRef = doc(db, "quizzes", quizId);
 
+
     await setDoc(quizRef, {
-      moduleId: "moduleId3", // Reference to parent module
+      quizId: quizId,
       title: "Quiz on Best Practices",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

@@ -85,9 +85,12 @@ export async function createCourses() {
     console.log("🚀 Starting to create courses...");
 
     for (const course of allCourses) {
-      const courseRef = doc(db, "courses", course.id.toString());
+      // Generate a unique course ID
+      const courseId = doc(collection(db, 'courses')).id;
+      const courseRef = doc(db, "courses", courseId);
 
       await setDoc(courseRef, {
+        id: courseId,
         title: course.title,
         description: course.description,
         category: course.category,
@@ -119,10 +122,12 @@ export async function createCourses() {
  */
 export async function createCourse() {
   try {
-    const courseId = "courseId"; // Replace with auto-generated ID if needed
+    // Generate a unique course ID
+    const courseId = doc(collection(db, 'courses')).id;
     const courseRef = doc(db, "courses", courseId);
 
     await setDoc(courseRef, {
+      id: courseId,
       title: "Introduction to Organic Farming",
       description: "Learn the basics of organic farming and sustainable agriculture.",
       category: "Agriculture",
@@ -177,7 +182,7 @@ export async function getCourseById(courseId) {
     }
 
     const course = { id: courseSnap.id, ...courseSnap.data() };
-    console.log("🎯 Course details:", course);
+    // console.log("🎯 Course details:", course);
     return course;
   } catch (error) {
     console.error("❌ Error fetching course by ID:", error.message);

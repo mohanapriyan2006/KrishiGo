@@ -243,9 +243,10 @@ export async function addOrderToExistingModules(courseId) {
 export async function addCourseWithModules() {
     try {
         // STEP 1: Create a course document
-        const courseId = "courseId"; // You can use a generated ID if you want
-        const courseRef = doc(db, "courses", courseId);
+        const courseId = doc(collection(db, 'courses')).id; // Generate unique ID
+        const courseRef = doc(db, 'courses', courseId);
 
+        // i want to store generated id as id field in document
         await setDoc(courseRef, {
             id: courseId,
             title: "How to Harvest More Effectively",
@@ -279,6 +280,7 @@ export async function addCourseWithModules() {
                 videoUrl: "eCwRVJyjKA4",
                 duration: "6 min",
                 completed: true,
+                order: 1,
             },
             {
                 title: "Advanced Techniques",
@@ -287,6 +289,7 @@ export async function addCourseWithModules() {
                 videoUrl: "mZXetb1TPEg",
                 duration: "12 min",
                 completed: false,
+                order: 2,
             },
             {
                 title: "Advanced Techniques Quiz",
@@ -295,6 +298,7 @@ export async function addCourseWithModules() {
                 quizId: "jhbfjhsebuhwe",
                 duration: "12 min",
                 completed: false,
+                order: 3,
             },
         ];
 

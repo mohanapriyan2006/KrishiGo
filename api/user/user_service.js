@@ -183,6 +183,15 @@ export async function addCourseToWishlist(userId, courseId) {
     const userRef = doc(db, "users", userId);
     const wishlistRef = collection(userRef, "wishlist");
 
+    // Check if course is already in wishlist to prevent duplicates
+    const existingQuery = query(wishlistRef, where("courseId", "==", courseId));
+    const existingSnapshot = await getDocs(existingQuery);
+    
+    if (!existingSnapshot.empty) {
+      console.log("⚠️ Course already exists in wishlist");
+      return; // Course already in wishlist, don't add again
+    }
+
     await addDoc(wishlistRef, {
       courseId,
       addedAt: new Date().toISOString(),
@@ -191,6 +200,7 @@ export async function addCourseToWishlist(userId, courseId) {
     console.log("✅ Course added to wishlist successfully!");
   } catch (error) {
     console.error("❌ Error adding course to wishlist:", error.message);
+    throw error; // Re-throw so UI can handle the error
   }
 }
 
@@ -213,6 +223,7 @@ export async function removeCourseFromWishlist(userId, courseId) {
     console.log("✅ Course removed from wishlist successfully!");
   } catch (error) {
     console.error("❌ Error removing course from wishlist:", error.message);
+    throw error; // Re-throw so UI can handle the error
   }
 }
 

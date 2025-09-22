@@ -304,7 +304,6 @@
 
 // ...existing code...
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 import { useContext, useEffect, useMemo, useState } from 'react';
 import {
     ActivityIndicator,
@@ -315,14 +314,14 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+
 import { getCourseById } from '../api/courses/all_courses_service';
 import { getCourseModules } from '../api/courses/courses_service';
 import { getUserEnrolledCourses } from '../api/user/user_service';
 import ProgressLine from '../components/ProgressLine';
 import { DataContext } from '../hooks/DataContext';
 
-const JourneyScreen = () => {
-    const navigation = useNavigation();
+const JourneyScreen = ({ navigation }) => {
     const { user } = useContext(DataContext);
 
     const [activeTab, setActiveTab] = useState('Ongoing');
@@ -473,7 +472,7 @@ const JourneyScreen = () => {
     useEffect(() => {
         getEnrollmentDetailsSafe();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user,navigation]);
+    }, [user, activeTab]);
 
     // Keep visible list in sync when tab or data changes
     useEffect(() => {
@@ -597,32 +596,32 @@ const JourneyScreen = () => {
 
     return (
         <SafeAreaView className="flex-1 bg-gray-50 pt-10">
-            {loading ? (
-                <View className="flex-1 items-center justify-center">
+            <FlatList
+                data={journeyData}
+                keyExtractor={(item) => String(item.id)}
+                renderItem={renderCourseCard}
+                ListHeaderComponent={renderHeader}
+                ListEmptyComponent={
+                    <View className="items-center justify-center py-12">
+                        <Ionicons name="book-outline" size={64} color="#9CA3AF" />
+                        <Text className="text-gray-500 text-lg font-medium mt-4">
+                            No {activeTab.toLowerCase()} courses
+                        </Text>
+                        <Text className="text-gray-400 text-sm mt-2 text-center px-8">
+                            {activeTab === 'Ongoing'
+                                ? 'Start a new course to begin your learning journey'
+                                : 'Complete some courses to see them here'}
+                        </Text>
+                    </View>
+                }
+
+                contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 96 }}
+                showsVerticalScrollIndicator={false}
+            />
+            {loading && (
+                <View className="absolute inset-0 bg-lime-950/20 items-center justify-center">
                     <ActivityIndicator size="large" color="#78BB1B" />
                 </View>
-            ) : (
-                <FlatList
-                    data={journeyData}
-                    keyExtractor={(item) => String(item.id)}
-                    renderItem={renderCourseCard}
-                    ListHeaderComponent={renderHeader}
-                    ListEmptyComponent={
-                        <View className="items-center justify-center py-12">
-                            <Ionicons name="book-outline" size={64} color="#9CA3AF" />
-                            <Text className="text-gray-500 text-lg font-medium mt-4">
-                                No {activeTab.toLowerCase()} courses
-                            </Text>
-                            <Text className="text-gray-400 text-sm mt-2 text-center px-8">
-                                {activeTab === 'Ongoing'
-                                    ? 'Start a new course to begin your learning journey'
-                                    : 'Complete some courses to see them here'}
-                            </Text>
-                        </View>
-                    }
-                    contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 96 }}
-                    showsVerticalScrollIndicator={false}
-                />
             )}
         </SafeAreaView>
     );
