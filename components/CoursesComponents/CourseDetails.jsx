@@ -1,6 +1,6 @@
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import {
     ActivityIndicator,
     Alert,
@@ -10,9 +10,10 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import { getCourse, getCourseModules, getUserEnrollment } from '../../api/courses/courses_service';
+import { enrollUserToCourse, getCourse, getCourseModules, getUserEnrollment } from '../../api/courses/courses_service';
 import { DataContext } from '../../hooks/DataContext';
 import AIChatSpace from '../AIComponents/AIChatSpace';
+import ProgressLine from '../ProgressLine';
 
 // ✅ Sample fallback data based on your schema
 const sampleCourse = {
@@ -97,14 +98,19 @@ const sampleModules = [
 const CourseDetails = ({ navigation, route }) => {
 
     const { user, course,
-        courseId, setCourseId,
         modules, enrollment,
         loading, setCourse,
         setModules, setEnrollment,
         setLoading } = useContext(DataContext);
 
-    // const courseId = route?.params?.courseId ?? 'courseId';\
 
+    const [courseId, setCourseId] = useState("courseId");
+
+    useEffect(() => {
+        if (route?.params?.courseId) {
+            setCourseId(route.params.courseId);
+        }
+    }, [route?.params?.courseId]);
 
     // Load data from API with fallback to sample data
     const loadCourseData = useCallback(async () => {
@@ -154,40 +160,40 @@ const CourseDetails = ({ navigation, route }) => {
     }, [loadCourseData]);
 
     const handleEnrollNow = async () => {
-        // if (!user) {
-        //     Alert.alert('Login required', 'Please log in to enroll in this course');
-        //     navigation.navigate('Login');
-        //     return;
-        // }
-
-        // setEnrolling(true);
-        // try {
-        //     await enrollUserToCourse(user.uid, courseId);
-        //     const enrollmentData = await getUserEnrollment(user.uid, courseId);
-        //     setEnrollment(enrollmentData);
-        //     Alert.alert('Success!', 'You are now enrolled in this course!');
-        // } catch (error) {
-        //     console.error('Enrollment error:', error);
-        //     Alert.alert('Error', error.message || 'Failed to enroll. Please try again.');
-        // } finally {
-        //     setEnrolling(false);
-        // }
-
-        // // sample usage
+        if (!user) {
+            Alert.alert('Login required', 'Please log in to enroll in this course');
+            navigation.navigate('Login');
+            return;
+        }
 
         setLoading(prev => ({ ...prev, enrolling: true }));
-        setTimeout(() => {
-            setLoading(prev => ({ ...prev, enrolling: false }));
-            setEnrollment(true);
+        try {
+            await enrollUserToCourse(user.uid, courseId);
+            const enrollmentData = await getUserEnrollment(user.uid, courseId);
+            setEnrollment(enrollmentData);
             Alert.alert('Success!', 'You are now enrolled in this course!');
-        }, 1500);
+        } catch (error) {
+            console.error('Enrollment error:', error);
+            Alert.alert('Error', error.message || 'Failed to enroll. Please try again.');
+        } finally {
+            setLoading(prev => ({ ...prev, enrolling: false }));
+        }
+
+        // // // sample usage
+
+        // setLoading(prev => ({ ...prev, enrolling: true }));
+        // setTimeout(() => {
+        //     setLoading(prev => ({ ...prev, enrolling: false }));
+        //     setEnrollment(true);
+        //     Alert.alert('Success!', 'You are now enrolled in this course!');
+        // }, 1500);
     }
 
     const handleModulePress = (module) => {
-        // if (!enrollment && course !== sampleCourse) {
-        //     Alert.alert('Enrollment Required', 'Please enroll in this course to access modules');
-        //     return;
-        // }
+        if (!enrollment && course !== sampleCourse) {
+            Alert.alert('Enrollment Required', 'Please enroll in this course to access modules');
+            return;
+        }
 
         if (module.type === 'quiz') {
             navigation.navigate('Quiz', {
@@ -283,7 +289,7 @@ const CourseDetails = ({ navigation, route }) => {
                                 <View className="flex-row items-center mr-4">
                                     <Feather name="clock" size={14} color="gray" />
                                     <Text className="text-gray-500 text-sm ml-1">
-                                        {Math.ceil((course?.duration || 420) / 60)}hrs
+                                        {Math.ceil((course?.hours || 420) / 60)}hrs
                                     </Text>
                                 </View>
                                 <View className="flex-row items-center">
@@ -292,23 +298,6 @@ const CourseDetails = ({ navigation, route }) => {
                                 </View>
                             </View>
 
-                            {/* Progress Bar (only if enrolled) */}
-                            {isEnrolled && (
-                                <View className="mt-4">
-                                    <View className="flex-row justify-between items-center mb-1">
-                                        <Text className="text-sm text-gray-600">Progress</Text>
-                                        <Text className="text-sm font-semibold text-primary">
-                                            {progressPercentage}%
-                                        </Text>
-                                    </View>
-                                    <View className="w-full bg-gray-200 rounded-full h-2">
-                                        <View
-                                            className="bg-primary h-2 rounded-full"
-                                            style={{ width: `${progressPercentage}%` }}
-                                        />
-                                    </View>
-                                </View>
-                            )}
                         </View>
 
                         {/* Course Image */}
@@ -317,6 +306,13 @@ const CourseDetails = ({ navigation, route }) => {
                             source={require('../../assets/images/course1.png')}
                             style={{ width: 140, height: 120, opacity: 0.9 }}
                         />
+
+                        {/* Progress Bar (only if enrolled) */}
+                        {isEnrolled && (
+                            <View className="absolute -bottom-3 left-2 right-2">
+                                <ProgressLine progress={progressPercentage} color='#78BB1B' bg='#E0F2F1' />
+                            </View>
+                        )}
                     </View>
                 </View>
 

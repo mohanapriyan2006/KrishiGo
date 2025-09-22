@@ -1,12 +1,12 @@
 // src/firebase/courseService.js
-import { doc, collection, getDoc, getDocs, query, orderBy, addDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 
 
 // get course details (top-level)
 export async function getCourse(courseId) {
     try {
-        const courseRef = doc(db, 'courseDetails', courseId);
+        const courseRef = doc(db, 'courses', courseId);
         const snap = await getDoc(courseRef);
         if (!snap.exists()) {
             throw new Error('Course not found');
@@ -21,7 +21,7 @@ export async function getCourse(courseId) {
 // get modules for a course, ordered
 export async function getCourseModules(courseId) {
     try {
-        const modulesCol = collection(db, 'courseDetails', courseId, 'modules');
+        const modulesCol = collection(db, 'courses', courseId, 'modules');
         // Try with order field first, if it fails, get all without ordering
         let snap;
         try {
@@ -63,8 +63,10 @@ export async function enrollUserToCourse(userId, courseId) {
         const enrollRef = doc(db, 'users', userId, 'enrollments', courseId);
         // create with initial progress empty
         await setDoc(enrollRef, {
+            courseId: courseId,
             enrolledAt: new Date(),
-            progress: {}
+            progress: {},
+            status: 'ongoing' // or 'completed'
         });
         return true;
     } catch (error) {
@@ -89,10 +91,24 @@ export async function getUserEnrollment(userId, courseId) {
 export async function setModuleCompleted(userId, courseId, moduleId, completed = true) {
     try {
         const ref = doc(db, 'users', userId, 'enrollments', courseId);
-        // update nested field progress.moduleId = true
         await updateDoc(ref, {
             [`progress.${moduleId}`]: completed
         });
+        // update nested field progress.moduleId = true
+        // if all modules are completed, also set status to 'completed'
+        const enrollmentSnap = await getDoc(ref);
+        if (enrollmentSnap.exists()) {
+            const enrollmentData = enrollmentSnap.data();
+            const allModules = await getCourseModules(courseId);
+            const completedModules = Object.values(enrollmentData.progress).filter(Boolean).length;
+            if (completedModules === allModules.length) {
+                await updateDoc(ref, {
+                    status: 'completed'
+                });
+                console.log('User enrolled course status updated to completed');
+            }
+        }
+        
     } catch (error) {
         console.error('Error updating module completion:', error);
         throw error;
@@ -104,7 +120,7 @@ export async function addCourseWithModulesOrdered() {
     try {
         // STEP 1: Create a course document
         const courseId = "courseId"; // You can use a generated ID if you want
-        const courseRef = doc(db, "courseDetails", courseId);
+        const courseRef = doc(db, "courses", courseId);
 
         await setDoc(courseRef, {
             title: "How to Harvest More Effectively",
@@ -200,7 +216,7 @@ export async function addCourseWithModulesOrdered() {
 // Function to update existing modules with order field
 export async function addOrderToExistingModules(courseId) {
     try {
-        const modulesCol = collection(db, 'courseDetails', courseId, 'modules');
+        const modulesCol = collection(db, 'courses', courseId, 'modules');
         const snap = await getDocs(modulesCol);
 
         const modules = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -209,7 +225,7 @@ export async function addOrderToExistingModules(courseId) {
         modules.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
         for (let i = 0; i < modules.length; i++) {
-            const moduleRef = doc(db, 'courseDetails', courseId, 'modules', modules[i].id);
+            const moduleRef = doc(db, 'courses', courseId, 'modules', modules[i].id);
             await updateDoc(moduleRef, {
                 order: i + 1
             });
@@ -228,9 +244,10 @@ export async function addCourseWithModules() {
     try {
         // STEP 1: Create a course document
         const courseId = "courseId"; // You can use a generated ID if you want
-        const courseRef = doc(db, "courseDetails", courseId);
+        const courseRef = doc(db, "courses", courseId);
 
         await setDoc(courseRef, {
+            id: courseId,
             title: "How to Harvest More Effectively",
             description: "Learn how to harvest crops more efficiently and sell them for higher profits.",
             category: "Agriculture",
@@ -298,12 +315,71 @@ export async function addCourseWithModules() {
     }
 }
 
+
+// Add modules to existing course 
+export async function addModulesToExistingCourse(courseId, modules = null) {
+    try {
+        const modulesCollectionRef = collection(db, "courses", courseId, "modules");
+
+        const modules = [
+            {
+                title: "Introduction",
+                order: 1,
+                description: "In this module, you will learn the basics of harvesting.",
+                type: "video",
+                videoUrl: "eCwRVJyjKA4",
+                duration: "6 min",
+                completed: true,
+            },
+            {
+                title: "Advanced Techniques",
+                order: 2,
+                description: "Learn advanced techniques for harvesting crops.",
+                type: "video",
+                videoUrl: "eCwRVJyjKA4",
+                duration: "6 min",
+                completed: true,
+            },
+            {
+                title: "Advanced Techniques",
+                order: 3,
+                description: "Learn advanced techniques for harvesting crops.",
+                type: "video",
+                videoUrl: "mZXetb1TPEg",
+                duration: "12 min",
+                completed: false,
+            },
+            {
+                title: "Advanced Techniques Quiz",
+                order: 4,
+                description: "Test your knowledge with a short quiz.",
+                type: "quiz",
+                quizId: "jhbfjhsebuhwe",
+                duration: "12 min",
+                completed: false,
+            },
+        ];
+
+        for (const module of modules) {
+            await addDoc(modulesCollectionRef, {
+                ...module,
+                courseId: courseId,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            });
+        }
+
+        console.log("Modules added successfully!");
+    } catch (error) {
+        console.error("Error adding modules to existing course:", error);
+    }
+}
+
 // // Run Create once to add a quiz
 // (async () => {
 //     await addCourseWithModules();
 // })();
 
 // (async () => {
-//     await addOrderToExistingModules('courseId');
-//     // await addCourseWithModules();
+//     await addModulesToExistingCourse('6');
 // })();

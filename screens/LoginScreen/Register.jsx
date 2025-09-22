@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useHeaderHeight } from "@react-navigation/elements";
 import { useNavigation } from "@react-navigation/native";
 import { onAuthStateChanged } from "firebase/auth";
 import { useContext, useEffect, useState } from "react";
@@ -13,13 +14,14 @@ import {
 	View,
 } from "react-native";
 import * as yup from "yup";
-import { handleRegister } from "../../api/register/register_firebase";
+import { handleRegister } from "../../api/user/register_firebase";
 import { auth, db } from "../../config/firebase";
 import { DataContext } from "../../hooks/DataContext";
 
 const registerSchema = yup.object().shape({
 	email: yup.string().required().email(),
-	fullName: yup.string().required("Full name is required").min(2),
+	firstName: yup.string().required("First name is required").min(2),
+	lastName: yup.string().required("Last name is required").min(1),
 	phoneNumber: yup
 		.string()
 		.required()
@@ -45,7 +47,7 @@ const registerSchema = yup.object().shape({
 		.string()
 		.required()
 		.min(8)
-		.matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/),
+		.matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Password must contain at least one uppercase letter, one lowercase letter, and one number"),
 	confirmPassword: yup
 		.string()
 		.required()
@@ -59,7 +61,8 @@ const Register = () => {
 
 	const [formData, setFormData] = useState({
 		email: "",
-		fullName: "",
+		firstName: "",
+		lastName: "",
 		phoneNumber: "+91",
 		address: {
 			street: "",
@@ -142,18 +145,27 @@ const Register = () => {
 			fetchUserDetails
 		});
 
+	const headerHeight = useHeaderHeight();
+
 	return (
 		<SafeAreaView className="flex-1 bg-gradient-to-br from-green-100 to-green-200">
 			<KeyboardAvoidingView
 				behavior={Platform.OS === "ios" ? "padding" : "height"}
+				keyboardVerticalOffset={Platform.OS === "ios" ? headerHeight : 0} // NEW
 				className="flex-1"
 			>
 				<ScrollView
-					contentContainerStyle={{ flexGrow: 1 }}
+					contentContainerStyle={{
+						flexGrow: 1,
+						justifyContent: "center",
+						paddingBottom: 180
+					}}
 					className="flex-1"
 					showsVerticalScrollIndicator={false}
+					keyboardShouldPersistTaps="handled"
+					keyboardDismissMode="on-drag"
 				>
-					<View className="flex-1 justify-center px-8 py-20">
+					<View className="flex-1 justify-start relative px-8 py-10">
 						<View className="items-center mb-2">
 							<Text className="text-4xl font-bold text-primaryDark mb-2">
 								KrishiGo
@@ -162,19 +174,36 @@ const Register = () => {
 						</View>
 
 						<View className="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl">
-							<View className="mb-4">
-								<TextInput
-									className={`bg-white p-4 rounded-xl border ${errors.fullName ? "border-red-500" : "border-gray-300"
-										}`}
-									placeholder="Full Name"
-									value={formData.fullName}
-									onChangeText={(text) => handleInputChange("fullName", text)}
-								/>
-								{errors.fullName && (
-									<Text className="text-red-500 text-xs mt-1">
-										{errors.fullName}
-									</Text>
-								)}
+
+							<View className="flex-row gap-2 mb-4">
+								<View className="flex-1">
+									<TextInput
+										className={`bg-white p-4 rounded-xl border ${errors.firstName ? "border-red-500" : "border-gray-300"
+											}`}
+										placeholder="First Name"
+										value={formData.firstName}
+										onChangeText={(text) => handleInputChange("firstName", text)}
+									/>
+									{errors.firstName && (
+										<Text className="text-red-500 text-xs mt-1">
+											{errors.firstName}
+										</Text>
+									)}
+								</View>
+								<View className="flex-1">
+									<TextInput
+										className={`bg-white p-4 rounded-xl border ${errors.lastName ? "border-red-500" : "border-gray-300"
+											}`}
+										placeholder="Last Name"
+										value={formData.lastName}
+										onChangeText={(text) => handleInputChange("lastName", text)}
+									/>
+									{errors.lastName && (
+										<Text className="text-red-500 text-xs mt-1">
+											{errors.lastName}
+										</Text>
+									)}
+								</View>
 							</View>
 
 							<View className="mb-4">
@@ -308,7 +337,7 @@ const Register = () => {
 								</View>
 							</View>
 
-							<View className="mb-4">
+							{/* <View className="mb-4">
 								<View className="flex-row items-center justify-between">
 									<Text className="text-gray-600">Enable Notifications</Text>
 									<TouchableOpacity
@@ -330,7 +359,7 @@ const Register = () => {
 										/>
 									</TouchableOpacity>
 								</View>
-							</View>
+							</View> */}
 
 							<View className="mb-4">
 								<View className="relative">

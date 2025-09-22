@@ -11,13 +11,14 @@ import {
 } from 'react-native';
 import ChangeLanguageModal from '../components/SettingsComponents/ChangeLanguageModal';
 import EditProfilePhoto from '../components/SettingsComponents/EditProfilePhoto';
+import { auth } from '../config/firebase';
 import { DataContext } from '../hooks/DataContext';
 
 const ProfileScreen = () => {
 
     const navigation = useNavigation();
 
-    const { userDetails } = useContext(DataContext)
+    const { userDetails , setUserDetails } = useContext(DataContext)
 
     const [userProfile, setUserProfile] = useState({
         firstName: 'Vijay',
@@ -66,6 +67,9 @@ const ProfileScreen = () => {
                 { text: 'Cancel', style: 'cancel' },
                 {
                     text: 'Logout', style: 'destructive', onPress: () => {
+                        setUserDetails(null);
+                        auth.signOut();
+                        // AsyncStorage.removeItem('userData');
                         navigation.navigate('Login');
                     }
                 },

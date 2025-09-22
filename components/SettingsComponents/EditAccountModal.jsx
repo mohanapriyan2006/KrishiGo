@@ -1,5 +1,5 @@
 import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import {
     Alert,
     KeyboardAvoidingView,
@@ -12,6 +12,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { DataContext } from '../../hooks/DataContext';
 
 const EditAccountModal = ({
     showEditModal,
@@ -19,12 +20,15 @@ const EditAccountModal = ({
     userProfile,
     onProfileUpdate,
 }) => {
+
+    const { userDetails, setUserDetails } = useContext(DataContext);
+
     const [formData, setFormData] = useState({
-        firstName: userProfile?.firstName || 'Vijay',
-        lastName: userProfile?.lastName || 'Kumar',
-        email: userProfile?.email || 'tvk2026@gmail.com',
-        phoneNumber: userProfile?.phoneNumber || '+91 12345-67890',
-        location: userProfile?.location || 'Koomapatti',
+        firstName: userDetails?.firstName || 'Vijay',
+        lastName: userDetails?.lastName || 'Kumar',
+        email: userDetails?.email || 'tvk2026@gmail.com',
+        phoneNumber: userDetails?.phoneNumber || '+91 12345-67890',
+        location: userDetails?.city || 'Koomapatti',
     });
 
     const [errors, setErrors] = useState({});

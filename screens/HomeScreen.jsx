@@ -58,6 +58,26 @@ export default function Home() {
         }
     ];
 
+    // Add dummy badges data
+    const userBadges = [
+       {
+        id: 1,
+        image: require('../assets/images/badges/first-harvest.png'),
+       },
+       {
+        id: 2,
+        image: require('../assets/images/badges/green-thumb.png'),
+       },
+         {
+        id: 3,
+        image: require('../assets/images/badges/early-bird.png'),
+       },
+       {
+        id: 4,
+        image: require('../assets/images/badges/harvest-helper.png'),
+       }
+    ];
+
     const { userDetails } = useContext(DataContext);
 
     return (
@@ -123,6 +143,36 @@ export default function Home() {
                             <Text className="text-white text-xs font-medium">Improve Now</Text>
                         </TouchableOpacity>
                     </View>
+                </View>
+
+                {/* Badges Section */}
+                <View className="mb-6">
+                    <View className="flex-row justify-between items-center mb-4 px-2">
+                        <Text className="text-lg font-bold text-primaryDark">Your Badges</Text>
+                        <Text className="text-sm text-primary font-medium">{userBadges.length} Earned</Text>
+                    </View>
+
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        className="px-2"
+                    >
+                        {userBadges.map((badge) => (
+                            <TouchableOpacity
+                                key={badge.id}
+                                className="bg-white rounded-full mr-3 my-2 border-dashed border border-primary items-center shadow-lg"
+                                activeOpacity={0.8}
+                            >
+                                <View className="bg-primary/10 p-2 rounded-full">
+                                    <Image
+                                        source={badge.image}
+                                        className="w-[100px] h-[100px]"
+                                        resizeMode="contain"
+                                    />
+                                </View>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
                 </View>
 
                 {/* Divider */}
