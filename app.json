@@ -11,6 +11,7 @@
 		"ios": {
 			"supportsTablet": true
 		},
+		"entryPoint": "./src/navigation/index.js",
 		"android": {
 			"adaptiveIcon": {
 				"foregroundImage": "./assets/images/logo.png",
