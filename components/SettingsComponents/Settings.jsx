@@ -1,270 +1,559 @@
-import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { useContext, useEffect, useState } from 'react';
+import { Feather, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { useContext, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
-    SafeAreaView,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
-} from 'react-native';
-import { DataContext } from '../../hooks/DataContext';
-import AIChatSpace from '../AIComponents/AIChatSpace';
-import ChangeLanguageModal from './ChangeLanguageModal';
-import DeleteAccModal from './DeleteAccModal';
-import EditAccountModal from './EditAccountModal';
+	SafeAreaView,
+	ScrollView,
+	Text,
+	TouchableOpacity,
+	View,
+} from "react-native";
+import i18n from "../../config/i18n"; // ✅ import i18n
+import { DataContext } from "../../hooks/DataContext";
+import AIChatSpace from "../AIComponents/AIChatSpace";
+import ChangeLanguageModal from "./ChangeLanguageModal";
+import DeleteAccModal from "./DeleteAccModal";
+import EditAccountModal from "./EditAccountModal";
 
 const Settings = ({ navigation }) => {
+	const { userDetails } = useContext(DataContext);
+	const { t } = useTranslation();
 
-    const { userDetails } = useContext(DataContext)
+	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [showLanguageModal, setShowLanguageModal] = useState(false);
+	const [showEditModal, setShowEditModal] = useState(false);
 
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [showLanguageModal, setShowLanguageModal] = useState(false);
-    const [showEditModal, setShowEditModal] = useState(false);
+	const [currentLanguage, setCurrentLanguage] = useState("en");
+	const [userProfile, setUserProfile] = useState({
+		firstName: "Vijay",
+		lastName: "Kumar",
+		email: "tvk2026@gmail.com",
+		phoneNumber: "+91 12345-67890",
+		location: "Koomapatti",
+	});
 
-    const [currentLanguage, setCurrentLanguage] = useState('English');
-    const [userProfile, setUserProfile] = useState({
-        firstName: 'Vijay',
-        lastName: 'Kumar',
-        email: 'tvk2026@gmail.com',
-        phoneNumber: '+91 12345-67890',
-        location: 'Koomapatti',
-    });
+	useEffect(() => {
+		if (userDetails) {
+			setUserProfile({
+				firstName: userDetails.firstName,
+				lastName: userDetails.lastName,
+				email: userDetails.email,
+				phoneNumber: userDetails.phoneNumber,
+				location: userDetails.city || "Chennai",
+			});
+		}
+	}, [userDetails]);
 
+	const handleEditProfile = () => {
+		setShowEditModal(true);
+	};
 
-    useEffect(() => {
-        if (userDetails) {
-            setUserProfile({
-                firstName: userDetails.firstName,
-                lastName: userDetails.lastName,
-                email: userDetails.email,
-                phoneNumber: userDetails.phoneNumber,
-                location: userDetails.city || 'Chennai',
-            });
-        }
-    }, [userDetails]);
+	const handleProfileUpdate = (updatedProfile) => {
+		setUserProfile(updatedProfile);
+		console.log("Profile updated:", updatedProfile);
+	};
 
+	const handleChangeLanguage = () => {
+		setShowLanguageModal(true);
+	};
 
+	const handleLanguageChange = (newLanguageCode) => {
+		setCurrentLanguage(newLanguageCode);
+		i18n.changeLanguage(newLanguageCode); // 🔥 switch language
+		console.log("Language changed to:", newLanguageCode);
+	};
 
-    const handleEditProfile = () => {
-        setShowEditModal(true);
-    };
+	const handleSavedCourses = () => {
+		navigation?.navigate("SavedCourses");
+	};
 
-    const handleProfileUpdate = (updatedProfile) => {
-        setUserProfile(updatedProfile);
-        console.log('Profile updated:', updatedProfile);
-        // Here you would typically save to storage/API
-    };
+	const handleAboutKrishiGo = () => {
+		navigation?.navigate("About");
+	};
 
-    const handleChangeLanguage = () => {
-        setShowLanguageModal(true);
-    };
+	const handleTermsAndConditions = () => {
+		navigation?.navigate("TermsAndConditions");
+	};
 
-    const handleLanguageChange = (newLanguage) => {
-        setCurrentLanguage(newLanguage);
-        console.log('Language changed to:', newLanguage);
-        // Here you would typically save the language preference to storage
-        // and update the app's language context
-    };
+	const handleDeleteAccount = () => {
+		setShowDeleteModal(true);
+	};
 
-    const handleSavedCourses = () => {
-        navigation?.navigate('SavedCourses');
-    };
+	return (
+		<SafeAreaView className="flex-1 bg-white">
+			<ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+				{/* Header */}
+				<View className="flex-row items-center justify-center px-4 py-3 mt-10 relative">
+					<TouchableOpacity
+						onPress={() => navigation?.goBack()}
+						className="w-8 h-8 rounded-full bg-primary absolute left-5 items-center justify-center mr-4"
+					>
+						<Feather name="chevron-left" size={20} color="white" />
+					</TouchableOpacity>
+					<Text className="text-2xl font-bold text-gray-900">
+						{t("settings.title")}
+					</Text>
+				</View>
 
-    const handleAboutKrishiGo = () => {
-        navigation?.navigate('About');
-    };
+				{/* Profile Information Card */}
+				<View className="mx-6 my-6">
+					<TouchableOpacity onPress={handleEditProfile}>
+						<View className="bg-lime-500/10 rounded-2xl p-6 relative">
+							{/* Edit Button */}
+							<TouchableOpacity
+								onPress={handleEditProfile}
+								className="absolute top-4 right-4 flex-row bg-lime-200 px-3 py-1 rounded-full"
+							>
+								<Ionicons name="pencil" size={16} color="#314C1C" />
+								<Text className="text-primaryDark text-sm font-medium">
+									{t("settings.edit")}
+								</Text>
+							</TouchableOpacity>
 
-    const handleTermsAndConditions = () => {
-        navigation?.navigate('TermsAndConditions');
-    };
+							{/* Profile Fields */}
+							<View className="gap-4">
+								<View className="flex-row gap-4">
+									<View className="flex-1">
+										<Text className="text-gray-600 text-sm mb-1">
+											{t("settings.firstName")}
+										</Text>
+										<View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
+											<Text className="text-gray-900 font-medium text-base">
+												{userProfile.firstName}
+											</Text>
+										</View>
+									</View>
+									<View className="flex-1">
+										<Text className="text-gray-600 text-sm mb-1">
+											{t("settings.lastName")}
+										</Text>
+										<View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
+											<Text className="text-gray-900 font-medium text-base">
+												{userProfile.lastName}
+											</Text>
+										</View>
+									</View>
+								</View>
 
-    const handleDeleteAccount = () => {
-        setShowDeleteModal(true);
-    };
+								<View>
+									<Text className="text-gray-600 text-sm mb-1">
+										{t("settings.email")}
+									</Text>
+									<View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
+										<Text className="text-gray-900 font-medium text-base">
+											{userProfile.email}
+										</Text>
+									</View>
+								</View>
 
-    return (
-        <SafeAreaView className="flex-1 bg-white">
-            <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+								<View>
+									<Text className="text-gray-600 text-sm mb-1">
+										{t("settings.phone")}
+									</Text>
+									<View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
+										<Text className="text-gray-900 font-medium text-base">
+											{userProfile.phoneNumber}
+										</Text>
+									</View>
+								</View>
 
-                {/* Header */}
-                <View className="flex-row items-center justify-center px-4 py-3 mt-10 relative">
-                    <TouchableOpacity
-                        onPress={() => navigation?.goBack()}
-                        className="w-8 h-8 rounded-full bg-primary absolute left-5 items-center justify-center mr-4"
-                    >
-                        <Feather name="chevron-left" size={20} color="white" />
-                    </TouchableOpacity>
-                    <Text className="text-2xl font-bold text-gray-900">Settings</Text>
-                </View>
+								<View>
+									<Text className="text-gray-600 text-sm mb-1">
+										{t("settings.location")}
+									</Text>
+									<View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
+										<Text className="text-gray-900 font-medium text-base">
+											{userProfile.location}
+										</Text>
+									</View>
+								</View>
+							</View>
+						</View>
+					</TouchableOpacity>
+				</View>
 
-                {/* Profile Information Card */}
-                <View className="mx-6 my-6">
-                    <TouchableOpacity onPress={handleEditProfile}>
-                        <View className="bg-lime-500/10 rounded-2xl p-6 relative">
-                            {/* Edit Button */}
-                            <TouchableOpacity
-                                onPress={() => handleEditProfile()}
-                                className="absolute top-4 right-4 flex-row bg-lime-200 px-3 py-1 rounded-full"
-                            >
-                                <Ionicons name="pencil" size={16} color="#314C1C" />
-                                <Text className="text-primaryDark text-sm font-medium">Edit</Text>
-                            </TouchableOpacity>
+				{/* Settings Options */}
+				<View className="mx-6 gap-3">
+					<TouchableOpacity
+						onPress={handleChangeLanguage}
+						className="bg-lime-500/10 p-4 rounded-xl flex-row items-center justify-between"
+						activeOpacity={0.7}
+					>
+						<View className="flex-row items-center">
+							<View className="w-10 h-10 bg-lime-200/50 rounded-full items-center justify-center mr-3">
+								<Ionicons name="language" size={20} color="#314C1C" />
+							</View>
+							<Text className="text-gray-900 font-medium text-base">
+								{t("settings.changeLanguage")}
+							</Text>
+						</View>
+						<Feather name="chevron-right" size={20} color="#6B7280" />
+					</TouchableOpacity>
 
-                            {/* Profile Fields */}
-                            {/* Profile Fields */}
-                            <View className="gap-4">
-                                {/* Name Row */}
-                                <View className="flex-row gap-4">
-                                    <View className="flex-1">
-                                        <Text className="text-gray-600 text-sm mb-1">First Name</Text>
-                                        <View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
-                                            <Text className="text-gray-900 font-medium text-base">{userProfile.firstName}</Text>
-                                        </View>
-                                    </View>
-                                    <View className="flex-1">
-                                        <Text className="text-gray-600 text-sm mb-1">Last Name</Text>
-                                        <View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
-                                            <Text className="text-gray-900 font-medium text-base">{userProfile.lastName}</Text>
-                                        </View>
-                                    </View>
-                                </View>
+					<TouchableOpacity
+						onPress={handleSavedCourses}
+						className="bg-lime-500/10 p-4 rounded-xl flex-row items-center justify-between"
+						activeOpacity={0.7}
+					>
+						<View className="flex-row items-center">
+							<View className="w-10 h-10 bg-lime-200/50 rounded-full items-center justify-center mr-3">
+								<Feather name="bookmark" size={20} color="#314C1C" />
+							</View>
+							<Text className="text-gray-900 font-medium text-base">
+								{t("settings.savedCourses")}
+							</Text>
+						</View>
+						<Feather name="chevron-right" size={20} color="#6B7280" />
+					</TouchableOpacity>
 
-                                {/* Email */}
-                                <View>
-                                    <Text className="text-gray-600 text-sm mb-1">Email Address</Text>
-                                    <View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
-                                        <Text className="text-gray-900 font-medium text-base">{userProfile.email}</Text>
-                                    </View>
-                                </View>
+					<TouchableOpacity
+						onPress={handleAboutKrishiGo}
+						className="bg-lime-500/10 p-4 rounded-xl flex-row items-center justify-between"
+						activeOpacity={0.7}
+					>
+						<View className="flex-row items-center">
+							<View className="w-10 h-10 bg-lime-200/50 rounded-full items-center justify-center mr-3">
+								<Feather name="info" size={20} color="#314C1C" />
+							</View>
+							<Text className="text-gray-900 font-medium text-base">
+								{t("settings.about")}
+							</Text>
+						</View>
+						<Feather name="chevron-right" size={20} color="#6B7280" />
+					</TouchableOpacity>
 
-                                {/* Mobile Number */}
-                                <View>
-                                    <Text className="text-gray-600 text-sm mb-1">Mobile Number</Text>
-                                    <View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
-                                        <Text className="text-gray-900 font-medium text-base">{userProfile.phoneNumber}</Text>
-                                    </View>
-                                </View>
+					<TouchableOpacity
+						onPress={handleTermsAndConditions}
+						className="bg-lime-500/10 p-4 rounded-xl flex-row items-center justify-between"
+						activeOpacity={0.7}
+					>
+						<View className="flex-row items-center">
+							<View className="w-10 h-10 bg-lime-200/50 rounded-full items-center justify-center mr-3">
+								<Feather name="file-text" size={20} color="#314C1C" />
+							</View>
+							<Text className="text-gray-900 font-medium text-base">
+								{t("settings.terms")}
+							</Text>
+						</View>
+						<Feather name="chevron-right" size={20} color="#6B7280" />
+					</TouchableOpacity>
 
-                                {/* Location */}
-                                <View>
-                                    <Text className="text-gray-600 text-sm mb-1">Location</Text>
-                                    <View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
-                                        <Text className="text-gray-900 font-medium text-base">{userProfile.location}</Text>
-                                    </View>
-                                </View>
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                </View>
+					<TouchableOpacity
+						onPress={handleDeleteAccount}
+						className="bg-red-50 p-4 rounded-xl flex-row items-center justify-between"
+						activeOpacity={0.7}
+					>
+						<View className="flex-row items-center">
+							<View className="w-10 h-10 bg-red-100/50 rounded-full items-center justify-center mr-3">
+								<MaterialIcons
+									name="delete-outline"
+									size={20}
+									color="#EF4444"
+								/>
+							</View>
+							<Text className="text-red-600 font-medium text-base">
+								{t("settings.deleteAccount")}
+							</Text>
+						</View>
+						<Feather name="chevron-right" size={20} color="#EF4444" />
+					</TouchableOpacity>
+				</View>
 
-                {/* Settings Options */}
-                <View className="mx-6 gap-3">
-                    {/* Change Language */}
-                    <TouchableOpacity
-                        onPress={handleChangeLanguage}
-                        className="bg-lime-500/10 p-4 rounded-xl flex-row items-center justify-between"
-                        activeOpacity={0.7}
-                    >
-                        <View className="flex-row items-center">
-                            <View className="w-10 h-10 bg-lime-200/50 rounded-full items-center justify-center mr-3">
-                                <Ionicons name="language" size={20} color="#314C1C" />
-                            </View>
-                            <Text className="text-gray-900 font-medium text-base">Change language</Text>
-                        </View>
-                        <Feather name="chevron-right" size={20} color="#6B7280" />
-                    </TouchableOpacity>
+				<View className="h-20" />
+			</ScrollView>
 
-                    {/* Saved Courses */}
-                    <TouchableOpacity
-                        onPress={handleSavedCourses}
-                        className="bg-lime-500/10 p-4 rounded-xl flex-row items-center justify-between"
-                        activeOpacity={0.7}
-                    >
-                        <View className="flex-row items-center">
-                            <View className="w-10 h-10 bg-lime-200/50 rounded-full items-center justify-center mr-3">
-                                <Feather name="bookmark" size={20} color="#314C1C" />
-                            </View>
-                            <Text className="text-gray-900 font-medium text-base">Saved courses</Text>
-                        </View>
-                        <Feather name="chevron-right" size={20} color="#6B7280" />
-                    </TouchableOpacity>
+			{/* Modals */}
+			<EditAccountModal
+				showEditModal={showEditModal}
+				setShowEditModal={setShowEditModal}
+				userProfile={userProfile}
+				onProfileUpdate={handleProfileUpdate}
+			/>
 
-                    {/* About KrishiGo */}
-                    <TouchableOpacity
-                        onPress={handleAboutKrishiGo}
-                        className="bg-lime-500/10 p-4 rounded-xl flex-row items-center justify-between"
-                        activeOpacity={0.7}
-                    >
-                        <View className="flex-row items-center">
-                            <View className="w-10 h-10 bg-lime-200/50 rounded-full items-center justify-center mr-3">
-                                <Feather name="info" size={20} color="#314C1C" />
-                            </View>
-                            <Text className="text-gray-900 font-medium text-base">About KrishiGo</Text>
-                        </View>
-                        <Feather name="chevron-right" size={20} color="#6B7280" />
-                    </TouchableOpacity>
+			<ChangeLanguageModal
+				showLanguageModal={showLanguageModal}
+				setShowLanguageModal={setShowLanguageModal}
+				currentLanguage={currentLanguage}
+				onLanguageChange={handleLanguageChange}
+			/>
 
-                    {/* Terms and Conditions */}
-                    <TouchableOpacity
-                        onPress={handleTermsAndConditions}
-                        className="bg-lime-500/10 p-4 rounded-xl flex-row items-center justify-between"
-                        activeOpacity={0.7}
-                    >
-                        <View className="flex-row items-center">
-                            <View className="w-10 h-10 bg-lime-200/50 rounded-full items-center justify-center mr-3">
-                                <Feather name="file-text" size={20} color="#314C1C" />
-                            </View>
-                            <Text className="text-gray-900 font-medium text-base">Terms and conditions</Text>
-                        </View>
-                        <Feather name="chevron-right" size={20} color="#6B7280" />
-                    </TouchableOpacity>
+			<DeleteAccModal
+				showDeleteModal={showDeleteModal}
+				setShowDeleteModal={setShowDeleteModal}
+				userEmail={userProfile.email}
+			/>
 
-                    {/* Delete Account */}
-                    <TouchableOpacity
-                        onPress={handleDeleteAccount}
-                        className="bg-red-50 p-4 rounded-xl flex-row items-center justify-between"
-                        activeOpacity={0.7}
-                    >
-                        <View className="flex-row items-center">
-                            <View className="w-10 h-10 bg-red-100/50 rounded-full items-center justify-center mr-3">
-                                <MaterialIcons name="delete-outline" size={20} color="#EF4444" />
-                            </View>
-                            <Text className="text-red-600 font-medium text-base">Delete Account</Text>
-                        </View>
-                        <Feather name="chevron-right" size={20} color="#EF4444" />
-                    </TouchableOpacity>
-                </View>
-
-                {/* Spacer for bottom navigation */}
-                <View className="h-20" />
-            </ScrollView>
-
-            {/* Edit Account Modal */}
-            <EditAccountModal
-                showEditModal={showEditModal}
-                setShowEditModal={setShowEditModal}
-                userProfile={userProfile}
-                onProfileUpdate={handleProfileUpdate}
-            />
-
-            {/* Change Language Modal */}
-            <ChangeLanguageModal
-                showLanguageModal={showLanguageModal}
-                setShowLanguageModal={setShowLanguageModal}
-                currentLanguage={currentLanguage}
-                onLanguageChange={handleLanguageChange}
-            />
-
-            {/* Delete Account Modal */}
-            <DeleteAccModal
-                showDeleteModal={showDeleteModal}
-                setShowDeleteModal={setShowDeleteModal}
-                userEmail={userProfile.email}
-            />
-
-            <AIChatSpace />
-        </SafeAreaView>
-    );
+			<AIChatSpace />
+		</SafeAreaView>
+	);
 };
 
 export default Settings;
+
+// import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
+// import { useContext, useEffect, useState } from 'react';
+// import {
+//     SafeAreaView,
+//     ScrollView,
+//     Text,
+//     TouchableOpacity,
+//     View,
+// } from 'react-native';
+// import { DataContext } from '../../hooks/DataContext';
+// import AIChatSpace from '../AIComponents/AIChatSpace';
+// import ChangeLanguageModal from './ChangeLanguageModal';
+// import DeleteAccModal from './DeleteAccModal';
+// import EditAccountModal from './EditAccountModal';
+
+// const Settings = ({ navigation }) => {
+
+//     const { userDetails } = useContext(DataContext)
+
+//     const [showDeleteModal, setShowDeleteModal] = useState(false);
+//     const [showLanguageModal, setShowLanguageModal] = useState(false);
+//     const [showEditModal, setShowEditModal] = useState(false);
+
+//     const [currentLanguage, setCurrentLanguage] = useState('English');
+//     const [userProfile, setUserProfile] = useState({
+//         firstName: 'Vijay',
+//         lastName: 'Kumar',
+//         email: 'tvk2026@gmail.com',
+//         phoneNumber: '+91 12345-67890',
+//         location: 'Koomapatti',
+//     });
+
+//     useEffect(() => {
+//         if (userDetails) {
+//             setUserProfile({
+//                 firstName: userDetails.firstName,
+//                 lastName: userDetails.lastName,
+//                 email: userDetails.email,
+//                 phoneNumber: userDetails.phoneNumber,
+//                 location: userDetails.city || 'Chennai',
+//             });
+//         }
+//     }, [userDetails]);
+
+//     const handleEditProfile = () => {
+//         setShowEditModal(true);
+//     };
+
+//     const handleProfileUpdate = (updatedProfile) => {
+//         setUserProfile(updatedProfile);
+//         console.log('Profile updated:', updatedProfile);
+//         // Here you would typically save to storage/API
+//     };
+
+//     const handleChangeLanguage = () => {
+//         setShowLanguageModal(true);
+//     };
+
+//     const handleLanguageChange = (newLanguage) => {
+//         setCurrentLanguage(newLanguage);
+//         console.log('Language changed to:', newLanguage);
+//         // Here you would typically save the language preference to storage
+//         // and update the app's language context
+//     };
+
+//     const handleSavedCourses = () => {
+//         navigation?.navigate('SavedCourses');
+//     };
+
+//     const handleAboutKrishiGo = () => {
+//         navigation?.navigate('About');
+//     };
+
+//     const handleTermsAndConditions = () => {
+//         navigation?.navigate('TermsAndConditions');
+//     };
+
+//     const handleDeleteAccount = () => {
+//         setShowDeleteModal(true);
+//     };
+
+//     return (
+//         <SafeAreaView className="flex-1 bg-white">
+//             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+
+//                 {/* Header */}
+//                 <View className="flex-row items-center justify-center px-4 py-3 mt-10 relative">
+//                     <TouchableOpacity
+//                         onPress={() => navigation?.goBack()}
+//                         className="w-8 h-8 rounded-full bg-primary absolute left-5 items-center justify-center mr-4"
+//                     >
+//                         <Feather name="chevron-left" size={20} color="white" />
+//                     </TouchableOpacity>
+//                     <Text className="text-2xl font-bold text-gray-900">Settings</Text>
+//                 </View>
+
+//                 {/* Profile Information Card */}
+//                 <View className="mx-6 my-6">
+//                     <TouchableOpacity onPress={handleEditProfile}>
+//                         <View className="bg-lime-500/10 rounded-2xl p-6 relative">
+//                             {/* Edit Button */}
+//                             <TouchableOpacity
+//                                 onPress={() => handleEditProfile()}
+//                                 className="absolute top-4 right-4 flex-row bg-lime-200 px-3 py-1 rounded-full"
+//                             >
+//                                 <Ionicons name="pencil" size={16} color="#314C1C" />
+//                                 <Text className="text-primaryDark text-sm font-medium">Edit</Text>
+//                             </TouchableOpacity>
+
+//                             {/* Profile Fields */}
+//                             {/* Profile Fields */}
+//                             <View className="gap-4">
+//                                 {/* Name Row */}
+//                                 <View className="flex-row gap-4">
+//                                     <View className="flex-1">
+//                                         <Text className="text-gray-600 text-sm mb-1">First Name</Text>
+//                                         <View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
+//                                             <Text className="text-gray-900 font-medium text-base">{userProfile.firstName}</Text>
+//                                         </View>
+//                                     </View>
+//                                     <View className="flex-1">
+//                                         <Text className="text-gray-600 text-sm mb-1">Last Name</Text>
+//                                         <View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
+//                                             <Text className="text-gray-900 font-medium text-base">{userProfile.lastName}</Text>
+//                                         </View>
+//                                     </View>
+//                                 </View>
+
+//                                 {/* Email */}
+//                                 <View>
+//                                     <Text className="text-gray-600 text-sm mb-1">Email Address</Text>
+//                                     <View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
+//                                         <Text className="text-gray-900 font-medium text-base">{userProfile.email}</Text>
+//                                     </View>
+//                                 </View>
+
+//                                 {/* Mobile Number */}
+//                                 <View>
+//                                     <Text className="text-gray-600 text-sm mb-1">Mobile Number</Text>
+//                                     <View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
+//                                         <Text className="text-gray-900 font-medium text-base">{userProfile.phoneNumber}</Text>
+//                                     </View>
+//                                 </View>
+
+//                                 {/* Location */}
+//                                 <View>
+//                                     <Text className="text-gray-600 text-sm mb-1">Location</Text>
+//                                     <View className="flex-row items-center bg-lime-200/50 px-3 py-2 rounded-lg">
+//                                         <Text className="text-gray-900 font-medium text-base">{userProfile.location}</Text>
+//                                     </View>
+//                                 </View>
+//                             </View>
+//                         </View>
+//                     </TouchableOpacity>
+//                 </View>
+
+//                 {/* Settings Options */}
+//                 <View className="mx-6 gap-3">
+//                     {/* Change Language */}
+//                     <TouchableOpacity
+//                         onPress={handleChangeLanguage}
+//                         className="bg-lime-500/10 p-4 rounded-xl flex-row items-center justify-between"
+//                         activeOpacity={0.7}
+//                     >
+//                         <View className="flex-row items-center">
+//                             <View className="w-10 h-10 bg-lime-200/50 rounded-full items-center justify-center mr-3">
+//                                 <Ionicons name="language" size={20} color="#314C1C" />
+//                             </View>
+//                             <Text className="text-gray-900 font-medium text-base">Change language</Text>
+//                         </View>
+//                         <Feather name="chevron-right" size={20} color="#6B7280" />
+//                     </TouchableOpacity>
+
+//                     {/* Saved Courses */}
+//                     <TouchableOpacity
+//                         onPress={handleSavedCourses}
+//                         className="bg-lime-500/10 p-4 rounded-xl flex-row items-center justify-between"
+//                         activeOpacity={0.7}
+//                     >
+//                         <View className="flex-row items-center">
+//                             <View className="w-10 h-10 bg-lime-200/50 rounded-full items-center justify-center mr-3">
+//                                 <Feather name="bookmark" size={20} color="#314C1C" />
+//                             </View>
+//                             <Text className="text-gray-900 font-medium text-base">Saved courses</Text>
+//                         </View>
+//                         <Feather name="chevron-right" size={20} color="#6B7280" />
+//                     </TouchableOpacity>
+
+//                     {/* About KrishiGo */}
+//                     <TouchableOpacity
+//                         onPress={handleAboutKrishiGo}
+//                         className="bg-lime-500/10 p-4 rounded-xl flex-row items-center justify-between"
+//                         activeOpacity={0.7}
+//                     >
+//                         <View className="flex-row items-center">
+//                             <View className="w-10 h-10 bg-lime-200/50 rounded-full items-center justify-center mr-3">
+//                                 <Feather name="info" size={20} color="#314C1C" />
+//                             </View>
+//                             <Text className="text-gray-900 font-medium text-base">About KrishiGo</Text>
+//                         </View>
+//                         <Feather name="chevron-right" size={20} color="#6B7280" />
+//                     </TouchableOpacity>
+
+//                     {/* Terms and Conditions */}
+//                     <TouchableOpacity
+//                         onPress={handleTermsAndConditions}
+//                         className="bg-lime-500/10 p-4 rounded-xl flex-row items-center justify-between"
+//                         activeOpacity={0.7}
+//                     >
+//                         <View className="flex-row items-center">
+//                             <View className="w-10 h-10 bg-lime-200/50 rounded-full items-center justify-center mr-3">
+//                                 <Feather name="file-text" size={20} color="#314C1C" />
+//                             </View>
+//                             <Text className="text-gray-900 font-medium text-base">Terms and conditions</Text>
+//                         </View>
+//                         <Feather name="chevron-right" size={20} color="#6B7280" />
+//                     </TouchableOpacity>
+
+//                     {/* Delete Account */}
+//                     <TouchableOpacity
+//                         onPress={handleDeleteAccount}
+//                         className="bg-red-50 p-4 rounded-xl flex-row items-center justify-between"
+//                         activeOpacity={0.7}
+//                     >
+//                         <View className="flex-row items-center">
+//                             <View className="w-10 h-10 bg-red-100/50 rounded-full items-center justify-center mr-3">
+//                                 <MaterialIcons name="delete-outline" size={20} color="#EF4444" />
+//                             </View>
+//                             <Text className="text-red-600 font-medium text-base">Delete Account</Text>
+//                         </View>
+//                         <Feather name="chevron-right" size={20} color="#EF4444" />
+//                     </TouchableOpacity>
+//                 </View>
+
+//                 {/* Spacer for bottom navigation */}
+//                 <View className="h-20" />
+//             </ScrollView>
+
+//             {/* Edit Account Modal */}
+//             <EditAccountModal
+//                 showEditModal={showEditModal}
+//                 setShowEditModal={setShowEditModal}
+//                 userProfile={userProfile}
+//                 onProfileUpdate={handleProfileUpdate}
+//             />
+
+//             {/* Change Language Modal */}
+//             <ChangeLanguageModal
+//                 showLanguageModal={showLanguageModal}
+//                 setShowLanguageModal={setShowLanguageModal}
+//                 currentLanguage={currentLanguage}
+//                 onLanguageChange={handleLanguageChange}
+//             />
+
+//             {/* Delete Account Modal */}
+//             <DeleteAccModal
+//                 showDeleteModal={showDeleteModal}
+//                 setShowDeleteModal={setShowDeleteModal}
+//                 userEmail={userProfile.email}
+//             />
+
+//             <AIChatSpace />
+//         </SafeAreaView>
+//     );
+// };
+
+// export default Settings;
