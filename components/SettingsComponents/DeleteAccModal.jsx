@@ -43,6 +43,7 @@ const DeleteAccModal = ({ showDeleteModal, setShowDeleteModal, userEmail }) => {
         }
 
         try {
+            // console.log('Reauthenticating user - password : ', password);
             // Reauthenticate user before deletion
             const credential = EmailAuthProvider.credential(userEmail, password);
             await reauthenticateWithCredential(user, credential);

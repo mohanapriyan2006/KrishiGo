@@ -1,4 +1,4 @@
-import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { useContext, useState } from 'react';
 import {
     Alert,
@@ -12,23 +12,26 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { updateUserProfile } from '../../api/user/user_service';
 import { DataContext } from '../../hooks/DataContext';
 
 const EditAccountModal = ({
     showEditModal,
     setShowEditModal,
     userProfile,
-    onProfileUpdate,
 }) => {
 
-    const { userDetails, setUserDetails } = useContext(DataContext);
+    const { user, userDetails, fetchUserDetails } = useContext(DataContext);
 
     const [formData, setFormData] = useState({
         firstName: userDetails?.firstName || 'Vijay',
         lastName: userDetails?.lastName || 'Kumar',
-        email: userDetails?.email || 'tvk2026@gmail.com',
         phoneNumber: userDetails?.phoneNumber || '+91 12345-67890',
-        location: userDetails?.city || 'Koomapatti',
+        street: userDetails?.address?.street || 'South street',
+        city: userDetails?.address?.city || 'Koomapatti',
+        state: userDetails?.address?.state || 'Tamil Nadu',
+        country: userDetails?.address?.country || 'India',
+        zipCode: userDetails?.address?.zipCode || '600001',
     });
 
     const [errors, setErrors] = useState({});
@@ -47,16 +50,8 @@ const EditAccountModal = ({
         // Last Name validation
         if (!formData.lastName.trim()) {
             newErrors.lastName = 'Last name is required';
-        } else if (formData.lastName.trim().length < 2) {
-            newErrors.lastName = 'Last name must be at least 2 characters';
-        }
-
-        // Email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!formData.email.trim()) {
-            newErrors.email = 'Email is required';
-        } else if (!emailRegex.test(formData.email)) {
-            newErrors.email = 'Please enter a valid email address';
+        } else if (formData.lastName.trim().length < 1) {
+            newErrors.lastName = 'Last name must be at least 1 characters';
         }
 
         // Phone Number validation
@@ -68,9 +63,25 @@ const EditAccountModal = ({
             newErrors.phoneNumber = 'Please enter a valid phone number';
         }
 
-        // Location validation
-        if (!formData.location.trim()) {
-            newErrors.location = 'Location is required';
+        // City validation
+        if (!formData.city.trim()) {
+            newErrors.city = 'City is required';
+        }
+        // State validation
+        if (!formData.state.trim()) {
+            newErrors.state = 'State is required';
+        }
+        // Country validation
+        if (!formData.country.trim()) {
+            newErrors.country = 'Country is required';
+        }
+        // Street validation
+        if (!formData.street.trim()) {
+            newErrors.street = 'Street is required';
+        }
+        // Zip code validation
+        if (!formData.zipCode.trim()) {
+            newErrors.zipCode = 'Zip code is required';
         }
 
         setErrors(newErrors);
@@ -100,11 +111,19 @@ const EditAccountModal = ({
         setIsLoading(true);
 
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1500));
 
-            // Call the update function passed from parent
-            onProfileUpdate(formData);
+            await updateUserProfile(user.uid, {
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                phoneNumber: formData.phoneNumber,
+                address: {
+                    city: formData.city,
+                    street: formData.street,
+                    state: formData.state,
+                    country: formData.country,
+                    zipCode: formData.zipCode,
+                },
+            });
 
             Alert.alert(
                 'Success',
@@ -123,6 +142,7 @@ const EditAccountModal = ({
                 [{ text: 'OK' }]
             );
         } finally {
+            fetchUserDetails();
             setIsLoading(false);
         }
     };
@@ -132,9 +152,12 @@ const EditAccountModal = ({
         setFormData({
             firstName: userProfile?.firstName || 'Vijay',
             lastName: userProfile?.lastName || 'Kumar',
-            email: userProfile?.email || 'tvk2026@gmail.com',
             phoneNumber: userProfile?.phoneNumber || '+91 12345-67890',
             location: userProfile?.location || 'Koomapatti',
+            street: userProfile?.address?.street || 'Street',
+            state: userProfile?.address?.state || 'State',
+            country: userProfile?.address?.country || 'Country',
+            zipCode: userProfile?.address?.zipCode || 'Zip Code',
         });
         setErrors({});
         setShowEditModal(false);
@@ -251,15 +274,6 @@ const EditAccountModal = ({
                                 <Ionicons name="person-outline" size={20} color="#6B7280" />
                             )}
 
-                            {/* Email */}
-                            {renderInputField(
-                                'Email Address',
-                                'email',
-                                'Enter your email address',
-                                'email-address',
-                                <MaterialIcons name="email" size={20} color="#6B7280" />
-                            )}
-
                             {/* Phone Number */}
                             {renderInputField(
                                 'Phone Number',
@@ -269,11 +283,47 @@ const EditAccountModal = ({
                                 <Feather name="phone" size={20} color="#6B7280" />
                             )}
 
-                            {/* Location */}
+                            {/* Street */}
                             {renderInputField(
-                                'Location',
-                                'location',
-                                'Enter your location',
+                                'Street',
+                                'street',
+                                'Enter your street',
+                                'default',
+                                <Ionicons name="location-outline" size={20} color="#6B7280" />
+                            )}
+
+                            {/* City */}
+                            {renderInputField(
+                                'City',
+                                'city',
+                                'Enter your city',
+                                'default',
+                                <Ionicons name="location-outline" size={20} color="#6B7280" />
+                            )}
+
+                            {/* State */}
+                            {renderInputField(
+                                'State',
+                                'state',
+                                'Enter your state',
+                                'default',
+                                <Ionicons name="location-outline" size={20} color="#6B7280" />
+                            )}
+
+                            {/* Country */}
+                            {renderInputField(
+                                'Country',
+                                'country',
+                                'Enter your country',
+                                'default',
+                                <Ionicons name="location-outline" size={20} color="#6B7280" />
+                            )}
+
+                            {/* Zip Code */}
+                            {renderInputField(
+                                'Zip Code',
+                                'zipCode',
+                                'Enter your zip code',
                                 'default',
                                 <Ionicons name="location-outline" size={20} color="#6B7280" />
                             )}

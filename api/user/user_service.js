@@ -95,6 +95,19 @@ export async function createUserProfile() {
 }
 
 /**
+ * UPDATE USER PROFILE
+ */
+export async function updateUserProfile(userId, updatedData) {
+  try {
+    const userRef = doc(db, "users", userId);
+    await setDoc(userRef, updatedData, { merge: true });
+    console.log("✅ User profile updated successfully!");
+  } catch (error) {
+    console.log("❌ Error updating user profile:", error.message);
+  }
+}
+
+/**
  * GET ALL USERS WITH ENROLLED COURSES AND ACHIEVEMENTS
  */
 export async function getAllUsers() {

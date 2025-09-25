@@ -40,7 +40,7 @@ const Settings = ({ navigation }) => {
                 lastName: userDetails.lastName,
                 email: userDetails.email,
                 phoneNumber: userDetails.phoneNumber,
-                location: userDetails.city || 'Chennai',
+                location: userDetails?.address?.city || 'Chennai',
             });
         }
     }, [userDetails]);
