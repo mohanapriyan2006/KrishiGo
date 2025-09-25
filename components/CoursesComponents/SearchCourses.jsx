@@ -124,7 +124,7 @@ const SearchCourses = ({ navigation }) => {
                 <View className="relative mb-3">
                     <Image
                         // source={{ uri: item.image }}
-                        source={require("../../assets/images/course1.png")}
+                        source={item.image}
                         className="w-full h-40 rounded-xl"
                         resizeMode="cover"
                     />

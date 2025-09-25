@@ -96,7 +96,7 @@ const sampleAllCourses = [
         instructor: 'Dr. Rajesh Kumar',
         duration: '4 weeks',
         rating: 4.8,
-        image: require('../assets/images/course1.png'),
+        image: require('../assets/images/courses/organic-basics.jpg'),
         category: 'Organic',
         level: 'Beginner',
         description: 'Learn the fundamentals of organic farming practices and sustainable agriculture.'
@@ -107,7 +107,7 @@ const sampleAllCourses = [
         instructor: 'Prof. Meera Sharma',
         duration: '6 weeks',
         rating: 4.9,
-        image: require('../assets/images/course1.png'),
+        image: require('../assets/images/courses/modern-irrigation.jpg'),
         category: 'Technology',
         level: 'Intermediate',
         description: 'Master water-efficient irrigation systems and smart farming technologies.'
@@ -118,7 +118,7 @@ const sampleAllCourses = [
         instructor: 'Dr. Anil Verma',
         duration: '5 weeks',
         rating: 4.7,
-        image: require('../assets/images/course1.png'),
+        image: require('../assets/images/courses/crop-disease.jpg'),
         category: 'Health',
         level: 'Advanced',
         description: 'Identify, prevent, and treat common crop diseases using sustainable methods.'
@@ -129,7 +129,7 @@ const sampleAllCourses = [
         instructor: 'Dr. Priya Patel',
         duration: '8 weeks',
         rating: 4.6,
-        image: require('../assets/images/course1.png'),
+        image: require('../assets/images/courses/sustainable-livestock.jpg'),
         category: 'Livestock',
         level: 'Intermediate',
         description: 'Ethical and sustainable practices for modern livestock management.'
@@ -140,7 +140,7 @@ const sampleAllCourses = [
         instructor: 'Prof. Suresh Reddy',
         duration: '3 weeks',
         rating: 4.9,
-        image: require('../assets/images/course1.png'),
+        image: require('../assets/images/courses/soil-health.jpg'),
         category: 'Soil',
         level: 'Beginner',
         description: 'Understanding soil composition, testing, and nutrient management.'
@@ -151,7 +151,7 @@ const sampleAllCourses = [
         instructor: 'Dr. Kavita Singh',
         duration: '7 weeks',
         rating: 4.8,
-        image: require('../assets/images/course1.png'),
+        image: require('../assets/images/courses/precision-agriculture.jpg'),
         category: 'Technology',
         level: 'Advanced',
         description: 'Use AI, IoT, and data analytics for precision farming solutions.'
@@ -225,7 +225,7 @@ const DataProvider = ({ children }) => {
         if (user) {
             fetchWishlist(user.uid);
         }
-    }, [user ]);
+    }, [user]);
 
     // -----------------------------------------------------------------------------
     // ------------- All Course State & Methods -------------
@@ -233,11 +233,27 @@ const DataProvider = ({ children }) => {
 
     const [allCourses, setAllCourses] = useState([]);
 
+    const getCourseImage = (courseId) => {
+        // Map course IDs to local images
+        const courseImages = {
+            "1": require('../assets/images/courses/organic-basics.jpg'),
+            "2": require('../assets/images/courses/modern-irrigation.jpg'),
+            "3": require('../assets/images/courses/crop-disease.jpg'),
+            "4": require('../assets/images/courses/sustainable-livestock.jpg'),
+            "5": require('../assets/images/courses/soil-health.jpg'),
+            "6": require('../assets/images/courses/precision-agriculture.jpg'),
+        };
+        return courseImages[courseId] || require('../assets/images/course1.png');
+    }
+
     const loadAllCourses = async () => {
         try {
             setLoading(prev => ({ ...prev, allCourses: true }));
             getAllCourses().then(courses => {
-                setAllCourses(courses);
+                setAllCourses(courses.map(course => ({
+                    ...course,
+                    image: getCourseImage(course.id)
+                })));
             }).catch(err => {
                 console.log("Error fetching all courses:", err);
                 setAllCourses(sampleAllCourses); // Fallback to sample courses on error
@@ -260,8 +276,7 @@ const DataProvider = ({ children }) => {
     // -----------------------------------------------------------------------------
 
 
-    const [course, setCourse] = useState(null);
-    const [modules, setModules] = useState([]);
+
     // const [enrollment, setEnrollment] = useState(null);
     const [enrollment, setEnrollment] = useState(false);
 
@@ -272,9 +287,9 @@ const DataProvider = ({ children }) => {
                 user, loading, setLoading,
                 userDetails, setUserDetails, fetchUserDetails,
                 allCourses, setAllCourses, loadAllCourses,
+                getCourseImage,
                 wishlistedCourses, setWishlistedCourses, fetchWishlist,
-                course, modules, enrollment,
-                setCourse, setModules, setEnrollment,
+                enrollment, setEnrollment,
             }}
         >
             {children}

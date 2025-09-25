@@ -97,11 +97,13 @@ const sampleModules = [
 
 const CourseDetails = ({ navigation, route }) => {
 
-    const { user, course,
-        modules, enrollment,
-        loading, setCourse,
-        setModules, setEnrollment,
-        setLoading } = useContext(DataContext);
+    const { user, enrollment,
+        loading, setEnrollment,
+        setLoading , getCourseImage } = useContext(DataContext);
+
+
+    const [course, setCourse] = useState(null);
+    const [modules, setModules] = useState([]);
 
 
     const [courseId, setCourseId] = useState("courseId");
@@ -124,6 +126,7 @@ const CourseDetails = ({ navigation, route }) => {
             try {
                 // Try to fetch from API
                 courseData = await getCourse(courseId);
+                courseData = {...courseData , image: getCourseImage(courseId) }|| null;
                 modulesData = await getCourseModules(courseId);
                 console.log('Fetched course data from API', courseData);
                 // console.log('Fetched modules data from API', modulesData);
@@ -201,7 +204,8 @@ const CourseDetails = ({ navigation, route }) => {
                 courseTitle: course?.title || sampleCourse.title,
                 moduleId: module.id,
                 courseId,
-                quizId: module.quizId
+                quizId: module.quizId,
+                module: modules.find(m => m.id === module.id) || {},
             });
         } else {
             navigation.navigate('CourseVideo', {
@@ -220,22 +224,6 @@ const CourseDetails = ({ navigation, route }) => {
         // });
     };
 
-    // const toggleModuleComplete = async (moduleId) => {
-    //     if (!user || !enrollment) {
-    //         Alert.alert('Login required', 'Please log in to track progress');
-    //         return;
-    //     }
-
-    //     try {
-    //         const isCompleted = enrollment?.progress?.[moduleId] === true;
-    //         await setModuleCompleted(user.uid, courseId, moduleId, !isCompleted);
-    //         const updatedEnrollment = await getUserEnrollment(user.uid, courseId);
-    //         setEnrollment(updatedEnrollment);
-    //     } catch (error) {
-    //         console.log('Toggle complete error:', error);
-    //         Alert.alert('Error', 'Could not update progress. Please try again.');
-    //     }
-    // };
 
     if (loading.courseDetails || loading.modules) {
         return (
@@ -304,8 +292,8 @@ const CourseDetails = ({ navigation, route }) => {
                         {/* Course Image */}
                         <Image
                             // source={course?.thumbnail ? { uri: course.thumbnail } : require('../../assets/images/course1.png')}
-                            source={require('../../assets/images/course1.png')}
-                            style={{ width: 140, height: 120, opacity: 0.9 }}
+                            source={course?.image || require('../../assets/images/course1.png')}
+                            style={{ width: 140, height: 120, opacity: 0.8 , borderRadius: 10}}
                         />
 
                         {/* Progress Bar (only if enrolled) */}

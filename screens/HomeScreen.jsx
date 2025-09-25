@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useContext } from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Image, Linking, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import RoundProgress from '../components/RoundProgress';
 import { DataContext } from '../hooks/DataContext';
 
@@ -11,71 +11,91 @@ export default function Home() {
 
     // Dummy government schemes data
     const governmentSchemes = [
-        {
-            id: 1,
-            title: "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
-            description: "Direct income support of ₹6000 per year to small and marginal farmers",
-            amount: "₹6,000/year",
-            deadline: "31 Dec 2024",
-            status: "Active",
-            image: require('../assets/images/course1.png')
-        },
-        {
-            id: 2,
-            title: "Kisan Credit Card (KCC)",
-            description: "Easy access to credit for farmers at subsidized interest rates",
-            amount: "Up to ₹3 Lakh",
-            deadline: "Ongoing",
-            status: "Apply Now",
-            image: require('../assets/images/course1.png')
-        },
-        {
-            id: 3,
-            title: "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
-            description: "Crop insurance scheme to protect farmers from crop losses",
-            amount: "Premium: 2-5%",
-            deadline: "15 Jan 2025",
-            status: "Limited Time",
-            image: require('../assets/images/course1.png')
-        },
-        {
-            id: 4,
-            title: "Soil Health Card Scheme",
-            description: "Free soil testing and nutrient management recommendations",
-            amount: "Free Service",
-            deadline: "Ongoing",
-            status: "Available",
-            image: require('../assets/images/course1.png')
-        },
-        {
-            id: 5,
-            title: "National Agriculture Market (e-NAM)",
-            description: "Online trading platform for agricultural commodities",
-            amount: "Better Prices",
-            deadline: "Ongoing",
-            status: "Join Now",
-            image: require('../assets/images/course1.png')
+    {
+        id: 1,
+        title: "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+        description: "Direct income support of ₹6000 per year to small and marginal farmers",
+        amount: "₹6,000/year",
+        deadline: "31 Dec 2024",
+        status: "Active",
+        image: require("../assets/images/schemes/pm-kisan.jpg"),
+        link: "https://pmkisan.gov.in/"
+    },
+    {
+        id: 2,
+        title: "Kisan Credit Card (KCC)",
+        description: "Easy access to credit for farmers at subsidized interest rates",
+        amount: "Up to ₹3 Lakh",
+        deadline: "Ongoing",
+        status: "Apply Now",
+        image: require("../assets/images/schemes/kcc-loan.jpg"),
+        link: "https://www.pmkisan.gov.in/Documents/KCC.pdf"
+    },
+    {
+        id: 3,
+        title: "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+        description: "Crop insurance scheme to protect farmers from crop losses",
+        amount: "Premium: 2-5%",
+        deadline: "15 Jan 2025",
+        status: "Limited Time",
+        image: require("../assets/images/schemes/pmp-crop.jpg"),
+        link: "https://pmfby.gov.in/"
+    },
+    {
+        id: 4,
+        title: "Soil Health Card Scheme",
+        description: "Free soil testing and nutrient management recommendations",
+        amount: "Free Service",
+        deadline: "Ongoing",
+        status: "Available",
+        image: require("../assets/images/schemes/soil-health-card.jpg"),
+        link: "https://soilhealth.dac.gov.in/"
+    },
+    {
+        id: 5,
+        title: "National Agriculture Market (e-NAM)",
+        description: "Online trading platform for agricultural commodities",
+        amount: "Better Prices",
+        deadline: "Ongoing",
+        status: "Join Now",
+        image: require("../assets/images/schemes/e-nam.jpg"),
+        link: "https://enam.gov.in/web/"
+    }
+];
+
+
+    const openExternalLink = async (url) => {
+        if (!url) return;
+        try {
+            const supported = await Linking.canOpenURL(url);
+            if (supported) {
+                await Linking.openURL(url);
+            }
+        } catch (e) {
+            console.log("Error", "Failed to open link : ", e);
         }
-    ];
+    };
+
+
 
     // Add dummy badges data
     const userBadges = [
-       {
-        id: 1,
-        image: require('../assets/images/badges/first-harvest.png'),
-       },
-       {
-        id: 2,
-        image: require('../assets/images/badges/green-thumb.png'),
-       },
-         {
-        id: 3,
-        image: require('../assets/images/badges/early-bird.png'),
-       },
-       {
-        id: 4,
-        image: require('../assets/images/badges/harvest-helper.png'),
-       }
+        {
+            id: 1,
+            image: require('../assets/images/badges/first-harvest.png'),
+        },
+        {
+            id: 2,
+            image: require('../assets/images/badges/green-thumb.png'),
+        },
+        {
+            id: 3,
+            image: require('../assets/images/badges/early-bird.png'),
+        },
+        {
+            id: 4,
+            image: require('../assets/images/badges/harvest-helper.png'),
+        }
     ];
 
     const { userDetails } = useContext(DataContext);
@@ -158,10 +178,9 @@ export default function Home() {
                         className="px-2"
                     >
                         {userBadges.map((badge) => (
-                            <TouchableOpacity
+                            <View
                                 key={badge.id}
                                 className="bg-white rounded-full mr-3 my-2 border-dashed border border-primary items-center shadow-lg"
-                                activeOpacity={0.8}
                             >
                                 <View className="bg-primary/10 p-2 rounded-full">
                                     <Image
@@ -170,7 +189,7 @@ export default function Home() {
                                         resizeMode="contain"
                                     />
                                 </View>
-                            </TouchableOpacity>
+                            </View>
                         ))}
                     </ScrollView>
                 </View>
@@ -192,11 +211,10 @@ export default function Home() {
                         className="p-2"
                     >
                         {governmentSchemes.map((scheme) => (
-                            <TouchableOpacity
+                            <View
                                 key={scheme.id}
                                 className="bg-white p-2 rounded-2xl mr-4"
                                 style={{ width: 280 }}
-                                activeOpacity={0.8}
                             >
                                 <View className="relative">
                                     <Image
@@ -226,11 +244,11 @@ export default function Home() {
                                         </View>
                                     </View>
 
-                                    <TouchableOpacity className="bg-primary py-2 px-4 rounded-lg">
+                                    <TouchableOpacity className="bg-primary py-2 px-4 rounded-lg" onPress={() => openExternalLink(scheme.link)}>
                                         <Text className="text-white text-center font-medium text-sm">Learn More</Text>
                                     </TouchableOpacity>
                                 </View>
-                            </TouchableOpacity>
+                            </View>
                         ))}
                     </ScrollView>
                 </View>
