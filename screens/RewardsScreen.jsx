@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import {
     Alert,
     Clipboard,
@@ -11,10 +11,15 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { updateUserRewards } from '../api/user/user_service';
 import RedeemScreen from '../components/RedeemComponents/RedeemScreen';
 import RewardPopUp from '../components/RewardPopUp';
+import { DataContext } from '../hooks/DataContext';
 
 const RewardsScreen = () => {
+
+    const { user } = useContext(DataContext)
+
     const [totalPoints, setTotalPoints] = useState(8490);
     const [redeemScreenVisible, setRedeemScreenVisible] = useState(false);
 
@@ -69,6 +74,7 @@ const RewardsScreen = () => {
         setTotalPoints(prev => prev + claimedReward.points);
 
         setRewardPoints(claimedReward.points);
+        updateUserRewards(user.uid, claimedReward.points, 0);
         setRewardPopUpVisible(true);
     };
 

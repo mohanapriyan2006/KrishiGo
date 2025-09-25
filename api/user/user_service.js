@@ -114,17 +114,17 @@ export async function getAllUsers() {
   try {
     const usersSnapshot = await getDocs(collection(db, "users"));
     const users = [];
-    
+
     for (const userDoc of usersSnapshot.docs) {
       const userData = { id: userDoc.id, ...userDoc.data() };
-      
+
       // Fetch enrolled courses for this user
       const enrolledCoursesSnapshot = await getDocs(collection(userDoc.ref, "enrolledCourses"));
       const enrolledCourses = enrolledCoursesSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      
+
       // Fetch achievements for this user
       const achievementsSnapshot = await getDocs(collection(userDoc.ref, "achievements"));
       const achievements = achievementsSnapshot.docs.map((doc) => ({
@@ -147,25 +147,25 @@ export async function getAllUsers() {
 /**
  *  UPDATE REWARDS POINTS FOR A USER
  */
-export async function updateUserRewards(userId, pointsToAdd=0 , redeemedPointsToAdd=0) {
+export async function updateUserRewards(userId, pointsToAdd = 0, redeemedPointsToAdd = 0) {
   try {
     const userRef = doc(db, "users", userId);
     const userSnap = await getDocs(query(collection(db, "users"), where("authId", "==", userId)));
-   if (!userSnap.empty) {
-     const userData = userSnap.docs[0].data();
+    if (!userSnap.empty) {
+      const userData = userSnap.docs[0].data();
 
-     await setDoc(userRef, {
-       rewards: {
-         totalPoints: (userData.rewards.totalPoints || 0) + pointsToAdd,
-         currentPoints: (userData.rewards.currentPoints || 0) + pointsToAdd,
-         redeemedPoints: (userData.rewards.redeemedPoints || 0) + redeemedPointsToAdd,
-       },
-     }, { merge: true });
+      await setDoc(userRef, {
+        rewards: {
+          totalPoints: (userData.rewards.totalPoints || 0) + pointsToAdd,
+          currentPoints: (userData.rewards.currentPoints - redeemedPointsToAdd || 0) + pointsToAdd,
+          redeemedPoints: (userData.rewards.redeemedPoints || 0) + redeemedPointsToAdd,
+        },
+      }, { merge: true });
 
-     console.log("✅ User rewards updated successfully!");
-   } else {
-     console.log("❌ User not found.");
-   }
+      console.log("✅ User rewards updated successfully!");
+    } else {
+      console.log("❌ User not found.");
+    }
   } catch (error) {
     console.log("❌ Error updating user rewards:", error.message);
   }
@@ -199,7 +199,7 @@ export async function addCourseToWishlist(userId, courseId) {
     // Check if course is already in wishlist to prevent duplicates
     const existingQuery = query(wishlistRef, where("courseId", "==", courseId));
     const existingSnapshot = await getDocs(existingQuery);
-    
+
     if (!existingSnapshot.empty) {
       console.log("⚠️ Course already exists in wishlist");
       return; // Course already in wishlist, don't add again
