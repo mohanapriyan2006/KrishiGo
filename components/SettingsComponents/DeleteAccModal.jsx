@@ -31,7 +31,7 @@ const DeleteAccModal = ({ showDeleteModal, setShowDeleteModal, userEmail }) => {
             Alert.alert('Account Deleted', 'Your account has been successfully deleted.');
             navigation.navigate('Login');
         } catch (error) {
-            console.error('Error deleting user account:', error);
+            console.log('Error deleting user account:', error);
             Alert.alert('Error', 'There was an issue deleting your account. Please try again later.');
         }
     }
@@ -63,7 +63,7 @@ const DeleteAccModal = ({ showDeleteModal, setShowDeleteModal, userEmail }) => {
                 ]
             );
         } catch (error) {
-            console.error('Reauthentication failed:', error);
+            console.log('Reauthentication failed:', error);
             Alert.alert(
                 'Authentication Failed',
                 'The password you entered is incorrect. Please try again.',

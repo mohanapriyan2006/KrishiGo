@@ -113,7 +113,7 @@ export async function createCourses() {
 
     console.log("🎉 All courses created successfully!");
   } catch (error) {
-    console.error("❌ Error creating courses:", error.message);
+    console.log("❌ Error creating courses:", error.message);
   }
 }
 
@@ -145,7 +145,7 @@ export async function createCourse() {
 
     console.log("✅ Course created successfully!");
   } catch (error) {
-    console.error("❌ Error creating course:", error.message);
+    console.log("❌ Error creating course:", error.message);
   }
 }
 
@@ -163,7 +163,7 @@ export async function getAllCourses() {
     // console.log("📚 All courses:", courses);
     return courses;
   } catch (error) {
-    console.error("❌ Error fetching courses:", error.message);
+    console.log("❌ Error fetching courses:", error.message);
     return [];
   }
 }
@@ -185,7 +185,7 @@ export async function getCourseById(courseId) {
     // console.log("🎯 Course details:", course);
     return course;
   } catch (error) {
-    console.error("❌ Error fetching course by ID:", error.message);
+    console.log("❌ Error fetching course by ID:", error.message);
     return null;
   }
 }

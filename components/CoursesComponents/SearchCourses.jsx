@@ -68,7 +68,7 @@ const SearchCourses = ({ navigation }) => {
             // Refresh wishlist from server to ensure consistency
             await fetchWishlist(user.uid);
         } catch (error) {
-            console.error('Error toggling wishlist:', error);
+            console.log('Error toggling wishlist:', error);
             // Revert optimistic update on error
             await fetchWishlist(user.uid);
             alert('Failed to update wishlist. Please try again.');

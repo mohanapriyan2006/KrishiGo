@@ -90,7 +90,7 @@ export async function createUserProfile() {
 
     console.log("🏆 Achievements added successfully!");
   } catch (error) {
-    console.error("❌ Error creating user profile:", error.message);
+    console.log("❌ Error creating user profile:", error.message);
   }
 }
 
@@ -125,7 +125,7 @@ export async function getAllUsers() {
     console.log("📚 Users fetched successfully:", users);
     return users;
   } catch (error) {
-    console.error("❌ Error fetching users:", error.message);
+    console.log("❌ Error fetching users:", error.message);
     return [];
   }
 }
@@ -154,7 +154,7 @@ export async function updateUserRewards(userId, pointsToAdd=0 , redeemedPointsTo
      console.log("❌ User not found.");
    }
   } catch (error) {
-    console.error("❌ Error updating user rewards:", error.message);
+    console.log("❌ Error updating user rewards:", error.message);
   }
 }
 
@@ -171,7 +171,7 @@ export async function getUserEnrolledCourses(userId) {
     }));
     return enrolledCourses;
   } catch (error) {
-    console.error("❌ Error fetching enrolled courses:", error.message);
+    console.log("❌ Error fetching enrolled courses:", error.message);
     return [];
   }
 }
@@ -199,7 +199,7 @@ export async function addCourseToWishlist(userId, courseId) {
 
     console.log("✅ Course added to wishlist successfully!");
   } catch (error) {
-    console.error("❌ Error adding course to wishlist:", error.message);
+    console.log("❌ Error adding course to wishlist:", error.message);
     throw error; // Re-throw so UI can handle the error
   }
 }
@@ -222,7 +222,7 @@ export async function removeCourseFromWishlist(userId, courseId) {
     await batch.commit();
     console.log("✅ Course removed from wishlist successfully!");
   } catch (error) {
-    console.error("❌ Error removing course from wishlist:", error.message);
+    console.log("❌ Error removing course from wishlist:", error.message);
     throw error; // Re-throw so UI can handle the error
   }
 }
@@ -241,7 +241,7 @@ export async function getUserWishlist(userId) {
     }));
     return wishlist;
   } catch (error) {
-    console.error("❌ Error fetching user wishlist:", error.message);
+    console.log("❌ Error fetching user wishlist:", error.message);
     return [];
   }
 }

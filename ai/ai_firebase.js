@@ -1,16 +1,16 @@
 import {
-	addDoc,
-	collection,
-	deleteDoc,
-	doc,
-	getDocs,
-	limit,
-	onSnapshot,
-	orderBy,
-	query,
-	serverTimestamp,
-	startAfter,
-	updateDoc,
+    addDoc,
+    collection,
+    deleteDoc,
+    doc,
+    getDocs,
+    limit,
+    onSnapshot,
+    orderBy,
+    query,
+    serverTimestamp,
+    startAfter,
+    updateDoc,
 } from "firebase/firestore";
 
 export const createFirebaseChatHandlers = ({
@@ -51,7 +51,7 @@ export const createFirebaseChatHandlers = ({
 			});
 			return unsubscribe;
 		} catch (error) {
-			console.error("Error loading recent chats:", error);
+			console.log("Error loading recent chats:", error);
 		}
 	};
 
@@ -90,7 +90,7 @@ export const createFirebaseChatHandlers = ({
 				timestamp: serverTimestamp(),
 			});
 		} catch (error) {
-			console.error("Error creating new chat session:", error);
+			console.log("Error creating new chat session:", error);
 		}
 	};
 
@@ -130,7 +130,7 @@ export const createFirebaseChatHandlers = ({
 			});
 			return unsubscribe;
 		} catch (error) {
-			console.error("Error loading chat:", error);
+			console.log("Error loading chat:", error);
 			setIsInitialLoading(false);
 		}
 	};
@@ -174,7 +174,7 @@ export const createFirebaseChatHandlers = ({
 
 			await updateDoc(chatSessionRef, updateData);
 		} catch (error) {
-			console.error("Error saving message:", error);
+			console.log("Error saving message:", error);
 		}
 	};
 
@@ -199,7 +199,7 @@ export const createFirebaseChatHandlers = ({
 				await startNewChat();
 			}
 		} catch (error) {
-			console.error("Error deleting chat:", error);
+			console.log("Error deleting chat:", error);
 		}
 	};
 
@@ -234,7 +234,7 @@ export const createFirebaseChatHandlers = ({
 			const hasMore = docs.length === PAGE_SIZE;
 			return { messages: reversed, lastCursor, hasMore };
 		} catch (error) {
-			console.error("Error fetching latest messages page:", error);
+			console.log("Error fetching latest messages page:", error);
 			return { messages: [], lastCursor: null, hasMore: false };
 		}
 	};
@@ -275,7 +275,7 @@ export const createFirebaseChatHandlers = ({
 			const hasMore = docs.length === PAGE_SIZE;
 			return { messages: reversed, lastCursor: newLastCursor, hasMore };
 		} catch (error) {
-			console.error("Error fetching older messages page:", error);
+			console.log("Error fetching older messages page:", error);
 			return { messages: [], lastCursor: null, hasMore: false };
 		}
 	};

@@ -13,7 +13,7 @@ export async function getCourse(courseId) {
         }
         return { id: snap.id, ...snap.data() };
     } catch (error) {
-        console.error('Error fetching course:', error);
+        console.log('Error fetching course:', error);
         throw error;
     }
 }
@@ -52,7 +52,7 @@ export async function getCourseModules(courseId) {
 
         return modules;
     } catch (error) {
-        console.error('Error fetching course modules:', error);
+        console.log('Error fetching course modules:', error);
         throw error;
     }
 }
@@ -70,7 +70,7 @@ export async function enrollUserToCourse(userId, courseId) {
         });
         return true;
     } catch (error) {
-        console.error('Error enrolling user:', error);
+        console.log('Error enrolling user:', error);
         throw error;
     }
 }
@@ -82,7 +82,7 @@ export async function getUserEnrollment(userId, courseId) {
         const snap = await getDoc(ref);
         return snap.exists() ? snap.data() : null;
     } catch (error) {
-        console.error('Error fetching user enrollment:', error);
+        console.log('Error fetching user enrollment:', error);
         return null; // Return null instead of throwing to allow graceful fallback
     }
 }
@@ -110,7 +110,7 @@ export async function setModuleCompleted(userId, courseId, moduleId, completed =
         }
         
     } catch (error) {
-        console.error('Error updating module completion:', error);
+        console.log('Error updating module completion:', error);
         throw error;
     }
 }
@@ -207,7 +207,7 @@ export async function addCourseWithModulesOrdered() {
 
         console.log("Modules added successfully!");
     } catch (error) {
-        console.error("Error adding course with modules:", error);
+        console.log("Error adding course with modules:", error);
         throw error;
     }
 }
@@ -233,7 +233,7 @@ export async function addOrderToExistingModules(courseId) {
 
         console.log('Order field added to existing modules');
     } catch (error) {
-        console.error('Error adding order to modules:', error);
+        console.log('Error adding order to modules:', error);
         throw error;
     }
 }
@@ -315,7 +315,7 @@ export async function addCourseWithModules() {
 
         console.log("Modules added successfully!");
     } catch (error) {
-        console.error("Error adding course with modules:", error);
+        console.log("Error adding course with modules:", error);
     }
 }
 
@@ -375,7 +375,7 @@ export async function addModulesToExistingCourse(courseId, modules = null) {
 
         console.log("Modules added successfully!");
     } catch (error) {
-        console.error("Error adding modules to existing course:", error);
+        console.log("Error adding modules to existing course:", error);
     }
 }
 

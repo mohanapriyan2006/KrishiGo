@@ -108,6 +108,7 @@ const CourseDetails = ({ navigation, route }) => {
 
     useEffect(() => {
         if (route?.params?.courseId) {
+            console.log('Route param courseId:', route.params.courseId);
             setCourseId(route.params.courseId);
         }
     }, [route?.params?.courseId]);
@@ -124,7 +125,7 @@ const CourseDetails = ({ navigation, route }) => {
                 // Try to fetch from API
                 courseData = await getCourse(courseId);
                 modulesData = await getCourseModules(courseId);
-                // console.log('Fetched course data from API', courseData);
+                console.log('Fetched course data from API', courseData);
                 // console.log('Fetched modules data from API', modulesData);
             } catch (apiError) {
                 console.log('API Error, using sample data:', apiError.message);
@@ -145,7 +146,7 @@ const CourseDetails = ({ navigation, route }) => {
                 }
             }
         } catch (error) {
-            console.error('Load data error:', error);
+            console.log('Load data error:', error);
             // Even on error, provide sample data
             setCourse(sampleCourse);
             setModules(sampleModules);
@@ -157,7 +158,7 @@ const CourseDetails = ({ navigation, route }) => {
 
     useEffect(() => {
         loadCourseData();
-    }, [loadCourseData]);
+    }, [courseId, user]);
 
     const handleEnrollNow = async () => {
         if (!user) {
@@ -173,7 +174,7 @@ const CourseDetails = ({ navigation, route }) => {
             setEnrollment(enrollmentData);
             Alert.alert('Success!', 'You are now enrolled in this course!');
         } catch (error) {
-            console.error('Enrollment error:', error);
+            console.log('Enrollment error:', error);
             Alert.alert('Error', error.message || 'Failed to enroll. Please try again.');
         } finally {
             setLoading(prev => ({ ...prev, enrolling: false }));
@@ -231,7 +232,7 @@ const CourseDetails = ({ navigation, route }) => {
     //         const updatedEnrollment = await getUserEnrollment(user.uid, courseId);
     //         setEnrollment(updatedEnrollment);
     //     } catch (error) {
-    //         console.error('Toggle complete error:', error);
+    //         console.log('Toggle complete error:', error);
     //         Alert.alert('Error', 'Could not update progress. Please try again.');
     //     }
     // };

@@ -15,6 +15,25 @@ export const handleRegister = async ({
     const isValid = await validateForm();
     if (!isValid) return;
 
+    // Extra guard: if user is a farmer, ensure Kisan Card is valid and verified
+    const selectedType = (formData.userType === "farmer" ? "farmer" : "helper");
+    if (selectedType === "farmer") {
+        const num = (formData?.farmerDetails?.kisanCardNumber || "").trim();
+        const verified = !!formData?.farmerDetails?.verified;
+        const numValid = /^[0-9]{12,16}$/.test(num);
+        if (!numValid || !verified) {
+            if (typeof setErrors === "function") {
+                setErrors((prev) => ({
+                    ...prev,
+                    ...(numValid ? {} : { "farmerDetails.kisanCardNumber": "Enter a valid 12-16 digit Kisan Card number" }),
+                    ...(verified ? {} : { "farmerDetails.verified": "Please verify Kisan Card" }),
+                }));
+            }
+            Alert.alert("Verification required", "Please enter and verify a valid Kisan Card number to continue.");
+            return;
+        }
+    }
+
     setLoading(true);
     try {
         // Create user in Firebase Auth
@@ -35,6 +54,11 @@ export const handleRegister = async ({
             lastName: formData.lastName,
             profilePicture: "", // Initially empty
             phoneNumber: formData.phoneNumber,
+            userType: selectedType,
+            farmerDetails: selectedType === "farmer" ? {
+                kisanCardNumber: formData?.farmerDetails?.kisanCardNumber || "",
+                verified: !!formData?.farmerDetails?.verified,
+            } : null,
             address: {
                 street: formData.address.street,
                 city: formData.address.city,
@@ -60,7 +84,7 @@ export const handleRegister = async ({
         navigation.navigate("Main");
         fetchUserDetails();
     } catch (error) {
-        console.error("Registration error:", error);
+        console.log("Registration error:", error);
         if (error.code === "auth/email-already-in-use") {
             Alert.alert("Error", "Email is already in use.");
         } else if (error.code === "auth/weak-password") {

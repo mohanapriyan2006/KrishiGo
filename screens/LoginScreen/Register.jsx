@@ -19,6 +19,7 @@ import { auth, db } from "../../config/firebase";
 import { DataContext } from "../../hooks/DataContext";
 
 const registerSchema = yup.object().shape({
+	userType: yup.string().required().oneOf(["farmer", "helper"], "Select account type"),
 	email: yup.string().required().email(),
 	firstName: yup.string().required("First name is required").min(2),
 	lastName: yup.string().required("Last name is required").min(1),
@@ -40,9 +41,31 @@ const registerSchema = yup.object().shape({
 		country: yup.string().required().min(2),
 	}),
 	preferences: yup.object().shape({
-		language: yup.string().required().oneOf(["en", "hi"]),
+		language: yup.string().required().oneOf(["english", "hindi", "malayalam", "tamil"], "Select a valid language"),
 		notificationsEnabled: yup.boolean().required(),
 	}),
+	farmerDetails: yup
+		.object()
+		.shape({
+			kisanCardNumber: yup
+				.string()
+				.when("$userType", {
+					is: "farmer",
+					then: (schema) =>
+						schema
+							.required("Kisan Card number is required")
+							.matches(/^[0-9]{12,16}$/, "Enter a valid 12-16 digit Kisan Card number"),
+					otherwise: (schema) => schema.optional(),
+				}),
+			verified: yup
+				.boolean()
+				.when("$userType", {
+					is: "farmer",
+					then: (schema) => schema.oneOf([true], "Please verify Kisan Card"),
+					otherwise: (schema) => schema.optional(),
+				}),
+		})
+		.default({ kisanCardNumber: "", verified: false }),
 	password: yup
 		.string()
 		.required()
@@ -54,12 +77,20 @@ const registerSchema = yup.object().shape({
 		.oneOf([yup.ref("password")], "Passwords must match"),
 });
 
+const LANGUAGE_OPTIONS = [
+	{ value: "english", label: "English" },
+	{ value: "malayalam", label: "Malayalam" },
+	{ value: "tamil", label: "Tamil" },
+	{ value: "hindi", label: "Hindi" },
+];
+
 const Register = () => {
 	const navigation = useNavigation();
 
 	const { fetchUserDetails } = useContext(DataContext);
 
 	const [formData, setFormData] = useState({
+		userType: "farmer", // "farmer" or "helper"
 		email: "",
 		firstName: "",
 		lastName: "",
@@ -72,8 +103,12 @@ const Register = () => {
 			country: "India",
 		},
 		preferences: {
-			language: "en",
+			language: "english",
 			notificationsEnabled: true,
+		},
+		farmerDetails: {
+			kisanCardNumber: "",
+			verified: false,
 		},
 		password: "",
 		confirmPassword: "",
@@ -83,6 +118,7 @@ const Register = () => {
 	const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
 		useState(false);
 	const [loading, setLoading] = useState(false);
+	const [kisanVerifying, setKisanVerifying] = useState(false);
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -92,7 +128,7 @@ const Register = () => {
 			}
 		});
 		return unsubscribe;
-	}, [navigation]);
+	}, []);
 
 	const handleInputChange = (field, value) => {
 		setFormData((prev) => {
@@ -118,9 +154,28 @@ const Register = () => {
 		}
 	};
 
+	const verifyKisanCard = async () => {
+		if (formData.userType !== "farmer") return;
+		const num = (formData.farmerDetails.kisanCardNumber || "").trim();
+		if (!/^[0-9]{12,16}$/.test(num)) {
+			setErrors((prev) => ({
+				...prev,
+				"farmerDetails.kisanCardNumber": "Enter a valid 12-16 digit Kisan Card number",
+			}));
+			handleInputChange("farmerDetails.verified", false);
+			return;
+		}
+		setKisanVerifying(true);
+		// Simulate async verification; replace with real API if available
+		setTimeout(() => {
+			handleInputChange("farmerDetails.verified", true);
+			setKisanVerifying(false);
+		}, 600);
+	};
+
 	const validateForm = async () => {
 		try {
-			await registerSchema.validate(formData, { abortEarly: false });
+			await registerSchema.validate(formData, { abortEarly: false, context: { userType: formData.userType } });
 			setErrors({});
 			return true;
 		} catch (validationErrors) {
@@ -175,6 +230,41 @@ const Register = () => {
 
 						<View className="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl">
 
+							{/* Account Type Selection */}
+							<View className="mb-4 border-b border-gray-300 pb-4">
+								<Text className="text-gray-600 mb-2">I am a</Text>
+								<View className="flex-row gap-2">
+									<TouchableOpacity
+										className={`flex-1 p-1 rounded-xl border ${formData.userType === "farmer" ? "bg-lime-100 border-primary" : "bg-white border-gray-300"}`}
+										onPress={() => {
+											handleInputChange("userType", "farmer");
+										}}
+									>
+										<Text className="text-center font-semibold">Farmer</Text>
+									</TouchableOpacity>
+									<TouchableOpacity
+										className={`flex-1 p-1 rounded-xl border ${formData.userType === "helper" ? "bg-lime-100 border-primary" : "bg-white border-gray-300"}`}
+										onPress={() => {
+											handleInputChange("userType", "helper");
+											// Reset farmer details when switching away
+											handleInputChange("farmerDetails.kisanCardNumber", "");
+											handleInputChange("farmerDetails.verified", false);
+											setErrors((prev) => {
+												const ne = { ...prev };
+												delete ne["farmerDetails.kisanCardNumber"];
+												delete ne["farmerDetails.verified"];
+												return ne;
+											});
+										}}
+									>
+										<Text className="text-center font-semibold">Helper</Text>
+									</TouchableOpacity>
+								</View>
+								{errors.userType && (
+									<Text className="text-red-500 text-xs mt-1">{errors.userType}</Text>
+								)}
+							</View>
+
 							<View className="flex-row gap-2 mb-4">
 								<View className="flex-1">
 									<TextInput
@@ -221,6 +311,45 @@ const Register = () => {
 									</Text>
 								)}
 							</View>
+
+							{/* Kisan Card number for Farmers */}
+							{formData.userType === "farmer" && (
+								<View className="mb-4">
+									<Text className="text-gray-600 mb-2">Kisan Card Number</Text>
+									<View className="flex-row items-center">
+										<TextInput
+											className={`flex-1 bg-white p-4 rounded-xl border ${errors["farmerDetails.kisanCardNumber"] ? "border-red-500" : "border-gray-300"}`}
+											placeholder="Enter 12-16 digit number"
+											keyboardType="numeric"
+											value={formData.farmerDetails.kisanCardNumber}
+											onChangeText={(text) => {
+												handleInputChange("farmerDetails.kisanCardNumber", text);
+												if (formData.farmerDetails.verified) {
+													handleInputChange("farmerDetails.verified", false);
+												}
+											}}
+										/>
+										<TouchableOpacity
+											className={`ml-2 px-4 py-3 rounded-xl ${formData.farmerDetails.verified ? "bg-green-600" : "bg-primary"}`}
+											onPress={verifyKisanCard}
+											disabled={kisanVerifying}
+										>
+											<Text className="text-white font-semibold">
+												{formData.farmerDetails.verified ? "Verified" : (kisanVerifying ? "Verifying..." : "Verify")}
+											</Text>
+										</TouchableOpacity>
+									</View>
+									{errors["farmerDetails.kisanCardNumber"] && (
+										<Text className="text-red-500 text-xs mt-1">{errors["farmerDetails.kisanCardNumber"]}</Text>
+									)}
+									{errors["farmerDetails.verified"] && (
+										<Text className="text-red-500 text-xs mt-1">{errors["farmerDetails.verified"]}</Text>
+									)}
+									{formData.farmerDetails.verified && (
+										<Text className="text-green-700 text-xs mt-1">Kisan Card verified</Text>
+									)}
+								</View>
+							)}
 
 							<View className="mb-4">
 								<TextInput
@@ -318,23 +447,35 @@ const Register = () => {
 							</View>
 
 							<View className="mb-4">
-								<View className="flex-row items-center justify-between">
-									<Text className="text-gray-600">Preferred Language</Text>
-									<TouchableOpacity
-										onPress={() =>
-											handleInputChange(
-												"preferences.language",
-												formData.preferences.language === "en" ? "hi" : "en"
-											)
-										}
-									>
-										<Text className="text-primaryDark">
-											{formData.preferences.language === "en"
-												? "English"
-												: "Hindi"}
-										</Text>
-									</TouchableOpacity>
-								</View>
+								<Text className="text-gray-600 mb-2">Preferred Language</Text>
+								<ScrollView horizontal>
+									{LANGUAGE_OPTIONS.map((lang) => {
+										const selected = formData.preferences.language === lang.value;
+										return (
+											<TouchableOpacity
+												key={lang.value}
+												onPress={() =>
+													handleInputChange("preferences.language", lang.value)
+												}
+												className={`px-4 py-1 ml-2 rounded-xl border ${selected
+													? "bg-lime-100 border-primary"
+													: "bg-white border-gray-300"
+													}`}
+											>
+												<Text
+													className={`font-semibold text-gray-700`}
+												>
+													{lang.label}
+												</Text>
+											</TouchableOpacity>
+										);
+									})}
+								</ScrollView>
+								{errors["preferences.language"] && (
+									<Text className="text-red-500 text-xs mt-1">
+										{errors["preferences.language"]}
+									</Text>
+								)}
 							</View>
 
 							{/* <View className="mb-4">

@@ -87,7 +87,7 @@ exports.callGeminiWithImage = functions.https.onCall(async (data, context) => {
 		const responseText = await result.response;
 		return { response: responseText.text() };
 	} catch (error) {
-		console.error("Error in callGeminiWithImage:", error);
+		console.log("Error in callGeminiWithImage:", error);
 		throw new functions.https.HttpsError("internal", error.message);
 	}
 });

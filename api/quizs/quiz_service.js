@@ -46,7 +46,7 @@ export async function createQuiz() {
 
     console.log("✅ Questions added successfully!");
   } catch (error) {
-    console.error("❌ Error creating quiz:", error.message);
+    console.log("❌ Error creating quiz:", error.message);
   }
 }
 
@@ -74,7 +74,7 @@ export async function getAllQuizzes() {
     console.log("📚 Quizzes fetched successfully:", quizzes);
     return quizzes;
   } catch (error) {
-    console.error("❌ Error fetching quizzes:", error.message);
+    console.log("❌ Error fetching quizzes:", error.message);
     return [];
   }
 }

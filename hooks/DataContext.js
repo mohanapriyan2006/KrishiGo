@@ -197,7 +197,7 @@ const DataProvider = ({ children }) => {
                 });
             }
         } catch (error) {
-            console.error("Error fetching user details:", error);
+            console.log("Error fetching user details:", error);
             setUserDetails({
                 name: "User",
                 email: "No email",
@@ -212,7 +212,7 @@ const DataProvider = ({ children }) => {
             const courseIdsForWishlist = wishlists.map(wl => wl.courseId);
             setWishlistedCourses(courseIdsForWishlist);
         } catch (error) {
-            console.error("Error fetching user wishlist:", error);
+            console.log("Error fetching user wishlist:", error);
             setWishlistedCourses([]);
         }
     };
@@ -225,7 +225,7 @@ const DataProvider = ({ children }) => {
         if (user) {
             fetchWishlist(user.uid);
         }
-    }, [user , wishlistedCourses.length]);
+    }, [user ]);
 
     // -----------------------------------------------------------------------------
     // ------------- All Course State & Methods -------------
@@ -239,11 +239,11 @@ const DataProvider = ({ children }) => {
             getAllCourses().then(courses => {
                 setAllCourses(courses);
             }).catch(err => {
-                console.error("Error fetching all courses:", err);
+                console.log("Error fetching all courses:", err);
                 setAllCourses(sampleAllCourses); // Fallback to sample courses on error
             });
         } catch (error) {
-            console.error("Error loading all courses:", error);
+            console.log("Error loading all courses:", error);
         } finally {
             setLoading(prev => ({ ...prev, allCourses: false }));
         }

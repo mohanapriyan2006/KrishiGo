@@ -304,7 +304,7 @@
 
 // ...existing code...
 import { Ionicons } from '@expo/vector-icons';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
     ActivityIndicator,
     FlatList,
@@ -331,73 +331,73 @@ const JourneyScreen = ({ navigation }) => {
     const [completedCourses, setCompletedCourses] = useState([]);
 
     // Fallback samples if no data
-    const sampleJourneyData = useMemo(() => ([
-        {
-            id: 'sample-1',
-            title: 'Introduction to Agriculture',
-            duration: 'N/A',
-            thumbnail: null,
-            localImage: require('../assets/images/course1.png'),
-            progress: 50,
-            status: 'ongoing',
-            modulesText: '10/20 modules',
-        },
-        {
-            id: 'sample-2',
-            title: 'Organic Farming Techniques',
-            duration: 'N/A',
-            thumbnail: null,
-            localImage: require('../assets/images/course1.png'),
-            progress: 53,
-            status: 'ongoing',
-            modulesText: '8/15 modules',
-        },
-        {
-            id: 'sample-3',
-            title: 'Modern Irrigation Systems',
-            duration: 'N/A',
-            thumbnail: null,
-            localImage: require('../assets/images/course1.png'),
-            progress: 42,
-            status: 'ongoing',
-            modulesText: '5/12 modules',
-        },
-    ]), []);
+    // const sampleJourneyData = useMemo(() => ([
+    //     {
+    //         id: 'sample-1',
+    //         title: 'Introduction to Agriculture',
+    //         duration: 'N/A',
+    //         thumbnail: null,
+    //         localImage: require('../assets/images/course1.png'),
+    //         progress: 50,
+    //         status: 'ongoing',
+    //         modulesText: '10/20 modules',
+    //     },
+    //     {
+    //         id: 'sample-2',
+    //         title: 'Organic Farming Techniques',
+    //         duration: 'N/A',
+    //         thumbnail: null,
+    //         localImage: require('../assets/images/course1.png'),
+    //         progress: 53,
+    //         status: 'ongoing',
+    //         modulesText: '8/15 modules',
+    //     },
+    //     {
+    //         id: 'sample-3',
+    //         title: 'Modern Irrigation Systems',
+    //         duration: 'N/A',
+    //         thumbnail: null,
+    //         localImage: require('../assets/images/course1.png'),
+    //         progress: 42,
+    //         status: 'ongoing',
+    //         modulesText: '5/12 modules',
+    //     },
+    // ]), []);
 
-    const sampleCompletedCourses = useMemo(() => ([
-        {
-            id: 'sample-4',
-            title: 'Advanced Farming Techniques',
-            duration: 'N/A',
-            thumbnail: null,
-            localImage: require('../assets/images/course1.png'),
-            progress: 100,
-            status: 'completed',
-            modulesText: '20/20 modules',
-        },
-        {
-            id: 'sample-5',
-            title: 'Sustainable Agriculture',
-            duration: 'N/A',
-            thumbnail: null,
-            localImage: require('../assets/images/course1.png'),
-            progress: 100,
-            status: 'completed',
-            modulesText: '15/15 modules',
-        },
-        {
-            id: 'sample-6',
-            title: 'Soil Health Management',
-            duration: 'N/A',
-            thumbnail: null,
-            localImage: require('../assets/images/course1.png'),
-            progress: 100,
-            status: 'completed',
-            modulesText: '10/10 modules',
-        },
-    ]), []);
+    // const sampleCompletedCourses = useMemo(() => ([
+    //     {
+    //         id: 'sample-4',
+    //         title: 'Advanced Farming Techniques',
+    //         duration: 'N/A',
+    //         thumbnail: null,
+    //         localImage: require('../assets/images/course1.png'),
+    //         progress: 100,
+    //         status: 'completed',
+    //         modulesText: '20/20 modules',
+    //     },
+    //     {
+    //         id: 'sample-5',
+    //         title: 'Sustainable Agriculture',
+    //         duration: 'N/A',
+    //         thumbnail: null,
+    //         localImage: require('../assets/images/course1.png'),
+    //         progress: 100,
+    //         status: 'completed',
+    //         modulesText: '15/15 modules',
+    //     },
+    //     {
+    //         id: 'sample-6',
+    //         title: 'Soil Health Management',
+    //         duration: 'N/A',
+    //         thumbnail: null,
+    //         localImage: require('../assets/images/course1.png'),
+    //         progress: 100,
+    //         status: 'completed',
+    //         modulesText: '10/10 modules',
+    //     },
+    // ]), []);
 
-    const [journeyData, setJourneyData] = useState(sampleJourneyData);
+    const [journeyData, setJourneyData] = useState([]);
 
     const buildCourseViewModels = async (details) => {
         const results = await Promise.all(details.map(async (enrollment) => {
@@ -432,10 +432,7 @@ const JourneyScreen = ({ navigation }) => {
 
     const getEnrollmentDetailsSafe = async () => {
         if (!user) {
-            // No user yet; show samples
-            setOnProgressCourses(sampleJourneyData);
-            setCompletedCourses(sampleCompletedCourses);
-            setJourneyData(activeTab === 'Ongoing' ? sampleJourneyData : sampleCompletedCourses);
+            // No user yet; 
             return;
         }
 
@@ -445,9 +442,6 @@ const JourneyScreen = ({ navigation }) => {
             setEnrollmentDetails(details || []);
 
             if (!details || details.length === 0) {
-                setOnProgressCourses(sampleJourneyData);
-                setCompletedCourses(sampleCompletedCourses);
-                setJourneyData(activeTab === 'Ongoing' ? sampleJourneyData : sampleCompletedCourses);
                 return;
             }
 
@@ -460,10 +454,6 @@ const JourneyScreen = ({ navigation }) => {
             setJourneyData(activeTab === 'Ongoing' ? ongoing : completed);
         } catch (e) {
             console.log('Failed to load enrollments:', e?.message || e);
-            // Fallback to samples on error
-            setOnProgressCourses(sampleJourneyData);
-            setCompletedCourses(sampleCompletedCourses);
-            setJourneyData(activeTab === 'Ongoing' ? sampleJourneyData : sampleCompletedCourses);
         } finally {
             setLoading(false);
         }

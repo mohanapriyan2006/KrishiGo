@@ -48,7 +48,7 @@ const SavedCourses = ({ navigation }) => {
                             await fetchWishlist(user.uid);
                             Alert.alert('Removed', 'Course removed from saved list');
                         } catch (error) {
-                            console.error('Error removing course:', error);
+                            console.log('Error removing course:', error);
                             alert('Failed to remove course. Please try again.');
                             // Refresh wishlist on error
                             await fetchWishlist(user.uid);

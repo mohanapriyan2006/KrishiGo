@@ -181,7 +181,7 @@ const ProfileScreenCopy = () => {
                 await Share.share({ url: shareUri, message: 'My KrishiGo Profile' });
             }
         } catch (error) {
-            console.error('Share error:', error);
+            console.log('Share error:', error);
             Alert.alert('Error', `Unable to share profile: ${error.message}`);
         } finally {
             setShowProfileForCapture(false);
@@ -219,7 +219,7 @@ const ProfileScreenCopy = () => {
     //         }
 
     //     } catch (error) {
-    //         console.error('Test capture error:', error);
+    //         console.log('Test capture error:', error);
     //         Alert.alert('Test Error', `Failed to capture: ${error.message}`);
     //     }
     // };

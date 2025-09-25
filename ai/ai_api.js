@@ -74,7 +74,7 @@ export const callGeminiAPI = async (userMessage, messages = []) => {
 			"Sorry, I couldn't generate a response.";
 		return responseText.replace(/^Assistant:\s*/, "");
 	} catch (error) {
-		console.error("Gemini API error:", error);
+		console.log("Gemini API error:", error);
 		return `🚜 Sorry, I'm having trouble connecting right now. Please check your internet connection and try again.\n\nError details: ${error.message}`;
 	}
 };
@@ -109,7 +109,7 @@ export const callGeminiAPIExternal = async (
 
 		return result.data.response;
 	} catch (error) {
-		console.error("Error calling Firebase Function:", error);
+		console.log("Error calling Firebase Function:", error);
 
 		// Provide more specific error messages
 		if (error.message.includes("image")) {
