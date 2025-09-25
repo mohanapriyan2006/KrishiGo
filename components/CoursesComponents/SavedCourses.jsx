@@ -1,6 +1,5 @@
-import { DataContext } from '../../hooks/DataContext';
 import { Feather, Ionicons } from '@expo/vector-icons';
-import { useContext, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import {
     Alert,
     FlatList,
@@ -10,48 +9,28 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-
-const sampleSavedCourses = [
-    {
-        id: 1,
-        title: 'Organic Farming Basics',
-        instructor: 'Jane Doe',
-        rating: 4.5,
-        duration: '3h 20m',
-        level: 'Beginner',
-        image: require('../../assets/images/course1.png'),
-        description: 'Learn the fundamentals of organic farming and sustainable agriculture.'
-    },
-    {
-        id: 2,
-        title: 'Advanced Irrigation Techniques',
-        instructor: 'John Smith',
-        rating: 4.7,
-        duration: '4h 10m',
-        level: 'Intermediate',
-        image: require('../../assets/images/course1.png'),
-        description: 'Explore modern irrigation methods to optimize water usage in farming.'
-    },
-    {
-        id: 3,
-        title: 'Precision Agriculture with IoT',
-        instructor: 'Alice Johnson',
-        rating: 4.9,
-        duration: '5h 00m',
-        level: 'Advanced',
-        image: require('../../assets/images/course1.png'),
-        description: 'Utilize IoT technologies to enhance precision farming practices.'
-    }
-];
+import { removeCourseFromWishlist } from '../../api/user/user_service';
+import { DataContext } from '../../hooks/DataContext';
 
 const SavedCourses = ({ navigation }) => {
-    // Sample saved courses data - in real app this would come from storage/API
-    const { wishlistedCourses, setWishlistedCourses } = useContext(DataContext);
-
+    const { user, wishlistedCourses, setWishlistedCourses, allCourses, fetchWishlist } = useContext(DataContext);
+    
     const [selectedSort, setSelectedSort] = useState('Alphabetical');
+    const [wishlistLoading, setWishlistLoading] = useState(false);
     const sortOptions = ['Alphabetical', 'Rating'];
 
-    const removeCourse = (courseId, courseTitle) => {
+    // Get actual course objects from allCourses based on wishlist IDs
+    const savedCourses = useMemo(() => {
+        return allCourses.filter(course => wishlistedCourses.includes(course.id));
+    }, [allCourses, wishlistedCourses]);
+
+    const toggleWishlist = async (courseId, courseTitle) => {
+        if (wishlistLoading) return;
+        if (!user?.uid) {
+            alert('Please log in to manage your wishlist.');
+            return;
+        }
+
         Alert.alert(
             'Remove Course',
             `Remove "${courseTitle}" from your saved courses?`,
@@ -60,13 +39,30 @@ const SavedCourses = ({ navigation }) => {
                 {
                     text: 'Remove',
                     style: 'destructive',
-                    onPress: () => {
-                        setWishlistedCourses(prev => prev.filter(course => course.id !== courseId));
-                        Alert.alert('Removed', 'Course removed from saved list');
+                    onPress: async () => {
+                        setWishlistLoading(true);
+                        try {
+                            await removeCourseFromWishlist(user.uid, courseId);
+                            setWishlistedCourses(prev => prev.filter(id => id !== courseId));
+                            // Refresh to ensure consistency
+                            await fetchWishlist(user.uid);
+                            Alert.alert('Removed', 'Course removed from saved list');
+                        } catch (error) {
+                            console.log('Error removing course:', error);
+                            alert('Failed to remove course. Please try again.');
+                            // Refresh wishlist on error
+                            await fetchWishlist(user.uid);
+                        } finally {
+                            setWishlistLoading(false);
+                        }
                     }
                 }
             ]
         );
+    };
+
+    const removeCourse = async (courseId, courseTitle) => {
+        await toggleWishlist(courseId, courseTitle);
     };
 
     const handleCoursePress = (course) => {
@@ -76,13 +72,13 @@ const SavedCourses = ({ navigation }) => {
     };
 
     const getSortedCourses = () => {
-        const coursesCopy = [...wishlistedCourses];
+        const coursesCopy = [...savedCourses];
 
         switch (selectedSort) {
             case 'Alphabetical':
                 return coursesCopy.sort((a, b) => a.title.localeCompare(b.title));
             case 'Rating':
-                return coursesCopy.sort((a, b) => b.rating - a.rating);
+                return coursesCopy.sort((a, b) => (b.rating || 0) - (a.rating || 0));
             default:
                 return coursesCopy;
         }
@@ -125,15 +121,16 @@ const SavedCourses = ({ navigation }) => {
                 {/* Course Image */}
                 <View className="relative mr-4">
                     <Image
-                        source={item.image}
+                        source={require("../../assets/images/course1.png")}
                         className="w-20 h-20 rounded-xl"
                         resizeMode="cover"
                     />
                     {/* Level Badge */}
                     <View className="absolute -top-1 -right-1">
-                        <View className={`p-1 rounded-full ${item.level === 'Beginner' ? 'bg-green-500' :
+                        <View className={`p-1 rounded-full ${
+                            item.level === 'Beginner' ? 'bg-green-500' :
                             item.level === 'Intermediate' ? 'bg-orange-500' : 'bg-red-500'
-                            }`}>
+                        }`}>
                             <Text className="text-white text-xs font-medium">{item.level}</Text>
                         </View>
                     </View>
@@ -148,28 +145,28 @@ const SavedCourses = ({ navigation }) => {
                         </Text>
                         <TouchableOpacity
                             onPress={() => removeCourse(item.id, item.title)}
-                            className="w-8 h-8 items-center justify-center"
+                            disabled={wishlistLoading}
+                            className={`w-8 h-8 items-center justify-center ${wishlistLoading ? 'opacity-50' : ''}`}
                         >
                             <Ionicons name="heart" size={20} color="#EF4444" />
                         </TouchableOpacity>
                     </View>
 
                     <Text className="text-primary font-medium text-sm mb-1">
-                        by {item.instructor.name}
+                        by {item.instructor?.name || item.instructor}
                     </Text>
 
                     {/* Stats Row */}
                     <View className="flex-row items-center mb-2">
                         <View className="flex-row items-center mr-4">
                             <Ionicons name="star" size={14} color="#FBB040" />
-                            <Text className="text-gray-600 text-sm ml-1">{item.rating}</Text>
+                            <Text className="text-gray-600 text-sm ml-1">{item.rating || 'N/A'}</Text>
                         </View>
 
                         <View className="flex-row items-center mr-4">
                             <Ionicons name="time-outline" size={14} color="#6B7280" />
                             <Text className="text-gray-600 text-sm ml-1">{item.duration}</Text>
                         </View>
-
                     </View>
                 </View>
             </View>
@@ -237,3 +234,4 @@ const SavedCourses = ({ navigation }) => {
 };
 
 export default SavedCourses;
+

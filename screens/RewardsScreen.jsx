@@ -11,8 +11,8 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import RewardPopUp from '../components/RewardPopUp';
 import RedeemScreen from '../components/RedeemComponents/RedeemScreen';
+import RewardPopUp from '../components/RewardPopUp';
 
 const RewardsScreen = () => {
     const [totalPoints, setTotalPoints] = useState(8490);
@@ -22,17 +22,22 @@ const RewardsScreen = () => {
     const [rewardPoints, setRewardPoints] = useState(0);
 
     const [dailyRewards, setDailyRewards] = useState([
-        { id: 1, name: 'Reward 1', points: 50, claimed: false },
-        { id: 2, name: 'Reward 2', points: 120, claimed: false },
+        { id: 1, name: 'Daily CheckIn', points: 50, claimed: false },
+        { id: 2, name: 'Complete 1 Quiz', points: 120, claimed: false }
     ]);
 
     const leaderboardData = [
-        { rank: 119, name: 'You', points: 91501, isCurrentUser: true },
+        { rank: 119, name: 'You', points: 1501, isCurrentUser: true },
         { rank: 1, name: 'Vimal', points: 85050, isCurrentUser: false },
         { rank: 2, name: 'Kamal', points: 85030, isCurrentUser: false },
         { rank: 3, name: 'Anand', points: 85020, isCurrentUser: false },
         { rank: 4, name: 'Ajith', points: 85010, isCurrentUser: false },
         { rank: 5, name: 'Rajini', points: 85000, isCurrentUser: false },
+        { rank: 6, name: 'John', points: 75050, isCurrentUser: false },
+        { rank: 7, name: 'Leo', points: 65030, isCurrentUser: false },
+        { rank: 8, name: 'Mohan', points: 55020, isCurrentUser: false },
+        { rank: 9, name: 'Mithilesh', points: 55010, isCurrentUser: false },
+        { rank: 10, name: 'Karthi', points: 45000, isCurrentUser: false },
     ];
 
     const handleRedeemPoints = () => {
@@ -228,7 +233,7 @@ const RewardsScreen = () => {
                                 <View className="flex-1 mx-4">
                                     <Text className={`font-medium ${user.isCurrentUser ? 'text-green-700' : 'text-gray-900'
                                         }`}>
-                                        {user.name}
+                                        {user.rank === 1 ? '🥇' : user.rank === 2 ? '🥈' : user.rank === 3 ? '🥉' : ''} {user.name}
                                     </Text>
                                 </View>
 

@@ -1,10 +1,12 @@
 # 🌱 KrishiGo - Your Digital Agriculture Companion
 
-![KrishiGo Logo](assets/images/icon.png)
+![KrishiGo Logo](assets/images/logo.png)
 
 ## 📱 About KrishiGo
 
 KrishiGo is a comprehensive mobile application designed to empower farmers with educational resources, interactive courses, challenges, and rewards. Built with React Native and Expo, this app provides a complete learning platform for agricultural knowledge, sustainable farming practices, and modern techniques.
+
+![img](assets/images/icon.png)
 
 ## ✨ Features
 
@@ -15,6 +17,8 @@ KrishiGo is a comprehensive mobile application designed to empower farmers with 
 - 🤖 **AI Assistant** - Get instant answers to your farming questions
 - 🌐 **Multilingual Support** - Access content in your preferred language
 - 👤 **Personalized Experience** - Track your progress and achievements
+
+![krishiGo logo](assets/images/logo2.png)
 
 ## 🚀 Getting Started
 

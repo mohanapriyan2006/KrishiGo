@@ -304,8 +304,7 @@
 
 // ...existing code...
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
     ActivityIndicator,
     FlatList,
@@ -315,14 +314,14 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+
 import { getCourseById } from '../api/courses/all_courses_service';
 import { getCourseModules } from '../api/courses/courses_service';
 import { getUserEnrolledCourses } from '../api/user/user_service';
 import ProgressLine from '../components/ProgressLine';
 import { DataContext } from '../hooks/DataContext';
 
-const JourneyScreen = () => {
-    const navigation = useNavigation();
+const JourneyScreen = ({ navigation }) => {
     const { user } = useContext(DataContext);
 
     const [activeTab, setActiveTab] = useState('Ongoing');
@@ -332,73 +331,73 @@ const JourneyScreen = () => {
     const [completedCourses, setCompletedCourses] = useState([]);
 
     // Fallback samples if no data
-    const sampleJourneyData = useMemo(() => ([
-        {
-            id: 'sample-1',
-            title: 'Introduction to Agriculture',
-            duration: 'N/A',
-            thumbnail: null,
-            localImage: require('../assets/images/course1.png'),
-            progress: 50,
-            status: 'ongoing',
-            modulesText: '10/20 modules',
-        },
-        {
-            id: 'sample-2',
-            title: 'Organic Farming Techniques',
-            duration: 'N/A',
-            thumbnail: null,
-            localImage: require('../assets/images/course1.png'),
-            progress: 53,
-            status: 'ongoing',
-            modulesText: '8/15 modules',
-        },
-        {
-            id: 'sample-3',
-            title: 'Modern Irrigation Systems',
-            duration: 'N/A',
-            thumbnail: null,
-            localImage: require('../assets/images/course1.png'),
-            progress: 42,
-            status: 'ongoing',
-            modulesText: '5/12 modules',
-        },
-    ]), []);
+    // const sampleJourneyData = useMemo(() => ([
+    //     {
+    //         id: 'sample-1',
+    //         title: 'Introduction to Agriculture',
+    //         duration: 'N/A',
+    //         thumbnail: null,
+    //         localImage: require('../assets/images/course1.png'),
+    //         progress: 50,
+    //         status: 'ongoing',
+    //         modulesText: '10/20 modules',
+    //     },
+    //     {
+    //         id: 'sample-2',
+    //         title: 'Organic Farming Techniques',
+    //         duration: 'N/A',
+    //         thumbnail: null,
+    //         localImage: require('../assets/images/course1.png'),
+    //         progress: 53,
+    //         status: 'ongoing',
+    //         modulesText: '8/15 modules',
+    //     },
+    //     {
+    //         id: 'sample-3',
+    //         title: 'Modern Irrigation Systems',
+    //         duration: 'N/A',
+    //         thumbnail: null,
+    //         localImage: require('../assets/images/course1.png'),
+    //         progress: 42,
+    //         status: 'ongoing',
+    //         modulesText: '5/12 modules',
+    //     },
+    // ]), []);
 
-    const sampleCompletedCourses = useMemo(() => ([
-        {
-            id: 'sample-4',
-            title: 'Advanced Farming Techniques',
-            duration: 'N/A',
-            thumbnail: null,
-            localImage: require('../assets/images/course1.png'),
-            progress: 100,
-            status: 'completed',
-            modulesText: '20/20 modules',
-        },
-        {
-            id: 'sample-5',
-            title: 'Sustainable Agriculture',
-            duration: 'N/A',
-            thumbnail: null,
-            localImage: require('../assets/images/course1.png'),
-            progress: 100,
-            status: 'completed',
-            modulesText: '15/15 modules',
-        },
-        {
-            id: 'sample-6',
-            title: 'Soil Health Management',
-            duration: 'N/A',
-            thumbnail: null,
-            localImage: require('../assets/images/course1.png'),
-            progress: 100,
-            status: 'completed',
-            modulesText: '10/10 modules',
-        },
-    ]), []);
+    // const sampleCompletedCourses = useMemo(() => ([
+    //     {
+    //         id: 'sample-4',
+    //         title: 'Advanced Farming Techniques',
+    //         duration: 'N/A',
+    //         thumbnail: null,
+    //         localImage: require('../assets/images/course1.png'),
+    //         progress: 100,
+    //         status: 'completed',
+    //         modulesText: '20/20 modules',
+    //     },
+    //     {
+    //         id: 'sample-5',
+    //         title: 'Sustainable Agriculture',
+    //         duration: 'N/A',
+    //         thumbnail: null,
+    //         localImage: require('../assets/images/course1.png'),
+    //         progress: 100,
+    //         status: 'completed',
+    //         modulesText: '15/15 modules',
+    //     },
+    //     {
+    //         id: 'sample-6',
+    //         title: 'Soil Health Management',
+    //         duration: 'N/A',
+    //         thumbnail: null,
+    //         localImage: require('../assets/images/course1.png'),
+    //         progress: 100,
+    //         status: 'completed',
+    //         modulesText: '10/10 modules',
+    //     },
+    // ]), []);
 
-    const [journeyData, setJourneyData] = useState(sampleJourneyData);
+    const [journeyData, setJourneyData] = useState([]);
 
     const buildCourseViewModels = async (details) => {
         const results = await Promise.all(details.map(async (enrollment) => {
@@ -433,10 +432,7 @@ const JourneyScreen = () => {
 
     const getEnrollmentDetailsSafe = async () => {
         if (!user) {
-            // No user yet; show samples
-            setOnProgressCourses(sampleJourneyData);
-            setCompletedCourses(sampleCompletedCourses);
-            setJourneyData(activeTab === 'Ongoing' ? sampleJourneyData : sampleCompletedCourses);
+            // No user yet; 
             return;
         }
 
@@ -446,9 +442,6 @@ const JourneyScreen = () => {
             setEnrollmentDetails(details || []);
 
             if (!details || details.length === 0) {
-                setOnProgressCourses(sampleJourneyData);
-                setCompletedCourses(sampleCompletedCourses);
-                setJourneyData(activeTab === 'Ongoing' ? sampleJourneyData : sampleCompletedCourses);
                 return;
             }
 
@@ -461,10 +454,6 @@ const JourneyScreen = () => {
             setJourneyData(activeTab === 'Ongoing' ? ongoing : completed);
         } catch (e) {
             console.log('Failed to load enrollments:', e?.message || e);
-            // Fallback to samples on error
-            setOnProgressCourses(sampleJourneyData);
-            setCompletedCourses(sampleCompletedCourses);
-            setJourneyData(activeTab === 'Ongoing' ? sampleJourneyData : sampleCompletedCourses);
         } finally {
             setLoading(false);
         }
@@ -473,7 +462,7 @@ const JourneyScreen = () => {
     useEffect(() => {
         getEnrollmentDetailsSafe();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user,navigation]);
+    }, [user, activeTab]);
 
     // Keep visible list in sync when tab or data changes
     useEffect(() => {
@@ -597,32 +586,32 @@ const JourneyScreen = () => {
 
     return (
         <SafeAreaView className="flex-1 bg-gray-50 pt-10">
-            {loading ? (
-                <View className="flex-1 items-center justify-center">
+            <FlatList
+                data={journeyData}
+                keyExtractor={(item) => String(item.id)}
+                renderItem={renderCourseCard}
+                ListHeaderComponent={renderHeader}
+                ListEmptyComponent={
+                    <View className="items-center justify-center py-12">
+                        <Ionicons name="book-outline" size={64} color="#9CA3AF" />
+                        <Text className="text-gray-500 text-lg font-medium mt-4">
+                            No {activeTab.toLowerCase()} courses
+                        </Text>
+                        <Text className="text-gray-400 text-sm mt-2 text-center px-8">
+                            {activeTab === 'Ongoing'
+                                ? 'Start a new course to begin your learning journey'
+                                : 'Complete some courses to see them here'}
+                        </Text>
+                    </View>
+                }
+
+                contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 96 }}
+                showsVerticalScrollIndicator={false}
+            />
+            {loading && (
+                <View className="absolute inset-0 bg-lime-950/20 items-center justify-center">
                     <ActivityIndicator size="large" color="#78BB1B" />
                 </View>
-            ) : (
-                <FlatList
-                    data={journeyData}
-                    keyExtractor={(item) => String(item.id)}
-                    renderItem={renderCourseCard}
-                    ListHeaderComponent={renderHeader}
-                    ListEmptyComponent={
-                        <View className="items-center justify-center py-12">
-                            <Ionicons name="book-outline" size={64} color="#9CA3AF" />
-                            <Text className="text-gray-500 text-lg font-medium mt-4">
-                                No {activeTab.toLowerCase()} courses
-                            </Text>
-                            <Text className="text-gray-400 text-sm mt-2 text-center px-8">
-                                {activeTab === 'Ongoing'
-                                    ? 'Start a new course to begin your learning journey'
-                                    : 'Complete some courses to see them here'}
-                            </Text>
-                        </View>
-                    }
-                    contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 96 }}
-                    showsVerticalScrollIndicator={false}
-                />
             )}
         </SafeAreaView>
     );

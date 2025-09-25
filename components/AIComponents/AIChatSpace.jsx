@@ -123,7 +123,7 @@ const ChatPopup = ({ visible, onClose }) => {
 			// Return the public URL
 			return `${process.env.EXPO_PUBLIC_R2_PUBLIC_URL}/${filename}`;
 		} catch (error) {
-			console.error("Error uploading image to R2:", error);
+			console.log("Error uploading image to R2:", error);
 			throw new Error("Failed to upload image");
 		} finally {
 			setUploadingImage(false);
@@ -186,7 +186,7 @@ const ChatPopup = ({ visible, onClose }) => {
 			setMessages((prev) => [...prev, botResponse]);
 			await saveMessageToFirebase(botResponse);
 		} catch (error) {
-			console.error("Error sending message:", error);
+			console.log("Error sending message:", error);
 			Alert.alert(
 				"Connection Error",
 				"Failed to get farming advice. Please check your internet connection and try again."
@@ -212,7 +212,7 @@ const ChatPopup = ({ visible, onClose }) => {
 			console.log("Received response from Gemini", { botResponseText });
 			// ... rest of the code ...
 		} catch (error) {
-			console.error("Error sending message:", error);
+			console.log("Error sending message:", error);
 			Alert.alert(
 				"Connection Error",
 				error.message.includes("image")

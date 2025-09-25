@@ -20,7 +20,7 @@ import EditProfilePhoto from '../components/SettingsComponents/EditProfilePhoto'
 import { auth } from '../config/firebase';
 import { DataContext } from '../hooks/DataContext';
 
-const ProfileScreen = () => {
+const ProfileScreenCopy = () => {
     const navigation = useNavigation();
     const { userDetails } = useContext(DataContext);
     const viewShotRef = useRef();
@@ -187,6 +187,42 @@ const ProfileScreen = () => {
             setShowProfileForCapture(false);
         }
     };
+
+
+    // Debug function to test image capture only
+    // const testImageCapture = async () => {
+    //     try {
+    //         console.log('Testing image capture...');
+
+    //         if (!viewShotRef.current) {
+    //             Alert.alert('Error', 'ViewShot ref is null');
+    //             return;
+    //         }
+
+    //         // Simple capture with basic options
+    //         const uri = await viewShotRef.current.capture({
+    //             format: 'png',
+    //             quality: 0.8
+    //         });
+
+    //         console.log('Test capture successful:', uri);
+
+    //         // Test simple share without the captured image first
+    //         try {
+    //             await Share.share({
+    //                 message: 'Test share from KrishiGo',
+    //                 title: 'Test Share'
+    //             });
+    //             Alert.alert('Success', `Image captured and simple share worked! URI: ${uri.substring(0, 50)}...`);
+    //         } catch (shareError) {
+    //             Alert.alert('Share Error', `Image captured but share failed: ${shareError.message}`);
+    //         }
+
+    //     } catch (error) {
+    //         console.log('Test capture error:', error);
+    //         Alert.alert('Test Error', `Failed to capture: ${error.message}`);
+    //     }
+    // };
 
     const getRankIcon = (rank) => {
         if (rank === 1) return '🥇';
@@ -592,4 +628,4 @@ const ProfileScreen = () => {
     );
 };
 
-export default ProfileScreen;
+export default ProfileScreenCopy;

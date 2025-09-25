@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, query, setDoc, where, writeBatch } from "firebase/firestore";
 import { db } from "../../config/firebase";
 
 /**
@@ -90,7 +90,7 @@ export async function createUserProfile() {
 
     console.log("🏆 Achievements added successfully!");
   } catch (error) {
-    console.error("❌ Error creating user profile:", error.message);
+    console.log("❌ Error creating user profile:", error.message);
   }
 }
 
@@ -125,7 +125,7 @@ export async function getAllUsers() {
     console.log("📚 Users fetched successfully:", users);
     return users;
   } catch (error) {
-    console.error("❌ Error fetching users:", error.message);
+    console.log("❌ Error fetching users:", error.message);
     return [];
   }
 }
@@ -154,7 +154,7 @@ export async function updateUserRewards(userId, pointsToAdd=0 , redeemedPointsTo
      console.log("❌ User not found.");
    }
   } catch (error) {
-    console.error("❌ Error updating user rewards:", error.message);
+    console.log("❌ Error updating user rewards:", error.message);
   }
 }
 
@@ -171,13 +171,80 @@ export async function getUserEnrolledCourses(userId) {
     }));
     return enrolledCourses;
   } catch (error) {
-    console.error("❌ Error fetching enrolled courses:", error.message);
+    console.log("❌ Error fetching enrolled courses:", error.message);
     return [];
   }
 }
 
+/** * ADD COURSE TO WISHLIST FOR A USER
+ */
+export async function addCourseToWishlist(userId, courseId) {
+  try {
+    const userRef = doc(db, "users", userId);
+    const wishlistRef = collection(userRef, "wishlist");
+
+    // Check if course is already in wishlist to prevent duplicates
+    const existingQuery = query(wishlistRef, where("courseId", "==", courseId));
+    const existingSnapshot = await getDocs(existingQuery);
+    
+    if (!existingSnapshot.empty) {
+      console.log("⚠️ Course already exists in wishlist");
+      return; // Course already in wishlist, don't add again
+    }
+
+    await addDoc(wishlistRef, {
+      courseId,
+      addedAt: new Date().toISOString(),
+    });
+
+    console.log("✅ Course added to wishlist successfully!");
+  } catch (error) {
+    console.log("❌ Error adding course to wishlist:", error.message);
+    throw error; // Re-throw so UI can handle the error
+  }
+}
 
 
+/** * REMOVE COURSE FROM WISHLIST FOR A USER
+ */
+export async function removeCourseFromWishlist(userId, courseId) {
+  try {
+    const userRef = doc(db, "users", userId);
+    const wishlistRef = collection(userRef, "wishlist");
+
+    const querySnapshot = await getDocs(query(wishlistRef, where("courseId", "==", courseId)));
+    const batch = writeBatch(db);
+
+    querySnapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+    console.log("✅ Course removed from wishlist successfully!");
+  } catch (error) {
+    console.log("❌ Error removing course from wishlist:", error.message);
+    throw error; // Re-throw so UI can handle the error
+  }
+}
+
+
+/** * GET WISHLIST FOR A USER
+ */
+export async function getUserWishlist(userId) {
+  try {
+    const userRef = doc(db, "users", userId);
+    const wishlistRef = collection(userRef, "wishlist");
+    const wishlistSnapshot = await getDocs(wishlistRef);
+    const wishlist = wishlistSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return wishlist;
+  } catch (error) {
+    console.log("❌ Error fetching user wishlist:", error.message);
+    return [];
+  }
+}
 
 // // Run once to test
 // (async () => {

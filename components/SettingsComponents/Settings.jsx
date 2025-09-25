@@ -8,7 +8,6 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import i18n from "../../config/i18n"; // ✅ import i18n
 import { DataContext } from "../../hooks/DataContext";
 import AIChatSpace from "../AIComponents/AIChatSpace";
 import ChangeLanguageModal from "./ChangeLanguageModal";
@@ -222,6 +221,7 @@ const Settings = ({ navigation }) => {
 						<Feather name="chevron-right" size={20} color="#6B7280" />
 					</TouchableOpacity>
 
+					{/* Terms and Conditions */}
 					<TouchableOpacity
 						onPress={handleTermsAndConditions}
 						className="bg-lime-500/10 p-4 rounded-xl flex-row items-center justify-between"
@@ -232,12 +232,13 @@ const Settings = ({ navigation }) => {
 								<Feather name="file-text" size={20} color="#314C1C" />
 							</View>
 							<Text className="text-gray-900 font-medium text-base">
-								{t("settings.terms")}
+								Terms and conditions
 							</Text>
 						</View>
 						<Feather name="chevron-right" size={20} color="#6B7280" />
 					</TouchableOpacity>
 
+					{/* Delete Account */}
 					<TouchableOpacity
 						onPress={handleDeleteAccount}
 						className="bg-red-50 p-4 rounded-xl flex-row items-center justify-between"
@@ -252,7 +253,7 @@ const Settings = ({ navigation }) => {
 								/>
 							</View>
 							<Text className="text-red-600 font-medium text-base">
-								{t("settings.deleteAccount")}
+								Delete Account
 							</Text>
 						</View>
 						<Feather name="chevron-right" size={20} color="#EF4444" />
