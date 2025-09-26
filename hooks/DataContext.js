@@ -158,6 +158,65 @@ const sampleAllCourses = [
     }
 ];
 
+// Sample rewards
+const SampleRewardTasks = [
+    {
+        id: 1,
+        task: 'Plant tree saplings',
+        farmerPoints: 1120,
+        helperPoints: 460,
+        completedBy: null, // 'farmer' | 'helper'
+        category: 'Afforestation',
+        description: 'Either farmer or youngster can plant saplings. Farmer gets higher reward.'
+    },
+    {
+        id: 2,
+        task: 'Adopt drip irrigation',
+        farmerPoints: 1180,
+        helperPoints: 590,
+        completedBy: null,
+        category: 'Water Conservation',
+        description: 'If farmer installs drip irrigation, more points. Helper gets fewer points for assisting or suggesting.'
+    },
+    {
+        id: 3,
+        task: 'Prepare organic compost',
+        farmerPoints: 1140,
+        helperPoints: 470,
+        completedBy: null,
+        category: 'Soil Health',
+        description: 'Both farmer and helper can create compost, but farmer gets extra points.'
+    },
+    {
+        id: 4,
+        task: 'Practice crop rotation',
+        farmerPoints: 1160,
+        helperPoints: 480,
+        completedBy: null,
+        category: 'Sustainable Farming',
+        description: 'Farmer gets more points for implementing crop rotation. Helper gets less for awareness work.'
+    },
+    {
+        id: 5,
+        task: 'Use bio-pesticides instead of chemicals',
+        farmerPoints: 1150,
+        helperPoints: 475,
+        completedBy: null,
+        category: 'Eco-Friendly Practices',
+        description: 'Farmer applies bio-pesticides in field. Helper gets points if they promote it.'
+    },
+    {
+        id: 6,
+        task: 'Install solar-powered pump',
+        farmerPoints: 2220,
+        helperPoints: 1000,
+        completedBy: null,
+        category: 'Renewable Energy',
+        description: 'Farmer earns more for installing pump. Helper earns less if just promoting/assisting.'
+    }
+];
+
+
 const DataProvider = ({ children }) => {
 
     const navigation = useNavigation();
@@ -290,6 +349,7 @@ const DataProvider = ({ children }) => {
                 getCourseImage,
                 wishlistedCourses, setWishlistedCourses, fetchWishlist,
                 enrollment, setEnrollment,
+                rewardTasks : SampleRewardTasks,
             }}
         >
             {children}

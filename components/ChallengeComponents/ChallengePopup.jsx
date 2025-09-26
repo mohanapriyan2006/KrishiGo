@@ -11,24 +11,24 @@ import {
 const activities = [
     {
         id: 1,
-        title: 'Solve Quiz',
+        title: 'Solve Quiz - easy',
         points: '30pts',
         icon: 'clock',
         description: 'Test your knowledge with quick quizzes'
     },
     {
         id: 2,
-        title: 'Create learnings',
+        title: 'Solve Quiz - medium',
         points: '150pts',
         icon: 'brain',
-        description: 'Share knowledge and help others learn'
+        description: 'Test your knowledge with quick quizzes'
     },
     {
         id: 3,
-        title: 'Help a farmer',
+        title: 'Solve Quiz - hard',
         points: '500pts',
         icon: 'sun',
-        description: 'Provide assistance to local farmers'
+        description: 'Test your knowledge with quick quizzes'
     }
 ];
 
@@ -106,7 +106,7 @@ const ChallengePopup = ({ visible, onClose }) => {
                     <View className="bg-lime-600/90 rounded-3xl p-2 shadow-lg">
                         {/* Header */}
                         <View className="flex-row justify-between items-center px-4 pt-2">
-                            <Text className="text-white text-xl font-bold">Activities</Text>
+                            <Text className="text-white text-xl font-bold">Daily Activities</Text>
                             <TouchableOpacity
                                 onPress={onClose}
                                 className="bg-white/20 rounded-full p-2"
