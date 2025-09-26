@@ -1,0 +1,73 @@
+{
+	"home": {
+		"greeting": "Good Morning",
+		"user": "User",
+		"myCourse": "My Course",
+		"rewards": "Rewards",
+		"wishlist": "Wishlist",
+		"search": "Search",
+		"sustainabilityScore": "Sustainability Score",
+		"scoreBest": "Best : 70 - 100%",
+		"growingStrong": "Growing Strong 🌱",
+		"improveNow": "Improve Now",
+		"yourBadges": "Your Badges",
+		"badgesEarned": "{{count}} Earned",
+		"governmentSchemes": "Latest Government Schemes",
+		"learnMore": "Learn More",
+		"inviteEarn": "Invite & Earn",
+		"shareCollect": "Share & Collect Rewards",
+		"earnRewards": "Earn ₹/coin! | Refer Points | Make a Preorder | Grow Vegetation"
+	},
+	"schemes": {
+		"pmKisan": {
+			"title": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+			"description": "Direct income support of ₹6000 per year to small and marginal farmers",
+			"amount": "₹6,000/year",
+			"deadline": "31 Dec 2024",
+			"status": "Active"
+		},
+		"kcc": {
+			"title": "Kisan Credit Card (KCC)",
+			"description": "Easy access to credit for farmers at subsidized interest rates",
+			"amount": "Up to ₹3 Lakh",
+			"deadline": "Ongoing",
+			"status": "Apply Now"
+		},
+		"pmfby": {
+			"title": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+			"description": "Crop insurance scheme to protect farmers from crop losses",
+			"amount": "Premium: 2-5%",
+			"deadline": "15 Jan 2025",
+			"status": "Limited Time"
+		},
+		"soilHealth": {
+			"title": "Soil Health Card Scheme",
+			"description": "Free soil testing and nutrient management recommendations",
+			"amount": "Free Service",
+			"deadline": "Ongoing",
+			"status": "Available"
+		},
+		"eNam": {
+			"title": "National Agriculture Market (e-NAM)",
+			"description": "Online trading platform for agricultural commodities",
+			"amount": "Better Prices",
+			"deadline": "Ongoing",
+			"status": "Join Now"
+		}
+	},
+
+	"settings": {
+		"title": "Settings",
+		"edit": "Edit",
+		"firstName": "First Name",
+		"lastName": "Last Name",
+		"email": "Email Address",
+		"phone": "Mobile Number",
+		"location": "Location",
+		"changeLanguage": "Change Language",
+		"savedCourses": "Saved Courses",
+		"aboutKrishiGo": "About KrishiGo",
+		"termsConditions": "Terms and Conditions",
+		"deleteAccount": "Delete Account"
+	}
+}
