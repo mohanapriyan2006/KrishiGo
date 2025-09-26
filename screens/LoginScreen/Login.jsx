@@ -22,7 +22,7 @@ import { DataContext } from "../../hooks/DataContext";
 const loginSchema = yup.object().shape({
     emailOrPhone: yup
         .string()
-        .required("Email or Phone number is required")
+        .required("Email is required")
         .test(
             "email-or-phone",
             "Enter a valid email address",
@@ -148,7 +148,7 @@ const Login = () => {
                                 <TextInput
                                     className={`w-full bg-white rounded-xl px-4 py-4 text-base border ${errors.emailOrPhone ? "border-red-500" : "border-gray-200"
                                         } shadow-sm`}
-                                    placeholder="Enter email or phone"
+                                    placeholder="Enter email"
                                     placeholderTextColor="#9CA3AF"
                                     value={formData.emailOrPhone}
                                     onChangeText={(text) =>
