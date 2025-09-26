@@ -22,7 +22,7 @@ import { DataContext } from "../../hooks/DataContext";
 const loginSchema = yup.object().shape({
     emailOrPhone: yup
         .string()
-        .required("Email or Phone number is required")
+        .required("Email is required")
         .test(
             "email-or-phone",
             "Enter a valid email address",
@@ -83,7 +83,7 @@ const Login = () => {
                 lastLogin: new Date().toISOString(),
             });
         } catch (error) {
-            console.error("Error updating last login:", error);
+            console.log("Error updating last login:", error);
         }
     };
 
@@ -108,7 +108,7 @@ const Login = () => {
                 Alert.alert("Phone Login", "Phone login requires verification.");
             }
         } catch (error) {
-            console.error("Login error:", error);
+            console.log("Login error:", error);
             if (error.code === "auth/user-not-found") {
                 Alert.alert("Error", "No account found with this email.");
             } else if (error.code === "auth/wrong-password") {
@@ -148,7 +148,7 @@ const Login = () => {
                                 <TextInput
                                     className={`w-full bg-white rounded-xl px-4 py-4 text-base border ${errors.emailOrPhone ? "border-red-500" : "border-gray-200"
                                         } shadow-sm`}
-                                    placeholder="Enter email or phone"
+                                    placeholder="Enter email"
                                     placeholderTextColor="#9CA3AF"
                                     value={formData.emailOrPhone}
                                     onChangeText={(text) =>

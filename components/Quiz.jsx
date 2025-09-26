@@ -14,10 +14,19 @@ import { DataContext } from '../hooks/DataContext';
 import ProgressLine from './ProgressLine';
 
 
-const QuizScreen = ({navigation, route}) => {
+const quiz_templates = [
+    require('../assets/images/quiz_templates/quiz_template1.png'),
+    require('../assets/images/quiz_templates/quiz_template2.png'),
+    require('../assets/images/quiz_templates/quiz_template5.png'),
+    require('../assets/images/quiz_templates/quiz_template3.png'),
+    require('../assets/images/quiz_templates/quiz_template4.png'),
+];
 
 
-    const {user} = useContext(DataContext)
+const QuizScreen = ({ navigation, route }) => {
+
+
+    const { user } = useContext(DataContext)
     const moduleId = route?.params?.moduleId;
     const courseId = route?.params?.courseId;
     const quizId = route?.params?.quizId;
@@ -27,6 +36,13 @@ const QuizScreen = ({navigation, route}) => {
     const [score, setScore] = useState(0);
     const [timeRemaining, setTimeRemaining] = useState(120);
     const [isAnswered, setIsAnswered] = useState(false);
+    const [quizImage, setQuizImage] = useState(quiz_templates[0]);
+
+    const shuffleQuizImage = () => {
+        const currentIndex = quiz_templates.indexOf(quizImage);
+        const nextIndex = (currentIndex + 1) % quiz_templates.length;
+        setQuizImage(quiz_templates[nextIndex]);
+    };
 
     // Multiple quiz questions
     const quizQuestions = [
@@ -83,10 +99,11 @@ const QuizScreen = ({navigation, route}) => {
             setSelectedAnswer(null);
             setIsAnswered(false);
         } else if (currentQuestion === quizQuestions.length) {
-            await setModuleCompleted(user.uid, courseId, moduleId)
+            try { await setModuleCompleted(user.uid, courseId, moduleId) } catch (e) { console.log(e) }
             navigation.goBack();
             Alert.alert('Quiz Completed', `Your final score is ${score} out of ${quizQuestions.length}`);
         }
+        shuffleQuizImage();
     };
 
     const handlePrevious = () => {
@@ -138,6 +155,8 @@ const QuizScreen = ({navigation, route}) => {
         return '';
     };
 
+
+
     return (
         <SafeAreaView className="flex-1 bg-white">
             <StatusBar barStyle="light-content" backgroundColor="#8bc34a" />
@@ -173,7 +192,7 @@ const QuizScreen = ({navigation, route}) => {
                     </View>
 
                     <View>
-                        <Image source={require('../assets/images/quiz_template1.png')}
+                        <Image source={quizImage}
                             style={{ height: 220, width: '110%' }}
                             className="absolute -bottom-[220px] z-1" />
                     </View>
@@ -247,3 +266,4 @@ const QuizScreen = ({navigation, route}) => {
 };
 
 export { QuizScreen };
+

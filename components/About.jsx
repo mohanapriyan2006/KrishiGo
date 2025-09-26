@@ -104,7 +104,7 @@ const About = ({ navigation }) => {
                     <Text className="text-xl font-bold text-gray-900 mb-4">🔑 How KrishiGo Works</Text>
                     <View className="gap-4">
                         {features.map((feature, index) => (
-                            <View key={index} className="bg-green-50 rounded-xl p-4">
+                            <View key={index} className="bg-lime-50 rounded-xl p-4">
                                 <View className="flex-row items-start">
                                     <Text className="text-2xl mr-3 mt-1">{feature.icon}</Text>
                                     <View className="flex-1">
@@ -126,7 +126,7 @@ const About = ({ navigation }) => {
                     <Text className="text-xl font-bold text-gray-900 mb-4">🌾 Why KrishiGo?</Text>
                     <View className="gap-4">
                         {benefits.map((benefit, index) => (
-                            <View key={index} className="bg-green-50 rounded-xl p-4">
+                            <View key={index} className="bg-lime-50 rounded-xl p-4">
                                 <View className="flex-row items-start">
                                     <Text className="text-2xl mr-3 mt-1">{benefit.icon}</Text>
                                     <View className="flex-1">
@@ -145,17 +145,17 @@ const About = ({ navigation }) => {
 
                 {/* Our Impact Section */}
                 <View className="mx-6 mt-6">
-                    <View className="bg-orange-50 rounded-2xl p-6">
+                    <View className="bg-lime-50 rounded-2xl p-6">
                         <View className="flex-row items-center mb-4">
-                            <View className="w-8 h-8 bg-orange-200 rounded-full items-center justify-center mr-3">
-                                <MaterialIcons name="trending-up" size={20} color="#EA580C" />
+                            <View className="w-8 h-8 bg-lime-200 rounded-full items-center justify-center mr-3">
+                                <MaterialIcons name="trending-up" size={20} color="green" />
                             </View>
                             <Text className="text-xl font-bold text-gray-900">🚀 Our Impact</Text>
                         </View>
                         <View className="gap-3">
                             {impacts.map((impact, index) => (
                                 <View key={index} className="flex-row items-start">
-                                    <View className="w-2 h-2 bg-orange-400 rounded-full mr-3 mt-2" />
+                                    <View className="w-2 h-2 bg-lime-500 rounded-full mr-3 mt-2" />
                                     <Text className="flex-1 text-gray-700 leading-5">{impact}</Text>
                                 </View>
                             ))}
@@ -165,7 +165,7 @@ const About = ({ navigation }) => {
 
                 {/* Closing Message */}
                 <View className="mx-6 mt-6 mb-8">
-                    <View className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-100">
+                    <View className="bg-lime-50 rounded-2xl p-6 border border-purple-100">
                         <Text className="text-center text-lg font-semibold text-gray-900 leading-6">
                             {" 👉 With KrishiGo, farming isn't just about growing crops its about growing knowledge, rewards, and a sustainable future. 🌱💡"}
                         </Text>

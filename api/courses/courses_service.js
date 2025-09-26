@@ -13,7 +13,7 @@ export async function getCourse(courseId) {
         }
         return { id: snap.id, ...snap.data() };
     } catch (error) {
-        console.error('Error fetching course:', error);
+        console.log('Error fetching course:', error);
         throw error;
     }
 }
@@ -52,7 +52,7 @@ export async function getCourseModules(courseId) {
 
         return modules;
     } catch (error) {
-        console.error('Error fetching course modules:', error);
+        console.log('Error fetching course modules:', error);
         throw error;
     }
 }
@@ -70,7 +70,7 @@ export async function enrollUserToCourse(userId, courseId) {
         });
         return true;
     } catch (error) {
-        console.error('Error enrolling user:', error);
+        console.log('Error enrolling user:', error);
         throw error;
     }
 }
@@ -82,7 +82,7 @@ export async function getUserEnrollment(userId, courseId) {
         const snap = await getDoc(ref);
         return snap.exists() ? snap.data() : null;
     } catch (error) {
-        console.error('Error fetching user enrollment:', error);
+        console.log('Error fetching user enrollment:', error);
         return null; // Return null instead of throwing to allow graceful fallback
     }
 }
@@ -110,7 +110,7 @@ export async function setModuleCompleted(userId, courseId, moduleId, completed =
         }
         
     } catch (error) {
-        console.error('Error updating module completion:', error);
+        console.log('Error updating module completion:', error);
         throw error;
     }
 }
@@ -207,7 +207,7 @@ export async function addCourseWithModulesOrdered() {
 
         console.log("Modules added successfully!");
     } catch (error) {
-        console.error("Error adding course with modules:", error);
+        console.log("Error adding course with modules:", error);
         throw error;
     }
 }
@@ -233,7 +233,7 @@ export async function addOrderToExistingModules(courseId) {
 
         console.log('Order field added to existing modules');
     } catch (error) {
-        console.error('Error adding order to modules:', error);
+        console.log('Error adding order to modules:', error);
         throw error;
     }
 }
@@ -243,9 +243,10 @@ export async function addOrderToExistingModules(courseId) {
 export async function addCourseWithModules() {
     try {
         // STEP 1: Create a course document
-        const courseId = "courseId"; // You can use a generated ID if you want
-        const courseRef = doc(db, "courses", courseId);
+        const courseId = doc(collection(db, 'courses')).id; // Generate unique ID
+        const courseRef = doc(db, 'courses', courseId);
 
+        // i want to store generated id as id field in document
         await setDoc(courseRef, {
             id: courseId,
             title: "How to Harvest More Effectively",
@@ -279,6 +280,7 @@ export async function addCourseWithModules() {
                 videoUrl: "eCwRVJyjKA4",
                 duration: "6 min",
                 completed: true,
+                order: 1,
             },
             {
                 title: "Advanced Techniques",
@@ -287,6 +289,7 @@ export async function addCourseWithModules() {
                 videoUrl: "mZXetb1TPEg",
                 duration: "12 min",
                 completed: false,
+                order: 2,
             },
             {
                 title: "Advanced Techniques Quiz",
@@ -295,6 +298,7 @@ export async function addCourseWithModules() {
                 quizId: "jhbfjhsebuhwe",
                 duration: "12 min",
                 completed: false,
+                order: 3,
             },
         ];
 
@@ -311,7 +315,7 @@ export async function addCourseWithModules() {
 
         console.log("Modules added successfully!");
     } catch (error) {
-        console.error("Error adding course with modules:", error);
+        console.log("Error adding course with modules:", error);
     }
 }
 
@@ -371,7 +375,7 @@ export async function addModulesToExistingCourse(courseId, modules = null) {
 
         console.log("Modules added successfully!");
     } catch (error) {
-        console.error("Error adding modules to existing course:", error);
+        console.log("Error adding modules to existing course:", error);
     }
 }
 

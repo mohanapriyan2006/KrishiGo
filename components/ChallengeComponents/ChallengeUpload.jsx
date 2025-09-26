@@ -1,21 +1,32 @@
 import { Feather, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import {
     Alert,
     Image,
     Modal,
+    ScrollView,
     Text,
     TextInput,
     TouchableOpacity,
     View
 } from 'react-native';
+import { DataContext } from '../../hooks/DataContext';
 
-const ChallengeUpload = ({ visible, onClose, onSubmit }) => {
-    const [name, setName] = useState('');
-    const [activityName, setActivityName] = useState('');
-    const [location, setLocation] = useState('');
-    const [selectedImage, setSelectedImage] = useState(null);
+const ChallengeUpload = ({ visible, onClose }) => {
+
+    const { rewardTasks = [] } = useContext(DataContext);
+
+    const [challengeData, setChallengeData] = useState({
+        name: '',
+        activityName: '',
+        activityId: '',
+        location: '',
+        description: '',
+        image: null,
+    });
+
+    const [activityPickerVisible, setActivityPickerVisible] = useState(false);
 
     const pickImage = async () => {
         // Request permission
@@ -33,32 +44,40 @@ const ChallengeUpload = ({ visible, onClose, onSubmit }) => {
         });
 
         if (!result.canceled) {
-            setSelectedImage(result.assets[0].uri);
+            setChallengeData(prev => ({ ...prev, image: result.assets[0].uri }));
         }
     };
 
     const handleSubmit = () => {
-        if (!name.trim() || !activityName.trim() || !location.trim()) {
+        if (!challengeData.name.trim() || !challengeData.activityName.trim() || !challengeData.location.trim()) {
             Alert.alert('Error', 'Please fill in all fields');
             return;
         }
 
         const data = {
-            name: name.trim(),
-            activityName: activityName.trim(),
-            location: location.trim(),
-            image: selectedImage,
+            name: challengeData.name.trim(),
+            activityName: challengeData.activityName.trim(),
+            activityId: challengeData.activityId.trim(),
+            location: challengeData.location.trim(),
+            description: challengeData.description.trim() || '',
+            image: challengeData.image,
         };
 
-        onSubmit(data);
+        console.log('Submitted Challenge Data:', data);
+        Alert.alert('Success', 'Activity submitted successfully!');
         handleReset();
     };
 
     const handleReset = () => {
-        setName('');
-        setActivityName('');
-        setLocation('');
-        setSelectedImage(null);
+        setChallengeData({
+            name: '',
+            activityName: '',
+            activityId: '',
+            location: '',
+            description: '',
+            image: null,
+        });
+        setActivityPickerVisible(false);
     };
 
     const handleClose = () => {
@@ -84,15 +103,15 @@ const ChallengeUpload = ({ visible, onClose, onSubmit }) => {
                     </View>
 
                     {/* Content */}
-                    <View className="p-6">
+                    <ScrollView className="p-6">
                         {/* Image Upload Section */}
                         <TouchableOpacity
                             onPress={pickImage}
                             className="border-2 border-dashed border-red-300 rounded-xl p-4 mb-6 items-center justify-center min-h-[200px]"
                         >
-                            {selectedImage ? (
+                            {challengeData.image ? (
                                 <Image
-                                    source={{ uri: selectedImage }}
+                                    source={{ uri: challengeData.image }}
                                     className="w-full h-[280px] scale-80 rounded-lg"
                                     resizeMode="cover"
                                 />
@@ -108,36 +127,78 @@ const ChallengeUpload = ({ visible, onClose, onSubmit }) => {
                         </TouchableOpacity>
 
                         {/* Form Fields */}
-                        <View className="flex gap-2">
+                        <View className="flex gap-3">
+                            {/* Name */}
+                            <TextInput
+                                value={challengeData.name}
+                                onChangeText={(text) => setChallengeData(prev => ({ ...prev, name: text }))}
+                                placeholder="Enter your name"
+                                className="border border-gray-200 rounded-xl px-4 py-3 text-gray-800 bg-gray-50"
+                                placeholderTextColor="#9CA3AF"
+                            />
+
+                            {/* Activity Picker Trigger */}
                             <View>
-                                <TextInput
-                                    value={name}
-                                    onChangeText={setName}
-                                    placeholder="Enter your name"
-                                    className="border border-gray-200 rounded-xl px-4 py-3 text-gray-800 bg-gray-50"
-                                    placeholderTextColor="#9CA3AF"
-                                />
+                                <TouchableOpacity
+                                    onPress={() => setActivityPickerVisible(v => !v)}
+                                    activeOpacity={0.8}
+                                    className="border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 flex-row justify-between items-center"
+                                >
+                                    <Text className={`text-sm ${challengeData.activityName ? 'text-gray-800' : 'text-gray-400'}`}> {challengeData.activityName || 'Select Activity'} </Text>
+                                    <Feather name={activityPickerVisible ? 'chevron-up' : 'chevron-down'} size={18} color="#6B7280" />
+                                </TouchableOpacity>
+                                {activityPickerVisible && (
+                                    <View className="mt-2 border border-gray-200 rounded-xl bg-white max-h-56 overflow-hidden">
+                                        <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false}>
+                                            {rewardTasks.map(task => (
+                                                <TouchableOpacity
+                                                    key={task.id}
+                                                    onPress={() => {
+                                                        setChallengeData(prev => ({ ...prev, activityName: task.task, activityId: String(task.id) }));
+                                                        setActivityPickerVisible(false);
+                                                    }}
+                                                    className="px-4 py-3 border-b border-gray-100 active:bg-gray-50"
+                                                >
+                                                    <Text className="text-gray-800 text-sm font-medium" numberOfLines={1}>{task.task}</Text>
+                                                    <Text className="text-[10px] text-primaryDark mt-1" numberOfLines={1}>ID: {task.id} • Farmer +{task.farmerPoints} / Helper +{task.helperPoints}</Text>
+                                                </TouchableOpacity>
+                                            ))}
+                                            {rewardTasks.length === 0 && (
+                                                <View className="px-4 py-4 items-center">
+                                                    <Text className="text-xs text-gray-500">No activities available</Text>
+                                                </View>
+                                            )}
+                                        </ScrollView>
+                                    </View>
+                                )}
                             </View>
 
-                            <View>
-                                <TextInput
-                                    value={activityName}
-                                    onChangeText={setActivityName}
-                                    placeholder="Activity name"
-                                    className="border border-gray-200 rounded-xl px-4 py-3 text-gray-800 bg-gray-50"
-                                    placeholderTextColor="#9CA3AF"
-                                />
-                            </View>
+                            {/* Activity ID (Read-only once selected) */}
+                            {challengeData.activityId ? (
+                                <View className="flex-row items-center justify-between border border-primary bg-lime-100 rounded-xl px-4 py-3">
+                                    <Text className="text-xs font-medium text-primaryDark">Selected ID</Text>
+                                    <Text className="text-sm font-semibold text-primaryDark">#{challengeData.activityId}</Text>
+                                </View>
+                            ) : null}
 
-                            <View>
-                                <TextInput
-                                    value={location}
-                                    onChangeText={setLocation}
-                                    placeholder="Location details"
-                                    className="border border-gray-200 rounded-xl px-4 py-3 text-gray-800 bg-gray-50"
-                                    placeholderTextColor="#9CA3AF"
-                                />
-                            </View>
+                            {/* Location */}
+                            <TextInput
+                                value={challengeData.location}
+                                onChangeText={(text) => setChallengeData(prev => ({ ...prev, location: text }))}
+                                placeholder="Location details"
+                                className="border border-gray-200 rounded-xl px-4 py-3 text-gray-800 bg-gray-50"
+                                placeholderTextColor="#9CA3AF"
+                            />
+
+                            {/* Description */}
+                            <TextInput
+                                value={challengeData.description}
+                                onChangeText={(text) => setChallengeData(prev => ({ ...prev, description: text }))}
+                                placeholder="Description (optional)"
+                                className="border border-gray-200 rounded-xl px-4 py-3 text-gray-800 bg-gray-50"
+                                placeholderTextColor="#9CA3AF"
+                                multiline
+                            />
                         </View>
 
                         {/* Submit Button */}
@@ -150,7 +211,7 @@ const ChallengeUpload = ({ visible, onClose, onSubmit }) => {
                                 Submit Activity
                             </Text>
                         </TouchableOpacity>
-                    </View>
+                    </ScrollView>
 
                     {/* Guidelines */}
                     <View className="mx-6 mb-6">

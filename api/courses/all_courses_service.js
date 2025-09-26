@@ -85,9 +85,12 @@ export async function createCourses() {
     console.log("🚀 Starting to create courses...");
 
     for (const course of allCourses) {
-      const courseRef = doc(db, "courses", course.id.toString());
+      // Generate a unique course ID
+      const courseId = doc(collection(db, 'courses')).id;
+      const courseRef = doc(db, "courses", courseId);
 
       await setDoc(courseRef, {
+        id: courseId,
         title: course.title,
         description: course.description,
         category: course.category,
@@ -110,7 +113,7 @@ export async function createCourses() {
 
     console.log("🎉 All courses created successfully!");
   } catch (error) {
-    console.error("❌ Error creating courses:", error.message);
+    console.log("❌ Error creating courses:", error.message);
   }
 }
 
@@ -119,10 +122,12 @@ export async function createCourses() {
  */
 export async function createCourse() {
   try {
-    const courseId = "courseId"; // Replace with auto-generated ID if needed
+    // Generate a unique course ID
+    const courseId = doc(collection(db, 'courses')).id;
     const courseRef = doc(db, "courses", courseId);
 
     await setDoc(courseRef, {
+      id: courseId,
       title: "Introduction to Organic Farming",
       description: "Learn the basics of organic farming and sustainable agriculture.",
       category: "Agriculture",
@@ -140,7 +145,7 @@ export async function createCourse() {
 
     console.log("✅ Course created successfully!");
   } catch (error) {
-    console.error("❌ Error creating course:", error.message);
+    console.log("❌ Error creating course:", error.message);
   }
 }
 
@@ -158,7 +163,7 @@ export async function getAllCourses() {
     // console.log("📚 All courses:", courses);
     return courses;
   } catch (error) {
-    console.error("❌ Error fetching courses:", error.message);
+    console.log("❌ Error fetching courses:", error.message);
     return [];
   }
 }
@@ -177,10 +182,10 @@ export async function getCourseById(courseId) {
     }
 
     const course = { id: courseSnap.id, ...courseSnap.data() };
-    console.log("🎯 Course details:", course);
+    // console.log("🎯 Course details:", course);
     return course;
   } catch (error) {
-    console.error("❌ Error fetching course by ID:", error.message);
+    console.log("❌ Error fetching course by ID:", error.message);
     return null;
   }
 }

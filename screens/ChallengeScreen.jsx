@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import {
     Alert,
     Image,
@@ -11,10 +11,13 @@ import {
 } from 'react-native';
 import ChallengePopup from '../components/ChallengeComponents/ChallengePopup';
 import ChallengeUpload from '../components/ChallengeComponents/ChallengeUpload';
+import { DataContext } from '../hooks/DataContext';
 
 const ChallengeScreen = () => {
 
     const navigation = useNavigation();
+
+    const { rewardTasks } = useContext(DataContext);
 
     const [challengeUploadVisible, setChallengeUploadVisible] = useState(false);
 
@@ -53,12 +56,7 @@ const ChallengeScreen = () => {
         setChallengeUploadVisible(true);
     };
 
-    const rewardTasks = [
-        { id: 1, task: 'Plant a sampling', points: 100, completed: false },
-        { id: 2, task: 'Take a photo', points: 50, completed: false },
-        { id: 3, task: 'Upload content', points: 200, completed: false },
-        { id: 4, task: 'Earn upto 7000pts', points: 7000, completed: false },
-    ];
+
 
 
     return (
@@ -108,42 +106,89 @@ const ChallengeScreen = () => {
 
                 {/* Earn Rewards Points Section */}
                 <View className="bg-white mx-6 mt-8 rounded-2xl p-6 shadow-sm">
-                    <Text className="text-2xl font-bold text-primaryDark mb-4">
-                        Earn Rewards Points
-                    </Text>
+                    {(() => {
+                        const totalPotential = rewardTasks.reduce((sum, t) => sum + (t.farmerPoints || 0), 0);
+                        return (
+                            <>
+                                <Text className="text-2xl font-bold text-primaryDark mb-2">
+                                    Earn Rewards Points <Text className="font-medium text-sm">upto {totalPotential}pts</Text>
+                                </Text>
+                                <Text className="text-gray-600 text-sm mb-4">
+                                    Complete sustainable & smart farming tasks. Farmer actions grant higher points; helpers (youth) earn support points.
+                                </Text>
 
-                    <Text className="text-gray-600 text-lg mb-4">
-                        Ways to earn rewards :
-                    </Text>
-
-                    {/* Reward Tasks List */}
-                    <View className="space-y-3 mb-6">
-                        {rewardTasks.map((item, index) => (
-                            <View
-                                key={item.id}
-                                className="flex-row items-center justify-between py-2"
-                            >
-                                <View className="flex-row items-center flex-1">
-                                    <Text className="text-gray-700 text-sm mr-2">
-                                        {item.id}.
-                                    </Text>
-                                    <Text className="text-gray-700 text-sm flex-1">
-                                        {item.task}
-                                    </Text>
+                                {/* Legend */}
+                                <View className="flex-row mb-4">
+                                    <View className="flex-row items-center mr-4">
+                                        <View className="w-3 h-3 rounded-full bg-lime-600 mr-2" />
+                                        <Text className="text-xs text-gray-600">Farmer Points</Text>
+                                    </View>
+                                    <View className="flex-row items-center">
+                                        <View className="w-3 h-3 rounded-full bg-lime-300 mr-2" />
+                                        <Text className="text-xs text-gray-600">Helper Points</Text>
+                                    </View>
                                 </View>
-                            </View>
-                        ))}
-                    </View>
 
-                    {/* Earn Rewards Button */}
-                    <TouchableOpacity
-                        className="bg-primary py-3 rounded-lg shadow-sm"
-                        onPress={handleEarnRewards}
-                    >
-                        <Text className="text-white font-semibold text-center text-lg">
-                            Earn Rewards
-                        </Text>
-                    </TouchableOpacity>
+                                {/* Reward Tasks List (Scrollable within section) */}
+                                <View style={{ maxHeight: 320 }} className="mb-6">
+                                    <ScrollView
+                                        showsVerticalScrollIndicator={false}
+                                        horizontal
+                                        contentContainerStyle={{ gap: 16, paddingBottom: 4 }}
+                                    >
+                                        {rewardTasks.map((item) => {
+                                            const statusColor = item.completedBy ? 'bg-green-100 border-green-500' : 'bg-gray-100 border-gray-300';
+                                            const roleLabel = item.completedBy ? (item.completedBy === 'farmer' ? 'Farmer Done' : 'Helper Done') : 'Pending';
+                                            return (
+                                                <View key={item.id} className="border border-primary rounded-xl p-4 bg-white w-60">
+                                                    <View className="flex-row justify-between items-start mb-2">
+                                                        <View className="flex-1 pr-2">
+                                                            <Text className="text-sm font-semibold text-gray-900" numberOfLines={2}>
+                                                                {item.id}. {item.task}
+                                                            </Text>
+                                                            <Text className="text-[11px] text-primaryDark mt-1" numberOfLines={1}>
+                                                                {item.category}
+                                                            </Text>
+                                                        </View>
+                                                        <View className={`px-2 py-1 rounded-full border ${statusColor}`}>
+                                                            <Text className="text-[10px] font-medium text-gray-700">
+                                                                {roleLabel}
+                                                            </Text>
+                                                        </View>
+                                                    </View>
+                                                    <Text className="text-[11px] text-gray-600 mb-3" numberOfLines={3}>
+                                                        {item.description}
+                                                    </Text>
+                                                    <View className="flex-row items-center">
+                                                        <View className="flex-row items-center mr-4">
+                                                            <View className="px-2 py-1 rounded-md bg-lime-600">
+                                                                <Text className="text-[11px] text-white font-semibold">Farmer +{item.farmerPoints}</Text>
+                                                            </View>
+                                                        </View>
+                                                        <View className="flex-row items-center">
+                                                            <View className="px-2 py-1 rounded-md bg-lime-300">
+                                                                <Text className="text-[11px] text-gray-800 font-semibold">Helper +{item.helperPoints}</Text>
+                                                            </View>
+                                                        </View>
+                                                    </View>
+                                                </View>
+                                            );
+                                        })}
+                                    </ScrollView>
+                                </View>
+
+                                {/* Earn Rewards Button */}
+                                <TouchableOpacity
+                                    className="bg-primary py-3 rounded-lg shadow-sm"
+                                    onPress={handleEarnRewards}
+                                >
+                                    <Text className="text-white font-semibold text-center text-lg">
+                                        Submit Proof / Claim
+                                    </Text>
+                                </TouchableOpacity>
+                            </>
+                        );
+                    })()}
                 </View>
 
                 {/* Challenge Upload Section */}

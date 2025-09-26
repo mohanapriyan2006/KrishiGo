@@ -1,10 +1,12 @@
 # 🌱 KrishiGo - Your Digital Agriculture Companion
 
-![KrishiGo Logo](assets/images/icon.png)
+![KrishiGo Logo](assets/images/logo.png)
 
 ## 📱 About KrishiGo
 
 KrishiGo is a comprehensive mobile application designed to empower farmers with educational resources, interactive courses, challenges, and rewards. Built with React Native and Expo, this app provides a complete learning platform for agricultural knowledge, sustainable farming practices, and modern techniques.
+
+![img](assets/images/icon.png)
 
 ## ✨ Features
 
@@ -15,6 +17,8 @@ KrishiGo is a comprehensive mobile application designed to empower farmers with 
 - 🤖 **AI Assistant** - Get instant answers to your farming questions
 - 🌐 **Multilingual Support** - Access content in your preferred language
 - 👤 **Personalized Experience** - Track your progress and achievements
+
+![krishiGo logo](assets/images/logo2.png)
 
 ## 🚀 Getting Started
 
@@ -27,6 +31,7 @@ KrishiGo is a comprehensive mobile application designed to empower farmers with 
 ### Installation
 
 1. Clone the repository
+
    ```bash
    git clone https://github.com/mohanapriyan2006/KrishiGo.git
    cd krishiGo-project
@@ -36,7 +41,6 @@ KrishiGo is a comprehensive mobile application designed to empower farmers with 
    ```bash
    npm install
    ```
-   
 3. Start the development server
    ```bash
    npx expo start
@@ -45,6 +49,7 @@ KrishiGo is a comprehensive mobile application designed to empower farmers with 
 ### Running the App
 
 Once the development server is running, you can open the app in:
+
 - 📱 **Expo Go app** on your physical device (scan the QR code)
 - 📱 **Android Emulator** (press 'a' in the terminal)
 - 📱 **iOS Simulator** (press 'i' in the terminal)
@@ -53,56 +58,113 @@ Once the development server is running, you can open the app in:
 ## 🧩 Project Structure
 
 ```
-krishiGo-project/
-├── app/                   # Main application screens and layouts
-│   ├── index.jsx          # Entry point
-│   ├── MainLayout.jsx     # Main layout component
-│   └── NavBar.jsx         # Navigation bar component
-├── assets/                # Static assets
-│   ├── fonts/             # Custom fonts
-│   └── images/            # App images and icons
-├── components/            # Reusable components
-│   ├── AIComponents/      # AI chat components
-│   ├── ChallengeComponents/ # Challenge-related components
-│   ├── CoursesComponents/ # Course-related components
-│   ├── RedeemComponents/  # Reward redemption components
-│   └── SettingsComponents/ # Settings-related components
-├── screens/               # Main app screens
-│   ├── LoginScreen/       # Authentication screens
-│   ├── ChallengeScreen.jsx # Challenge screen
-│   ├── HomeScreen.jsx     # Home screen
-│   ├── JourneyScreen.jsx  # Learning journey screen
-│   ├── ProfileScreen.jsx  # User profile screen
-│   └── RewardsScreen.jsx  # Rewards screen
-├── api/                   # API services
-│   ├── challenges/        # Challenge API services
-│   ├── courses/           # Course API services
-│   ├── login/             # Authentication services
-│   ├── quizs/             # Quiz API services
-│   ├── register/          # Registration services
-│   └── user/              # User API services
-├── ai/                    # AI related services
-│   ├── ai_api.js          # AI API interface
-│   ├── ai_contest.js      # AI contest utilities
-│   └── ai_firebase.js     # AI Firebase integration
-├── config/                # Configuration files
-│   └── firebase.js        # Firebase configuration
-├── hooks/                 # Custom React hooks
-│   └── DataContext.js     # Data context provider
-├── app.json               # Expo app configuration
-├── babel.config.js        # Babel configuration
-├── eslint.config.js       # ESLint configuration
-├── global.css             # Global styles
-├── jsconfig.json          # JavaScript configuration
-├── metro.config.js        # Metro bundler configuration
-├── package.json           # Project dependencies
-├── tailwind.config.js     # Tailwind CSS configuration
-└── README.md              # Project documentation
+krishigo/
+├── ai/
+│ ├── ai_api.js
+│ ├── ai_contest.js
+│ └── ai_firebase.js
+│
+├── api/
+│ ├── challenges/
+│ │ └── challenges_firebase.js
+│ │
+│ ├── courses/
+│ │ ├── all_courses_service.js
+│ │ └── courses_service.js
+│ │
+│ ├── quizs/
+│ │ └── quiz_service.js
+│ │
+│ └── user/
+│ ├── login_firebase.js
+│ ├── register_firebase.js
+│ └── user_service.js
+│
+├── app/
+│ ├── index.jsx
+│ ├── MainLayout.jsx
+│ └── NavBar.jsx
+│
+├── assets/
+│ ├── fonts/
+│ └── images/
+│
+├── components/
+│ ├── AIComponents/
+│ │ ├── AIChatSpace.jsx
+│ │ └── FloatingAIbutton.jsx
+│ │
+│ ├── ChallengeComponents/
+│ │ ├── ChallengePopup.jsx
+│ │ └── ChallengeUpload.jsx
+│ │
+│ ├── CoursesComponents/
+│ │ ├── CourseDetails.jsx
+│ │ ├── CourseVideo.jsx
+│ │ ├── SavedCourses.jsx
+│ │ └── SearchCourses.jsx
+│ │
+│ ├── RedeemComponents/
+│ │ ├── CouponModal.jsx
+│ │ ├── GadgetsModal.jsx
+│ │ ├── RedeemScreen.jsx
+│ │ └── UpiModal.jsx
+│ │
+│ ├── SettingsComponents/
+│ │ ├── ChangeLanguageModal.jsx
+│ │ ├── DeleteAccModal.jsx
+│ │ ├── EditAccountModal.jsx
+│ │ ├── EditProfilePhoto.jsx
+│ │ └── Settings.jsx
+│ │
+│ ├── About.jsx
+│ ├── ProgressLine.jsx
+│ ├── Quiz.jsx
+│ ├── RewardPopUp.jsx
+│ ├── RoundProgress.jsx
+│ └── TremsAndConditions.jsx
+│
+├── config/
+│ └── firebase.js
+│
+├── functions/
+│ └── index.js
+│
+├── hooks/
+│ └── DataContext.js
+│
+├── screens/
+│ ├── LoginScreen/
+│ │ ├── Login.jsx
+│ │ └── Register.jsx
+│ │
+│ ├── ChallengeScreen.jsx
+│ ├── HomeScreen.jsx
+│ ├── JourneyScreen.jsx
+│ ├── ProfileScreen.jsx
+│ └── RewardsScreen.jsx
+│
+├── node_modules/ (auto-generated)
+│
+├── .env
+├── .gitignore
+├── app.json
+├── babel.config.js
+├── eslint.config.js
+├── global.css
+├── iconfig.json
+├── metro.config.js
+├── package-lock.json
+├── package.json
+├── README.md
+└── tailwind.config.js
+
 ```
 
 ## 🔄 Backend Data Structure
 
 ### User Management
+
 ```js
 {
   "users": {
@@ -152,6 +214,7 @@ krishiGo-project/
 ```
 
 ### Course Management
+
 ```js
 {
   "courses": {
@@ -191,6 +254,7 @@ krishiGo-project/
 ```
 
 ### Quiz Structure
+
 ```js
 {
   "quizzes": {
@@ -217,7 +281,9 @@ krishiGo-project/
 }
 ```
 
+
 ### Rewards System
+
 ```js
 {
   "rewards": {
@@ -247,4 +313,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 📬 Contact
 
 For any inquiries or support, please contact the project maintainers:
+
 - GitHub: [@mohanapriyan2006](https://github.com/mohanapriyan2006)

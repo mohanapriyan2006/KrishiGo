@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, query, setDoc, where, writeBatch } from "firebase/firestore";
 import { db } from "../../config/firebase";
 
 /**
@@ -90,7 +90,20 @@ export async function createUserProfile() {
 
     console.log("🏆 Achievements added successfully!");
   } catch (error) {
-    console.error("❌ Error creating user profile:", error.message);
+    console.log("❌ Error creating user profile:", error.message);
+  }
+}
+
+/**
+ * UPDATE USER PROFILE
+ */
+export async function updateUserProfile(userId, updatedData) {
+  try {
+    const userRef = doc(db, "users", userId);
+    await setDoc(userRef, updatedData, { merge: true });
+    console.log("✅ User profile updated successfully!");
+  } catch (error) {
+    console.log("❌ Error updating user profile:", error.message);
   }
 }
 
@@ -101,17 +114,17 @@ export async function getAllUsers() {
   try {
     const usersSnapshot = await getDocs(collection(db, "users"));
     const users = [];
-    
+
     for (const userDoc of usersSnapshot.docs) {
       const userData = { id: userDoc.id, ...userDoc.data() };
-      
+
       // Fetch enrolled courses for this user
       const enrolledCoursesSnapshot = await getDocs(collection(userDoc.ref, "enrolledCourses"));
       const enrolledCourses = enrolledCoursesSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      
+
       // Fetch achievements for this user
       const achievementsSnapshot = await getDocs(collection(userDoc.ref, "achievements"));
       const achievements = achievementsSnapshot.docs.map((doc) => ({
@@ -125,7 +138,7 @@ export async function getAllUsers() {
     console.log("📚 Users fetched successfully:", users);
     return users;
   } catch (error) {
-    console.error("❌ Error fetching users:", error.message);
+    console.log("❌ Error fetching users:", error.message);
     return [];
   }
 }
@@ -134,27 +147,27 @@ export async function getAllUsers() {
 /**
  *  UPDATE REWARDS POINTS FOR A USER
  */
-export async function updateUserRewards(userId, pointsToAdd=0 , redeemedPointsToAdd=0) {
+export async function updateUserRewards(userId, pointsToAdd = 0, redeemedPointsToAdd = 0) {
   try {
     const userRef = doc(db, "users", userId);
     const userSnap = await getDocs(query(collection(db, "users"), where("authId", "==", userId)));
-   if (!userSnap.empty) {
-     const userData = userSnap.docs[0].data();
+    if (!userSnap.empty) {
+      const userData = userSnap.docs[0].data();
 
-     await setDoc(userRef, {
-       rewards: {
-         totalPoints: (userData.rewards.totalPoints || 0) + pointsToAdd,
-         currentPoints: (userData.rewards.currentPoints || 0) + pointsToAdd,
-         redeemedPoints: (userData.rewards.redeemedPoints || 0) + redeemedPointsToAdd,
-       },
-     }, { merge: true });
+      await setDoc(userRef, {
+        rewards: {
+          totalPoints: (userData.rewards.totalPoints || 0) + pointsToAdd,
+          currentPoints: (userData.rewards.currentPoints - redeemedPointsToAdd || 0) + pointsToAdd,
+          redeemedPoints: (userData.rewards.redeemedPoints || 0) + redeemedPointsToAdd,
+        },
+      }, { merge: true });
 
-     console.log("✅ User rewards updated successfully!");
-   } else {
-     console.log("❌ User not found.");
-   }
+      console.log("✅ User rewards updated successfully!");
+    } else {
+      console.log("❌ User not found.");
+    }
   } catch (error) {
-    console.error("❌ Error updating user rewards:", error.message);
+    console.log("❌ Error updating user rewards:", error.message);
   }
 }
 
@@ -171,13 +184,80 @@ export async function getUserEnrolledCourses(userId) {
     }));
     return enrolledCourses;
   } catch (error) {
-    console.error("❌ Error fetching enrolled courses:", error.message);
+    console.log("❌ Error fetching enrolled courses:", error.message);
     return [];
   }
 }
 
+/** * ADD COURSE TO WISHLIST FOR A USER
+ */
+export async function addCourseToWishlist(userId, courseId) {
+  try {
+    const userRef = doc(db, "users", userId);
+    const wishlistRef = collection(userRef, "wishlist");
+
+    // Check if course is already in wishlist to prevent duplicates
+    const existingQuery = query(wishlistRef, where("courseId", "==", courseId));
+    const existingSnapshot = await getDocs(existingQuery);
+
+    if (!existingSnapshot.empty) {
+      console.log("⚠️ Course already exists in wishlist");
+      return; // Course already in wishlist, don't add again
+    }
+
+    await addDoc(wishlistRef, {
+      courseId,
+      addedAt: new Date().toISOString(),
+    });
+
+    console.log("✅ Course added to wishlist successfully!");
+  } catch (error) {
+    console.log("❌ Error adding course to wishlist:", error.message);
+    throw error; // Re-throw so UI can handle the error
+  }
+}
 
 
+/** * REMOVE COURSE FROM WISHLIST FOR A USER
+ */
+export async function removeCourseFromWishlist(userId, courseId) {
+  try {
+    const userRef = doc(db, "users", userId);
+    const wishlistRef = collection(userRef, "wishlist");
+
+    const querySnapshot = await getDocs(query(wishlistRef, where("courseId", "==", courseId)));
+    const batch = writeBatch(db);
+
+    querySnapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+    console.log("✅ Course removed from wishlist successfully!");
+  } catch (error) {
+    console.log("❌ Error removing course from wishlist:", error.message);
+    throw error; // Re-throw so UI can handle the error
+  }
+}
+
+
+/** * GET WISHLIST FOR A USER
+ */
+export async function getUserWishlist(userId) {
+  try {
+    const userRef = doc(db, "users", userId);
+    const wishlistRef = collection(userRef, "wishlist");
+    const wishlistSnapshot = await getDocs(wishlistRef);
+    const wishlist = wishlistSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return wishlist;
+  } catch (error) {
+    console.log("❌ Error fetching user wishlist:", error.message);
+    return [];
+  }
+}
 
 // // Run once to test
 // (async () => {

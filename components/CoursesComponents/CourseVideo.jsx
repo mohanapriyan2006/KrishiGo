@@ -21,10 +21,12 @@ const { width } = Dimensions.get('window');
 
 const CourseVideo = ({ navigation, route }) => {
 
-    const { user, modules } = useContext(DataContext);
+    const { user , getCourseImage } = useContext(DataContext);
 
     // Get parameters from navigation
     const moduleId = route?.params?.moduleId;
+    const module = route?.params?.module || {};
+    // console.log('Module ID from route params:', moduleId);
     const courseId = route?.params?.courseId;
     const courseTitle = route?.params?.courseTitle || "Course Title";
 
@@ -40,11 +42,8 @@ const CourseVideo = ({ navigation, route }) => {
     const [moduleData, setModuleData] = useState(null);
 
     useEffect(() => {
-        if (modules && moduleId) {
-            const mod = modules.find(m => m.id === moduleId);
-            setModuleData(mod);
-        }
-    }, [modules, moduleId]);
+        setModuleData(module);
+    }, [moduleId]);
 
 
     // Check if module is already completed when component loads
@@ -57,7 +56,7 @@ const CourseVideo = ({ navigation, route }) => {
                         setIsCompleted(true);
                     }
                 } catch (error) {
-                    console.error('Error checking module completion:', error);
+                    console.log('Error checking module completion:', error);
                 }
             }
         };
@@ -66,7 +65,7 @@ const CourseVideo = ({ navigation, route }) => {
     }, [user, courseId, moduleId]);
 
     // Handle marking module as completed
-    const handleMarkCompleted = async () => {
+    const handleOnCompleted = async (type) => {
         if (!user) {
             Alert.alert('Login Required', 'Please log in to track your progress');
             return;
@@ -83,22 +82,31 @@ const CourseVideo = ({ navigation, route }) => {
             await setModuleCompleted(user.uid, courseId, moduleId, newCompletedState);
             setIsCompleted(newCompletedState);
 
-            Alert.alert(
-                'Success!',
-                newCompletedState ? 'Module marked as completed!' : 'Module marked as incomplete',
-                [
+            if (type == "Mark as completed") {
+                Alert.alert(
+                    'Success!',
+                    newCompletedState ? 'Module marked as completed!' : 'Module marked as incomplete',
+                    [
+                        {
+                            text: 'Continue Learning',
+                            onPress: () => navigation?.goBack()
+                        },
+                        {
+                            text: 'Stay Here',
+                            style: 'cancel'
+                        }
+                    ]
+                );
+            } else {
+                Alert.alert('Great job!', 'You have completed the video module.', [
                     {
-                        text: 'Continue Learning',
+                        text: 'OK',
                         onPress: () => navigation?.goBack()
-                    },
-                    {
-                        text: 'Stay Here',
-                        style: 'cancel'
                     }
-                ]
-            );
+                ]);
+            }
         } catch (error) {
-            console.error('Error updating module completion:', error);
+            console.log('Error updating module completion:', error);
             Alert.alert('Error', 'Failed to update progress. Please try again.');
         } finally {
             setIsUpdating(false);
@@ -128,6 +136,7 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
     const onStateChange = (state) => {
         if (state === 'ended') {
             setIsPlaying(false);
+            handleOnCompleted("Course completed");
         }
     };
 
@@ -167,7 +176,7 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
                         ) : (
                             <View className="flex-1 border-[0.5px] border-primary rounded-xl relative">
                                 {/* Farm Illustration Background */}
-                                <Image source={require('../../assets/images/course1.png')}
+                                <Image source={getCourseImage(courseId)}
                                     style={{ width: width - 32, height: ((width - 32) * 9) / 16, opacity: 0.4 }}
                                 />
 
@@ -230,7 +239,7 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
                         className={`flex-1 py-4 rounded-xl items-center ${isCompleted ? 'bg-primary' : 'bg-green-50 border-[0.5px] border-lime-500'
                             }`}
                         activeOpacity={0.8}
-                        onPress={handleMarkCompleted}
+                        onPress={() => handleOnCompleted("Mark as completed")}
                         disabled={isUpdating}
                     >
                         <Text className={`${isCompleted ? 'text-white' : 'text-primaryDark'} font-semibold`}>
