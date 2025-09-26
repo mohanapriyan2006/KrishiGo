@@ -121,7 +121,7 @@ const SavedCourses = ({ navigation }) => {
                 {/* Course Image */}
                 <View className="relative mr-4">
                     <Image
-                        source={require("../../assets/images/course1.png")}
+                        source={item.image}
                         className="w-20 h-20 rounded-xl"
                         resizeMode="cover"
                     />

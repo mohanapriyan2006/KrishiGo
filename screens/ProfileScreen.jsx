@@ -32,8 +32,7 @@ const ProfileScreen = () => {
     const [userProfile, setUserProfile] = useState({
         firstName: 'Vijay',
         lastName: 'Kumar',
-        email: 'tvk2026@gmail.com',
-        phoneNumber: '+91 12345-67890',
+        type: 'helper',
         location: 'Chennai',
         points: 8490,
         rank: 23,
@@ -97,9 +96,8 @@ const ProfileScreen = () => {
                 ...prev,
                 firstName: userDetails.firstName || 'Vijay',
                 lastName: userDetails.lastName || 'Kumar',
-                email: userDetails.email || 'tvk2026@gmail.com',
-                phoneNumber: userDetails.phoneNumber || '+91 12345-67890',
-                location: userDetails.city || 'Chennai',
+                location: userDetails?.address?.city || 'Chennai',
+                type: userDetails.userType || 'helper',
             }));
         }
     }, [userDetails]);
@@ -229,7 +227,7 @@ const ProfileScreen = () => {
                             {/* User Info */}
                             <View className="flex-1">
                                 <Text className="text-xl font-bold text-white mb-1">
-                                    {userProfile.firstName} {userProfile.lastName}
+                                    {userProfile.firstName} {userProfile.lastName} <Text className='font-medium text-sm text-white capitalize'>- {userProfile.type}</Text>
                                 </Text>
                                 <Text className="text-white font-semibold text-base mb-2">
                                     {userProfile.points.toLocaleString()} pts  <Text className="text-yellow-400 font-semibold text-base">
@@ -254,8 +252,8 @@ const ProfileScreen = () => {
                             </View>
 
                             {/* Streak Badge */}
-                            <View className="absolute top-2 right-2">
-                                <View className="bg-orange-500 px-3 py-2 rounded-full flex-row items-center">
+                            <View className="absolute -top-4 -right-4">
+                                <View className="bg-orange-500 px-2 py-2 rounded-full flex-row items-center">
                                     <Ionicons name="flame" size={16} color="white" />
                                     <Text className="text-white font-bold text-sm ml-1">
                                         {userProfile.streakDays}
@@ -272,7 +270,7 @@ const ProfileScreen = () => {
                             <RoundProgress
                                 progress={userProfile.sustainabilityScore}
                                 size={100}
-                                duration={100}
+                                duration={10}
                                 showPercentage={true}
                                 className="mb-2"
                             />
@@ -389,8 +387,9 @@ const ProfileScreen = () => {
                         {/* User Info */}
                         <View className="flex-1">
                             <Text className="text-xl font-bold text-white mb-1">
-                                {userProfile.firstName} {userProfile.lastName}
+                                {userProfile.firstName} {userProfile.lastName} <Text className='font-medium text-sm text-white capitalize'>- {userProfile.type}</Text>
                             </Text>
+
                             <Text className="text-white font-semibold text-base mb-2">
                                 8,490 pts  <Text className="text-yellow-400 font-semibold text-base">
                                     {getRankIcon(userProfile.rank)}
@@ -414,7 +413,7 @@ const ProfileScreen = () => {
                         </View>
 
                         {/* Streak fire flame */}
-                        <View className="flex-row absolute top-0 right-0 items-center bg-green-50 px-3 py-1 rounded-full ml-3">
+                        <View className="flex-row absolute -top-4 -right-2 items-center bg-green-50 px-3 py-1 rounded-full ml-3">
                             <Ionicons name="flame" size={16} color="#FF4500" />
                             <Text className="text-black font-semibold text-base ml-1">
                                 {userProfile.streakDays} days

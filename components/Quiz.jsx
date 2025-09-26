@@ -17,9 +17,9 @@ import ProgressLine from './ProgressLine';
 const quiz_templates = [
     require('../assets/images/quiz_templates/quiz_template1.png'),
     require('../assets/images/quiz_templates/quiz_template2.png'),
+    require('../assets/images/quiz_templates/quiz_template5.png'),
     require('../assets/images/quiz_templates/quiz_template3.png'),
     require('../assets/images/quiz_templates/quiz_template4.png'),
-    require('../assets/images/quiz_templates/quiz_template5.png'),
 ];
 
 
@@ -266,3 +266,4 @@ const QuizScreen = ({ navigation, route }) => {
 };
 
 export { QuizScreen };
+

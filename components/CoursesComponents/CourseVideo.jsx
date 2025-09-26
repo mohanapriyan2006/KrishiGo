@@ -21,10 +21,11 @@ const { width } = Dimensions.get('window');
 
 const CourseVideo = ({ navigation, route }) => {
 
-    const { user, modules } = useContext(DataContext);
+    const { user , getCourseImage } = useContext(DataContext);
 
     // Get parameters from navigation
     const moduleId = route?.params?.moduleId;
+    const module = route?.params?.module || {};
     // console.log('Module ID from route params:', moduleId);
     const courseId = route?.params?.courseId;
     const courseTitle = route?.params?.courseTitle || "Course Title";
@@ -41,11 +42,8 @@ const CourseVideo = ({ navigation, route }) => {
     const [moduleData, setModuleData] = useState(null);
 
     useEffect(() => {
-        if (modules && moduleId) {
-            const mod = modules.find(m => m.id === moduleId);
-            setModuleData(mod);
-        }
-    }, [modules, moduleId]);
+        setModuleData(module);
+    }, [moduleId]);
 
 
     // Check if module is already completed when component loads
@@ -178,7 +176,7 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
                         ) : (
                             <View className="flex-1 border-[0.5px] border-primary rounded-xl relative">
                                 {/* Farm Illustration Background */}
-                                <Image source={require('../../assets/images/course1.png')}
+                                <Image source={getCourseImage(courseId)}
                                     style={{ width: width - 32, height: ((width - 32) * 9) / 16, opacity: 0.4 }}
                                 />
 

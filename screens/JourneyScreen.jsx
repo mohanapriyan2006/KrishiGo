@@ -322,7 +322,7 @@ import ProgressLine from '../components/ProgressLine';
 import { DataContext } from '../hooks/DataContext';
 
 const JourneyScreen = ({ navigation }) => {
-    const { user } = useContext(DataContext);
+    const { user , getCourseImage } = useContext(DataContext);
 
     const [activeTab, setActiveTab] = useState('Ongoing');
     const [loading, setLoading] = useState(false);
@@ -515,11 +515,7 @@ const JourneyScreen = ({ navigation }) => {
     );
 
     const renderCourseCard = ({ item: course }) => {
-        const imgSource = course.localImage
-            ? course.localImage
-            : course.thumbnail
-                ? { uri: course.thumbnail }
-                : require('../assets/images/course1.png');
+        const imgSource = getCourseImage(course.id);
 
         return (
             <View key={course.id} className="bg-white rounded-xl shadow-md p-4 mb-4 border border-lime-200">

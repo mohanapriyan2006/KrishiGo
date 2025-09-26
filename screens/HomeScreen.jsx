@@ -2,9 +2,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Image, Linking, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import RoundProgress from "../components/RoundProgress";
 import { DataContext } from "../hooks/DataContext";
+
 
 export default function Home() {
 	const navigation = useNavigation();
@@ -19,7 +20,8 @@ export default function Home() {
 			amount: t("schemes.pmKisan.amount"),
 			deadline: t("schemes.pmKisan.deadline"),
 			status: t("schemes.pmKisan.status"),
-			image: require("../assets/images/course1.png"),
+			image: require("../assets/images/schemes/pm-kisan.jpg"),
+			link: "https://pmkisan.gov.in/"
 		},
 		{
 			id: 2,
@@ -28,7 +30,8 @@ export default function Home() {
 			amount: t("schemes.kcc.amount"),
 			deadline: t("schemes.kcc.deadline"),
 			status: t("schemes.kcc.status"),
-			image: require("../assets/images/course1.png"),
+			image: require("../assets/images/schemes/kcc-loan.jpg"),
+			link: "https://www.pmkisan.gov.in/Documents/KCC.pdf"
 		},
 		{
 			id: 3,
@@ -37,16 +40,18 @@ export default function Home() {
 			amount: t("schemes.pmfby.amount"),
 			deadline: t("schemes.pmfby.deadline"),
 			status: t("schemes.pmfby.status"),
-			image: require("../assets/images/course1.png"),
+			image: require("../assets/images/schemes/pmp-crop.jpg"),
+			link: "https://pmfby.gov.in/"
 		},
 		{
 			id: 4,
-			title: t("schemes.soilHealth.title"),
-			description: t("schemes.soilHealth.description"),
-			amount: t("schemes.soilHealth.amount"),
-			deadline: t("schemes.soilHealth.deadline"),
-			status: t("schemes.soilHealth.status"),
-			image: require("../assets/images/course1.png"),
+			title: t("schemes.shc.title"),
+			description: t("schemes.shc.description"),
+			amount: t("schemes.shc.amount"),
+			deadline: t("schemes.shc.deadline"),
+			status: t("schemes.shc.status"),
+			image: require("../assets/images/schemes/soil-health-card.jpg"),
+			link: "https://soilhealth.dac.gov.in/"
 		},
 		{
 			id: 5,
@@ -55,28 +60,44 @@ export default function Home() {
 			amount: t("schemes.eNam.amount"),
 			deadline: t("schemes.eNam.deadline"),
 			status: t("schemes.eNam.status"),
-			image: require("../assets/images/course1.png"),
-		},
+			image: require("../assets/images/schemes/e-nam.jpg"),
+			link: "https://enam.gov.in/web/"
+		}
 	];
+
+
+	const openExternalLink = async (url) => {
+		if (!url) return;
+		try {
+			const supported = await Linking.canOpenURL(url);
+			if (supported) {
+				await Linking.openURL(url);
+			}
+		} catch (e) {
+			console.log("Error", "Failed to open link : ", e);
+		}
+	};
+
+
 
 	// Add dummy badges data
 	const userBadges = [
 		{
 			id: 1,
-			image: require("../assets/images/badges/first-harvest.png"),
+			image: require('../assets/images/badges/first-harvest.png'),
 		},
 		{
 			id: 2,
-			image: require("../assets/images/badges/green-thumb.png"),
+			image: require('../assets/images/badges/green-thumb.png'),
 		},
 		{
 			id: 3,
-			image: require("../assets/images/badges/early-bird.png"),
+			image: require('../assets/images/badges/early-bird.png'),
 		},
 		{
 			id: 4,
-			image: require("../assets/images/badges/harvest-helper.png"),
-		},
+			image: require('../assets/images/badges/harvest-helper.png'),
+		}
 	];
 
 	const { userDetails } = useContext(DataContext);
@@ -246,11 +267,10 @@ export default function Home() {
 						className="p-2"
 					>
 						{governmentSchemes.map((scheme) => (
-							<TouchableOpacity
+							<View
 								key={scheme.id}
 								className="bg-white p-2 rounded-2xl mr-4"
 								style={{ width: 280 }}
-								activeOpacity={0.8}
 							>
 								<View className="relative">
 									<Image
@@ -258,6 +278,7 @@ export default function Home() {
 										className="w-full h-32 rounded-t-2xl"
 										resizeMode="cover"
 									/>
+
 								</View>
 
 								<View className="p-4">
@@ -289,13 +310,13 @@ export default function Home() {
 										</View>
 									</View>
 
-									<TouchableOpacity className="bg-primary py-2 px-4 rounded-lg">
+									<TouchableOpacity onPress={() => openExternalLink(scheme.link)} className="bg-primary py-2 px-4 rounded-lg">
 										<Text className="text-white text-center font-medium text-sm">
 											{t("home.learnMore")}
 										</Text>
 									</TouchableOpacity>
 								</View>
-							</TouchableOpacity>
+							</View>
 						))}
 					</ScrollView>
 				</View>

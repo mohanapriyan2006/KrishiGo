@@ -96,7 +96,7 @@ const sampleAllCourses = [
         instructor: 'Dr. Rajesh Kumar',
         duration: '4 weeks',
         rating: 4.8,
-        image: require('../assets/images/course1.png'),
+        image: require('../assets/images/courses/organic-basics.jpg'),
         category: 'Organic',
         level: 'Beginner',
         description: 'Learn the fundamentals of organic farming practices and sustainable agriculture.'
@@ -107,7 +107,7 @@ const sampleAllCourses = [
         instructor: 'Prof. Meera Sharma',
         duration: '6 weeks',
         rating: 4.9,
-        image: require('../assets/images/course1.png'),
+        image: require('../assets/images/courses/modern-irrigation.jpg'),
         category: 'Technology',
         level: 'Intermediate',
         description: 'Master water-efficient irrigation systems and smart farming technologies.'
@@ -118,7 +118,7 @@ const sampleAllCourses = [
         instructor: 'Dr. Anil Verma',
         duration: '5 weeks',
         rating: 4.7,
-        image: require('../assets/images/course1.png'),
+        image: require('../assets/images/courses/crop-disease.jpg'),
         category: 'Health',
         level: 'Advanced',
         description: 'Identify, prevent, and treat common crop diseases using sustainable methods.'
@@ -129,7 +129,7 @@ const sampleAllCourses = [
         instructor: 'Dr. Priya Patel',
         duration: '8 weeks',
         rating: 4.6,
-        image: require('../assets/images/course1.png'),
+        image: require('../assets/images/courses/sustainable-livestock.jpg'),
         category: 'Livestock',
         level: 'Intermediate',
         description: 'Ethical and sustainable practices for modern livestock management.'
@@ -140,7 +140,7 @@ const sampleAllCourses = [
         instructor: 'Prof. Suresh Reddy',
         duration: '3 weeks',
         rating: 4.9,
-        image: require('../assets/images/course1.png'),
+        image: require('../assets/images/courses/soil-health.jpg'),
         category: 'Soil',
         level: 'Beginner',
         description: 'Understanding soil composition, testing, and nutrient management.'
@@ -151,12 +151,71 @@ const sampleAllCourses = [
         instructor: 'Dr. Kavita Singh',
         duration: '7 weeks',
         rating: 4.8,
-        image: require('../assets/images/course1.png'),
+        image: require('../assets/images/courses/precision-agriculture.jpg'),
         category: 'Technology',
         level: 'Advanced',
         description: 'Use AI, IoT, and data analytics for precision farming solutions.'
     }
 ];
+
+// Sample rewards
+const SampleRewardTasks = [
+    {
+        id: 1,
+        task: 'Plant tree saplings',
+        farmerPoints: 1120,
+        helperPoints: 460,
+        completedBy: null, // 'farmer' | 'helper'
+        category: 'Afforestation',
+        description: 'Either farmer or youngster can plant saplings. Farmer gets higher reward.'
+    },
+    {
+        id: 2,
+        task: 'Adopt drip irrigation',
+        farmerPoints: 1180,
+        helperPoints: 590,
+        completedBy: null,
+        category: 'Water Conservation',
+        description: 'If farmer installs drip irrigation, more points. Helper gets fewer points for assisting or suggesting.'
+    },
+    {
+        id: 3,
+        task: 'Prepare organic compost',
+        farmerPoints: 1140,
+        helperPoints: 470,
+        completedBy: null,
+        category: 'Soil Health',
+        description: 'Both farmer and helper can create compost, but farmer gets extra points.'
+    },
+    {
+        id: 4,
+        task: 'Practice crop rotation',
+        farmerPoints: 1160,
+        helperPoints: 480,
+        completedBy: null,
+        category: 'Sustainable Farming',
+        description: 'Farmer gets more points for implementing crop rotation. Helper gets less for awareness work.'
+    },
+    {
+        id: 5,
+        task: 'Use bio-pesticides instead of chemicals',
+        farmerPoints: 1150,
+        helperPoints: 475,
+        completedBy: null,
+        category: 'Eco-Friendly Practices',
+        description: 'Farmer applies bio-pesticides in field. Helper gets points if they promote it.'
+    },
+    {
+        id: 6,
+        task: 'Install solar-powered pump',
+        farmerPoints: 2220,
+        helperPoints: 1000,
+        completedBy: null,
+        category: 'Renewable Energy',
+        description: 'Farmer earns more for installing pump. Helper earns less if just promoting/assisting.'
+    }
+];
+
 
 const DataProvider = ({ children }) => {
 
@@ -225,7 +284,7 @@ const DataProvider = ({ children }) => {
         if (user) {
             fetchWishlist(user.uid);
         }
-    }, [user ]);
+    }, [user]);
 
     // -----------------------------------------------------------------------------
     // ------------- All Course State & Methods -------------
@@ -233,11 +292,27 @@ const DataProvider = ({ children }) => {
 
     const [allCourses, setAllCourses] = useState([]);
 
+    const getCourseImage = (courseId) => {
+        // Map course IDs to local images
+        const courseImages = {
+            "1": require('../assets/images/courses/organic-basics.jpg'),
+            "2": require('../assets/images/courses/modern-irrigation.jpg'),
+            "3": require('../assets/images/courses/crop-disease.jpg'),
+            "4": require('../assets/images/courses/sustainable-livestock.jpg'),
+            "5": require('../assets/images/courses/soil-health.jpg'),
+            "6": require('../assets/images/courses/precision-agriculture.jpg'),
+        };
+        return courseImages[courseId] || require('../assets/images/course1.png');
+    }
+
     const loadAllCourses = async () => {
         try {
             setLoading(prev => ({ ...prev, allCourses: true }));
             getAllCourses().then(courses => {
-                setAllCourses(courses);
+                setAllCourses(courses.map(course => ({
+                    ...course,
+                    image: getCourseImage(course.id)
+                })));
             }).catch(err => {
                 console.log("Error fetching all courses:", err);
                 setAllCourses(sampleAllCourses); // Fallback to sample courses on error
@@ -260,8 +335,7 @@ const DataProvider = ({ children }) => {
     // -----------------------------------------------------------------------------
 
 
-    const [course, setCourse] = useState(null);
-    const [modules, setModules] = useState([]);
+
     // const [enrollment, setEnrollment] = useState(null);
     const [enrollment, setEnrollment] = useState(false);
 
@@ -272,9 +346,10 @@ const DataProvider = ({ children }) => {
                 user, loading, setLoading,
                 userDetails, setUserDetails, fetchUserDetails,
                 allCourses, setAllCourses, loadAllCourses,
+                getCourseImage,
                 wishlistedCourses, setWishlistedCourses, fetchWishlist,
-                course, modules, enrollment,
-                setCourse, setModules, setEnrollment,
+                enrollment, setEnrollment,
+                rewardTasks : SampleRewardTasks,
             }}
         >
             {children}
