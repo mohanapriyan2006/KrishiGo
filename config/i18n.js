@@ -12,9 +12,10 @@ import ta from "../locales/ta.json";
 const locales = Localization.getLocales();
 const systemLang = locales?.length > 0 ? locales[0].languageCode : "en";
 
-i18n.use(initReactI18next).init({
+// Create a promise to track initialization
+const initPromise = i18n.use(initReactI18next).init({
 	compatibilityJSON: "v3",
-	lng: systemLang, // default system language
+	lng: systemLang,
 	fallbackLng: "en",
 	resources: {
 		en: { translation: en },
@@ -23,11 +24,19 @@ i18n.use(initReactI18next).init({
 		ml: { translation: ml },
 	},
 	interpolation: {
-		escapeValue: false, // react already protects from XSS
+		escapeValue: false,
 	},
 	react: {
-		useSuspense: false, // avoid RN Suspense issues
+		useSuspense: false,
+		bindI18n: "languageChanged",
+		bindI18nStore: "",
+		transEmptyNodeValue: "",
+		transSupportBasicHtmlNodes: true,
+		transKeepBasicHtmlNodesFor: ["br", "strong", "i"],
 	},
 });
+
+// Export the promise for optional waiting
+export const i18nInit = initPromise;
 
 export default i18n;
