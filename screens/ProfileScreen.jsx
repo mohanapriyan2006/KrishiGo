@@ -97,7 +97,7 @@ const ProfileScreen = () => {
                 firstName: userDetails.firstName || 'Vijay',
                 lastName: userDetails.lastName || 'Kumar',
                 location: userDetails?.address?.city || 'Chennai',
-                type: userDetails.type || 'helper',
+                type: userDetails.userType || 'helper',
             }));
         }
     }, [userDetails]);
