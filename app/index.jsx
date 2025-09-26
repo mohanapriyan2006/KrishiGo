@@ -20,29 +20,8 @@ const Stack = createNativeStackNavigator();
 // Create a wrapper component to handle i18n initialization
 function AppContent() {
 	return (
-		<DataProvider>
-			<Stack.Navigator
-				initialRouteName="Login"
-				screenOptions={{ headerShown: false }}
-			>
-				<Stack.Screen name="Login" component={Login} />
-				<Stack.Screen name="Register" component={Register} />
-				<Stack.Screen name="Main" component={RootLayout} />
-				<Stack.Screen name="Quiz" component={QuizScreen} />
-				<Stack.Screen name="SearchCourses" component={SearchCourses} />
-				<Stack.Screen name="SavedCourses" component={SavedCourses} />
-				<Stack.Screen name="CourseDetails" component={CourseDetails} />
-				<Stack.Screen name="CourseVideo" component={CourseVideo} />
-				<Stack.Screen name="Settings" component={Settings} />
-				<Stack.Screen name="About" component={About} />
-				<Stack.Screen
-					name="TermsAndConditions"
-					component={TermsAndConditions}
-				/>
-			</Stack.Navigator>
-		</DataProvider>
 		<Stack.Navigator
-			initialRouteName="Main"
+			initialRouteName="Login"
 			screenOptions={{ headerShown: false }}
 		>
 			<Stack.Screen name="Login" component={Login} />
@@ -55,7 +34,10 @@ function AppContent() {
 			<Stack.Screen name="CourseVideo" component={CourseVideo} />
 			<Stack.Screen name="Settings" component={Settings} />
 			<Stack.Screen name="About" component={About} />
-			<Stack.Screen name="TermsAndConditions" component={TermsAndConditions} />
+			<Stack.Screen
+				name="TermsAndConditions"
+				component={TermsAndConditions}
+			/>
 		</Stack.Navigator>
 	);
 }

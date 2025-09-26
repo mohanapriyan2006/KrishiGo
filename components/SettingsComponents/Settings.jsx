@@ -2,12 +2,14 @@ import { Feather, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+	Alert,
 	SafeAreaView,
 	ScrollView,
 	Text,
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { auth } from "../../config/firebase";
 import { DataContext } from "../../hooks/DataContext";
 import useLanguage from "../../hooks/useLanguage";
 import AIChatSpace from "../AIComponents/AIChatSpace";
@@ -39,21 +41,10 @@ const Settings = ({ navigation }) => {
 				lastName: userDetails.lastName,
 				email: userDetails.email,
 				phoneNumber: userDetails.phoneNumber,
-				location: userDetails.city || "Chennai",
+				location: userDetails?.address?.city || 'Chennai',
 			});
 		}
 	}, [userDetails]);
-    useEffect(() => {
-        if (userDetails) {
-            setUserProfile({
-                firstName: userDetails.firstName,
-                lastName: userDetails.lastName,
-                email: userDetails.email,
-                phoneNumber: userDetails.phoneNumber,
-                location: userDetails?.address?.city || 'Chennai',
-            });
-        }
-    }, [userDetails]);
 
 	// Get current language name for display
 	const getCurrentLanguageName = () => {
@@ -98,6 +89,22 @@ const Settings = ({ navigation }) => {
 
 	const handleDeleteAccount = () => {
 		setShowDeleteModal(true);
+	};
+
+	const handleLogout = () => {
+		Alert.alert(
+			'Logout',
+			'Are you sure you want to logout?',
+			[
+				{ text: 'Cancel', style: 'cancel' },
+				{
+					text: 'Logout', style: 'destructive', onPress: () => {
+						auth.signOut();
+						navigation.navigate('Login');
+					}
+				},
+			]
+		);
 	};
 
 	return (
@@ -272,10 +279,31 @@ const Settings = ({ navigation }) => {
 						<Feather name="chevron-right" size={20} color="#6B7280" />
 					</TouchableOpacity>
 
+					{/* Logout */}
+					<TouchableOpacity
+						onPress={handleLogout}
+						className="bg-red-50 p-4 rounded-xl flex-row items-center justify-between"
+						activeOpacity={0.7}
+					>
+						<View className="flex-row items-center">
+							<View className="w-10 h-10 bg-red-100/50 rounded-full items-center justify-center mr-3">
+								<MaterialIcons
+									name="logout"
+									size={20}
+									color="#EF4444"
+								/>
+							</View>
+							<Text className="text-red-600 font-medium text-base">
+								{t("settings.logout")}
+							</Text>
+						</View>
+						<Feather name="chevron-right" size={20} color="#EF4444" />
+					</TouchableOpacity>
+
 					{/* Delete Account */}
 					<TouchableOpacity
 						onPress={handleDeleteAccount}
-						className="bg-red-50 p-4 rounded-xl flex-row items-center justify-between"
+						className="bg-red-100 p-4 rounded-xl flex-row items-center justify-between"
 						activeOpacity={0.7}
 					>
 						<View className="flex-row items-center">
