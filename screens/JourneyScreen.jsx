@@ -305,6 +305,7 @@
 // ...existing code...
 import { Ionicons } from '@expo/vector-icons';
 import { useContext, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     ActivityIndicator,
     FlatList,
@@ -323,10 +324,11 @@ import { DataContext } from '../hooks/DataContext';
 
 const JourneyScreen = ({ navigation }) => {
     const { user , getCourseImage } = useContext(DataContext);
+    const { t } = useTranslation();
 
     const [activeTab, setActiveTab] = useState('Ongoing');
     const [loading, setLoading] = useState(false);
-    const [enrollmentDetails, setEnrollmentDetails] = useState([]);
+    // Removed unused enrollmentDetails state
     const [onProgressCourses, setOnProgressCourses] = useState([]);
     const [completedCourses, setCompletedCourses] = useState([]);
 
@@ -423,7 +425,9 @@ const JourneyScreen = ({ navigation }) => {
                 localImage: null, // fallback handled in render
                 progress,
                 status,
-                modulesText: `${completedCount}/${totalModules} modules`,
+                // expose counts for i18n formatting
+                completedCount,
+                totalModules,
             };
         }));
 
@@ -439,7 +443,6 @@ const JourneyScreen = ({ navigation }) => {
         setLoading(true);
         try {
             const details = await getUserEnrolledCourses(user.uid);
-            setEnrollmentDetails(details || []);
 
             if (!details || details.length === 0) {
                 return;
@@ -477,7 +480,7 @@ const JourneyScreen = ({ navigation }) => {
         <View>
             {/* Header */}
             <View className="flex-row justify-between items-center  py-3 bg-white">
-                <Text className="text-2xl font-bold text-gray-900">My journey</Text>
+                <Text className="text-2xl font-bold text-gray-900">{t('journey.title')}</Text>
                 <TouchableOpacity
                     className="w-[40px] h-[40px] bg-[#67b00019] border border-gray-200 rounded-full items-center justify-center"
                     onPress={() => navigation.navigate('Profile')}
@@ -498,7 +501,7 @@ const JourneyScreen = ({ navigation }) => {
                     onPress={() => setActiveTab('Ongoing')}
                 >
                     <Text className={`font-medium text-sm ${activeTab === 'Ongoing' ? 'text-white' : 'text-gray-700'}`}>
-                        Ongoing
+                        {t('journey.ongoing')}
                     </Text>
                 </TouchableOpacity>
 
@@ -507,7 +510,7 @@ const JourneyScreen = ({ navigation }) => {
                     onPress={() => setActiveTab('Completed')}
                 >
                     <Text className={`font-medium text-sm ${activeTab === 'Completed' ? 'text-white' : 'text-gray-700'}`}>
-                        Completed
+                        {t('journey.completed')}
                     </Text>
                 </TouchableOpacity>
             </View>
@@ -537,7 +540,7 @@ const JourneyScreen = ({ navigation }) => {
                                 color="white"
                             />
                             <Text className="text-white text-xs font-medium ml-1">
-                                {course.status === 'completed' ? 'COMPLETED' : 'IN PROGRESS'}
+                                {course.status === 'completed' ? t('journey.statusCompleted') : t('journey.statusInProgress')}
                             </Text>
                         </View>
                     </View>
@@ -550,13 +553,13 @@ const JourneyScreen = ({ navigation }) => {
                     </Text>
 
                     <Text className="text-gray-600 text-sm mb-3">
-                        Duration - {course.duration || 'N/A'}
+                        {t('journey.durationLabel')} - {course.duration || t('journey.na')}
                     </Text>
 
                     <ProgressLine progress={course.progress || 0} color={'#78BB1B'} bg={'#E5E5E5'} />
 
                     <Text className="text-gray-700 text-sm mt-3 font-medium">
-                        {course.modulesText || '0/0 modules'}
+                        {t('journey.modulesCount', { completed: course.completedCount || 0, total: course.totalModules || 0 })}
                     </Text>
                 </View>
 
@@ -567,7 +570,7 @@ const JourneyScreen = ({ navigation }) => {
                         onPress={() => handleResume(course.id)}
                     >
                         <Text className="text-white font-semibold text-sm mr-2">
-                            {course.status === 'completed' ? 'Review' : 'Resume'}
+                            {course.status === 'completed' ? t('journey.review') : t('journey.resume')}
                         </Text>
                         <Ionicons
                             name={course.status === 'completed' ? 'refresh' : 'play'}
@@ -591,12 +594,12 @@ const JourneyScreen = ({ navigation }) => {
                     <View className="items-center justify-center py-12">
                         <Ionicons name="book-outline" size={64} color="#9CA3AF" />
                         <Text className="text-gray-500 text-lg font-medium mt-4">
-                            No {activeTab.toLowerCase()} courses
+                            {activeTab === 'Ongoing' ? t('journey.emptyOngoingTitle') : t('journey.emptyCompletedTitle')}
                         </Text>
                         <Text className="text-gray-400 text-sm mt-2 text-center px-8">
                             {activeTab === 'Ongoing'
-                                ? 'Start a new course to begin your learning journey'
-                                : 'Complete some courses to see them here'}
+                                ? t('journey.emptyOngoingSubtitle')
+                                : t('journey.emptyCompletedSubtitle')}
                         </Text>
                     </View>
                 }
@@ -614,4 +617,3 @@ const JourneyScreen = ({ navigation }) => {
 };
 
 export default JourneyScreen;
-// ...existing code...

@@ -1,6 +1,7 @@
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useCallback, useContext, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     ActivityIndicator,
     Alert,
@@ -97,9 +98,11 @@ const sampleModules = [
 
 const CourseDetails = ({ navigation, route }) => {
 
+    const { t } = useTranslation();
+
     const { user, enrollment,
         loading, setEnrollment,
-        setLoading , getCourseImage } = useContext(DataContext);
+        setLoading, getCourseImage } = useContext(DataContext);
 
 
     const [course, setCourse] = useState(null);
@@ -126,7 +129,7 @@ const CourseDetails = ({ navigation, route }) => {
             try {
                 // Try to fetch from API
                 courseData = await getCourse(courseId);
-                courseData = {...courseData , image: getCourseImage(courseId) }|| null;
+                courseData = { ...courseData, image: getCourseImage(courseId) } || null;
                 modulesData = await getCourseModules(courseId);
                 console.log('Fetched course data from API', courseData);
                 // console.log('Fetched modules data from API', modulesData);
@@ -229,7 +232,7 @@ const CourseDetails = ({ navigation, route }) => {
         return (
             <SafeAreaView className="flex-1 justify-center items-center bg-white">
                 <ActivityIndicator size="large" color="#78BB1B" />
-                <Text className="mt-4 text-gray-600">Loading course details...</Text>
+                <Text className="mt-4 text-gray-600">{t('courses.details.loading')}</Text>
             </SafeAreaView>
         );
     }
@@ -251,7 +254,7 @@ const CourseDetails = ({ navigation, route }) => {
                 >
                     <Feather name="chevron-left" size={20} color="white" />
                 </TouchableOpacity>
-                <Text className="text-lg font-semibold">Course Details</Text>
+                <Text className="text-lg font-semibold">{t('courses.details.title')}</Text>
             </View>
 
             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
@@ -268,7 +271,7 @@ const CourseDetails = ({ navigation, route }) => {
                                 <View className="bg-yellow-500 px-3 py-1 rounded-full flex-row items-center">
                                     <MaterialIcons name="stars" size={16} color="white" />
                                     <Text className="text-white text-sm font-semibold ml-1">
-                                        {course?.points || '1000+'} pts
+                                        {course?.points || '1000+'} {t('courses.details.pointsSuffix')}
                                     </Text>
                                 </View>
                             </View>
@@ -278,12 +281,12 @@ const CourseDetails = ({ navigation, route }) => {
                                 <View className="flex-row items-center mr-4">
                                     <Feather name="clock" size={14} color="gray" />
                                     <Text className="text-gray-500 text-sm ml-1">
-                                        {Math.ceil((course?.hours || 420) / 60)}hrs
+                                        {t('courses.details.hours', { hours: Math.ceil((course?.hours || 420) / 60) })}
                                     </Text>
                                 </View>
                                 <View className="flex-row items-center">
                                     <Feather name="book-open" size={14} color="gray" />
-                                    <Text className="text-gray-500 text-sm ml-1">{totalModules} modules</Text>
+                                    <Text className="text-gray-500 text-sm ml-1">{t('courses.details.modules', { count: totalModules })}</Text>
                                 </View>
                             </View>
 
@@ -293,7 +296,7 @@ const CourseDetails = ({ navigation, route }) => {
                         <Image
                             // source={course?.thumbnail ? { uri: course.thumbnail } : require('../../assets/images/course1.png')}
                             source={course?.image || require('../../assets/images/course1.png')}
-                            style={{ width: 140, height: 120, opacity: 0.8 , borderRadius: 10}}
+                            style={{ width: 140, height: 120, opacity: 0.8, borderRadius: 10 }}
                         />
 
                         {/* Progress Bar (only if enrolled) */}
@@ -308,7 +311,7 @@ const CourseDetails = ({ navigation, route }) => {
                 {/* About Section */}
                 <View className="px-4 mt-6">
                     <Text className="text-xl font-bold text-gray-900 mb-3">
-                        About this course
+                        {t('courses.details.about')}
                     </Text>
                     <Text className="text-gray-600 leading-6 mb-4">
                         {course?.description}
@@ -321,7 +324,7 @@ const CourseDetails = ({ navigation, route }) => {
                                 <MaterialIcons name="verified" size={20} color="white" />
                             </View>
                             <Text className="text-gray-700">
-                                Certificate by <Text className="font-semibold text-primaryDark">KrishiGo</Text>
+                                {t('courses.details.certificateBy', { brand: 'KrishiGo' })}
                             </Text>
                         </View>
                     </View>
@@ -335,7 +338,7 @@ const CourseDetails = ({ navigation, route }) => {
                 {/* Course Modules */}
                 <View className="px-4 mt-6">
                     <Text className="text-xl font-bold text-gray-900 mb-4">
-                        Course modules
+                        {t('courses.details.courseModules')}
                     </Text>
 
                     {modules.map((module, index) => {
@@ -417,7 +420,7 @@ const CourseDetails = ({ navigation, route }) => {
                     disabled={loading.enrolling || isEnrolled}
                 >
                     <Text className="text-white font-semibold text-lg">
-                        {isEnrolled ? '✓ Enrolled' : (loading.enrolling ? 'Enrolling...' : 'Enroll now')}
+                        {isEnrolled ? t('courses.details.enrolled') : (loading.enrolling ? t('courses.details.enrolling') : t('courses.details.enrollNow'))}
                     </Text>
                 </TouchableOpacity>
             </View>

@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Alert,
     Image,
@@ -27,8 +28,10 @@ const QuizScreen = ({ navigation, route }) => {
 
 
     const { user } = useContext(DataContext)
+    const { t } = useTranslation();
     const moduleId = route?.params?.moduleId;
     const courseId = route?.params?.courseId;
+    // eslint-disable-next-line no-unused-vars
     const quizId = route?.params?.quizId;
 
     const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -101,7 +104,7 @@ const QuizScreen = ({ navigation, route }) => {
         } else if (currentQuestion === quizQuestions.length) {
             try { await setModuleCompleted(user.uid, courseId, moduleId) } catch (e) { console.log(e) }
             navigation.goBack();
-            Alert.alert('Quiz Completed', `Your final score is ${score} out of ${quizQuestions.length}`);
+            Alert.alert(t('quiz.completedTitle'), t('quiz.completedMsg', { score, total: quizQuestions.length }));
         }
         shuffleQuizImage();
     };
@@ -171,7 +174,7 @@ const QuizScreen = ({ navigation, route }) => {
 
                 <View className="flex-row items-center gap-4">
                     <View className="bg-white/20 px-3 py-1 rounded-full">
-                        <Text className="text-white font-semibold">Score: {score}</Text>
+                        <Text className="text-white font-semibold">{t('quiz.score', { score })}</Text>
                     </View>
 
                     <View className="flex-row items-center bg-white/20 px-3 py-1 rounded-full">
@@ -202,7 +205,7 @@ const QuizScreen = ({ navigation, route }) => {
                 {/* Progress Bar */}
                 <View className="mx-4 mb-4">
                     <Text className="text-gray-600 text-sm mb-2">
-                        Question {currentQuestion} of {quizQuestions.length}
+                        {t('quiz.progress', { current: currentQuestion, total: quizQuestions.length })}
                     </Text>
                     <ProgressLine progress={(currentQuestion / quizQuestions.length) * 100} color='#78BB1B' bg='#7eff574c' />
                 </View>
@@ -234,7 +237,7 @@ const QuizScreen = ({ navigation, route }) => {
                         onPress={handleSubmitAnswer}
                         className="mx-4 mt-4 bg-primary py-4 rounded-xl items-center"
                     >
-                        <Text className="text-white font-semibold text-lg">Submit Answer</Text>
+                        <Text className="text-white font-semibold text-lg">{t('quiz.submitAnswer')}</Text>
                     </TouchableOpacity>
                 )}
             </ScrollView>
@@ -247,7 +250,7 @@ const QuizScreen = ({ navigation, route }) => {
                     className={`flex-1 mr-2 border border-primary py-4 rounded-xl flex-row items-center justify-center ${currentQuestion === 1 ? 'bg-gray-200' : 'bg-lime-100'
                         }`}
                 >
-                    <Text className="text-primaryDark font-semibold">← Previous</Text>
+                    <Text className="text-primaryDark font-semibold">{t('quiz.previous')}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -257,7 +260,7 @@ const QuizScreen = ({ navigation, route }) => {
                         }`}
                 >
                     <Text className={`${currentQuestion === quizQuestions.length ? 'text-white' : 'text-primaryDark'} font-semibold`}>
-                        {currentQuestion === quizQuestions.length ? 'Finish' : 'Next →'}
+                        {currentQuestion === quizQuestions.length ? t('quiz.finish') : t('quiz.next')}
                     </Text>
                 </TouchableOpacity>
             </View>

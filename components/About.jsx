@@ -1,4 +1,5 @@
 import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import {
     SafeAreaView,
     ScrollView,
@@ -8,52 +9,11 @@ import {
 } from 'react-native';
 
 const About = ({ navigation }) => {
-    const features = [
-        {
-            icon: '🧩',
-            title: 'Play Quizzes',
-            description: 'Learn about modern farming, sustainability, and best agri-practices.'
-        },
-        {
-            icon: '⭐',
-            title: 'Earn Points',
-            description: 'Every correct answer gives you points for your knowledge and effort.'
-        },
-        {
-            icon: '🎁',
-            title: 'Claim Rewards',
-            description: 'Redeem your points for vouchers, agri-products, or exclusive discounts.'
-        },
-        {
-            icon: '💰',
-            title: 'Convert to Money',
-            description: 'Use your points to unlock financial benefits and farming resources.'
-        }
-    ];
+    const { t } = useTranslation();
 
-    const benefits = [
-        {
-            icon: '👩‍🌾',
-            title: 'For Farmers',
-            description: 'Practical tips, eco-friendly methods, and a chance to earn while learning.'
-        },
-        {
-            icon: '👨‍💻',
-            title: 'For Youth',
-            description: 'A fun, engaging way to connect with agriculture and contribute to a sustainable future.'
-        },
-        {
-            icon: '🌍',
-            title: 'For the Environment',
-            description: 'Promoting reduced chemical use, water conservation, and healthier farming practices.'
-        }
-    ];
-
-    const impacts = [
-        'Encouraging young farmers to adopt sustainable practices.',
-        'Making agriculture exciting through quizzes, challenges, and community competitions.',
-        'Building greener ecosystems while rewarding knowledge and action.'
-    ];
+    const features = t('about.features', { returnObjects: true });
+    const benefits = t('about.benefits', { returnObjects: true });
+    const impacts = t('about.impacts', { returnObjects: true });
 
     return (
         <SafeAreaView className="flex-1 bg-white">
@@ -66,19 +26,18 @@ const About = ({ navigation }) => {
                     >
                         <Feather name="chevron-left" size={20} color="white" />
                     </TouchableOpacity>
-                    <Text className="text-2xl font-bold text-gray-900">About KrishiGo</Text>
+                    <Text className="text-2xl font-bold text-gray-900">{t('about.title')}</Text>
                 </View>
 
                 {/* Welcome Section */}
                 <View className="mx-6 mt-6">
                     <View className="bg-gradient-to-br from-lime-50 to-green-50 rounded-2xl p-6">
-                        <Text className="text-3xl font-bold text-center mb-2">🌱 About KrishiGo</Text>
+                        <Text className="text-3xl font-bold text-center mb-2">{t('about.bannerTitle')}</Text>
                         <Text className="text-base text-gray-700 text-center leading-6">
-                            Welcome to KrishiGo – where farming meets fun, learning, and rewards! 🚜✨
+                            {t('about.bannerWelcome')}
                         </Text>
                         <Text className="text-base text-gray-700 text-center leading-6 mt-4">
-                            KrishiGo is a gamified platform designed for young farmers and agri-enthusiasts who want to learn,
-                            engage, and contribute to sustainable farming practices while earning exciting rewards.
+                            {t('about.bannerDescription')}
                         </Text>
                     </View>
                 </View>
@@ -90,30 +49,25 @@ const About = ({ navigation }) => {
                             <View className="w-8 h-8 bg-blue-200 rounded-full items-center justify-center mr-3">
                                 <Ionicons name="flag" size={20} color="#1E40AF" />
                             </View>
-                            <Text className="text-xl font-bold text-gray-900">🎯 Our Mission</Text>
+                            <Text className="text-xl font-bold text-gray-900">{t('about.missionTitle')}</Text>
                         </View>
                         <Text className="text-base text-gray-700 leading-6">
-                            To empower the next generation of farmers with knowledge, motivation, and incentives that make
-                            agriculture smarter, greener, and more sustainable.
+                            {t('about.missionText')}
                         </Text>
                     </View>
                 </View>
 
                 {/* How It Works Section */}
                 <View className="mx-6 mt-6">
-                    <Text className="text-xl font-bold text-gray-900 mb-4">🔑 How KrishiGo Works</Text>
+                    <Text className="text-xl font-bold text-gray-900 mb-4">{t('about.howWorksTitle')}</Text>
                     <View className="gap-4">
                         {features.map((feature, index) => (
                             <View key={index} className="bg-lime-50 rounded-xl p-4">
                                 <View className="flex-row items-start">
                                     <Text className="text-2xl mr-3 mt-1">{feature.icon}</Text>
                                     <View className="flex-1">
-                                        <Text className="text-lg font-semibold text-gray-900 mb-1">
-                                            {feature.title}
-                                        </Text>
-                                        <Text className="text-gray-700 leading-5">
-                                            {feature.description}
-                                        </Text>
+                                        <Text className="text-lg font-semibold text-gray-900 mb-1">{feature.title}</Text>
+                                        <Text className="text-gray-700 leading-5">{feature.description}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -123,19 +77,15 @@ const About = ({ navigation }) => {
 
                 {/* Why KrishiGo Section */}
                 <View className="mx-6 mt-6">
-                    <Text className="text-xl font-bold text-gray-900 mb-4">🌾 Why KrishiGo?</Text>
+                    <Text className="text-xl font-bold text-gray-900 mb-4">{t('about.whyTitle')}</Text>
                     <View className="gap-4">
                         {benefits.map((benefit, index) => (
                             <View key={index} className="bg-lime-50 rounded-xl p-4">
                                 <View className="flex-row items-start">
                                     <Text className="text-2xl mr-3 mt-1">{benefit.icon}</Text>
                                     <View className="flex-1">
-                                        <Text className="text-lg font-semibold text-gray-900 mb-1">
-                                            {benefit.title}
-                                        </Text>
-                                        <Text className="text-gray-700 leading-5">
-                                            {benefit.description}
-                                        </Text>
+                                        <Text className="text-lg font-semibold text-gray-900 mb-1">{benefit.title}</Text>
+                                        <Text className="text-gray-700 leading-5">{benefit.description}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -150,7 +100,7 @@ const About = ({ navigation }) => {
                             <View className="w-8 h-8 bg-lime-200 rounded-full items-center justify-center mr-3">
                                 <MaterialIcons name="trending-up" size={20} color="green" />
                             </View>
-                            <Text className="text-xl font-bold text-gray-900">🚀 Our Impact</Text>
+                            <Text className="text-xl font-bold text-gray-900">{t('about.impactTitle')}</Text>
                         </View>
                         <View className="gap-3">
                             {impacts.map((impact, index) => (
@@ -166,24 +116,22 @@ const About = ({ navigation }) => {
                 {/* Closing Message */}
                 <View className="mx-6 mt-6 mb-8">
                     <View className="bg-lime-50 rounded-2xl p-6 border border-purple-100">
-                        <Text className="text-center text-lg font-semibold text-gray-900 leading-6">
-                            {" 👉 With KrishiGo, farming isn't just about growing crops its about growing knowledge, rewards, and a sustainable future. 🌱💡"}
-                        </Text>
+                        <Text className="text-center text-lg font-semibold text-gray-900 leading-6">{t('about.closing')}</Text>
                     </View>
                 </View>
 
                 {/* Contact Section */}
                 <View className="mx-6 mb-6">
                     <View className="bg-gray-50 rounded-2xl p-6">
-                        <Text className="text-lg font-bold text-gray-900 mb-4 text-center">Get in Touch</Text>
+                        <Text className="text-lg font-bold text-gray-900 mb-4 text-center">{t('about.contactTitle')}</Text>
                         <View className="gap-3">
                             <TouchableOpacity className="bg-white rounded-xl p-4 flex-row items-center justify-center border border-gray-200">
                                 <Ionicons name="mail" size={20} color="#4c8b1f" />
-                                <Text className="text-primary font-medium ml-2">support@krishigo.com</Text>
+                                <Text className="text-primary font-medium ml-2">{t('about.contact.email')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity className="bg-white rounded-xl p-4 flex-row items-center justify-center border border-gray-200">
                                 <Ionicons name="globe" size={20} color="#4c8b1f" />
-                                <Text className="text-primary font-medium ml-2">www.krishigo.com</Text>
+                                <Text className="text-primary font-medium ml-2">{t('about.contact.website')}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -192,12 +140,8 @@ const About = ({ navigation }) => {
                 {/* Version Info */}
                 <View className="mx-6 mb-8">
                     <View className="bg-gray-100 rounded-xl p-4">
-                        <Text className="text-center text-gray-600 text-sm">
-                            KrishiGo v1.0.0
-                        </Text>
-                        <Text className="text-center text-gray-500 text-xs mt-1">
-                            © 2024 KrishiGo. All rights reserved.
-                        </Text>
+                        <Text className="text-center text-gray-600 text-sm">{t('about.version')}</Text>
+                        <Text className="text-center text-gray-500 text-xs mt-1">{t('about.copyright')}</Text>
                     </View>
                 </View>
 

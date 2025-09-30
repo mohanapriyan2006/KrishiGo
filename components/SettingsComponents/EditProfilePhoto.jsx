@@ -1,6 +1,7 @@
 import { Feather, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Alert,
     Image,
@@ -17,6 +18,7 @@ const EditProfilePhoto = ({
     currentPhoto,
     onPhotoUpdate,
 }) => {
+    const { t } = useTranslation();
     const [selectedImage, setSelectedImage] = useState(currentPhoto || null);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -26,9 +28,9 @@ const EditProfilePhoto = ({
 
         if (cameraStatus !== 'granted' || mediaStatus !== 'granted') {
             Alert.alert(
-                'Permissions Required',
-                'We need camera and photo library permissions to change your profile photo.',
-                [{ text: 'OK' }]
+                t('settings.photo.permissionsTitle'),
+                t('settings.photo.permissionsText'),
+                [{ text: t('common.ok') }]
             );
             return false;
         }
@@ -50,8 +52,8 @@ const EditProfilePhoto = ({
             if (!result.canceled && result.assets[0]) {
                 setSelectedImage(result.assets[0].uri);
             }
-        } catch (error) {
-            Alert.alert('Error', 'Failed to take photo. Please try again.');
+        } catch (_error) {
+            Alert.alert(t('common.error'), t('settings.photo.takeFailed'));
         }
     };
 
@@ -70,19 +72,19 @@ const EditProfilePhoto = ({
             if (!result.canceled && result.assets[0]) {
                 setSelectedImage(result.assets[0].uri);
             }
-        } catch (error) {
-            Alert.alert('Error', 'Failed to select photo. Please try again.');
+        } catch (_error) {
+            Alert.alert(t('common.error'), t('settings.photo.selectFailed'));
         }
     };
 
     const removePhoto = () => {
         Alert.alert(
-            'Remove Photo',
-            'Are you sure you want to remove your profile photo?',
+            t('settings.photo.removeTitle'),
+            t('settings.photo.removeConfirm'),
             [
-                { text: 'Cancel', style: 'cancel' },
+                { text: t('common.cancel'), style: 'cancel' },
                 {
-                    text: 'Remove',
+                    text: t('settings.photo.remove'),
                     style: 'destructive',
                     onPress: () => setSelectedImage(null)
                 }
@@ -101,17 +103,17 @@ const EditProfilePhoto = ({
             onPhotoUpdate(selectedImage);
 
             Alert.alert(
-                'Success',
-                'Your profile photo has been updated successfully!',
+                t('common.success'),
+                t('settings.photo.updateSuccess'),
                 [
                     {
-                        text: 'OK',
+                        text: t('common.ok'),
                         onPress: () => setShowPhotoModal(false)
                     }
                 ]
             );
-        } catch (error) {
-            Alert.alert('Error', 'Failed to update photo. Please try again.');
+        } catch (_error) {
+            Alert.alert(t('common.error'), t('settings.photo.updateFailed'));
         } finally {
             setIsLoading(false);
         }
@@ -124,19 +126,19 @@ const EditProfilePhoto = ({
 
     const photoOptions = [
         {
-            title: 'Take Photo',
+            title: t('settings.photo.takePhoto'),
             icon: 'camera',
             color: '#78BB1B',
             action: pickImageFromCamera
         },
         {
-            title: 'Choose from Gallery',
+            title: t('settings.photo.chooseFromGallery'),
             icon: 'image',
             color: '#78BB1B',
             action: pickImageFromGallery
         },
         {
-            title: 'Remove Photo',
+            title: t('settings.photo.removePhoto'),
             icon: 'trash-2',
             color: '#EF4444',
             action: removePhoto,
@@ -164,7 +166,7 @@ const EditProfilePhoto = ({
                                 <Feather name="x" size={24} color="#6B7280" />
                             </TouchableOpacity>
 
-                            <Text className="text-xl font-bold text-gray-900">Profile Photo</Text>
+                            <Text className="text-xl font-bold text-gray-900">{t('settings.photo.title')}</Text>
 
                             <TouchableOpacity
                                 onPress={handleSave}
@@ -176,11 +178,11 @@ const EditProfilePhoto = ({
                             >
                                 {isLoading ? (
                                     <View className="flex-row items-center">
-                                        <Text className="text-white font-semibold mr-2">Saving</Text>
+                                        <Text className="text-white font-semibold mr-2">{t('settings.photo.saving')}</Text>
                                         <View className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                                     </View>
                                 ) : (
-                                    <Text className="text-white font-semibold">Save</Text>
+                                    <Text className="text-white font-semibold">{t('settings.photo.save')}</Text>
                                 )}
                             </TouchableOpacity>
                         </View>
@@ -201,14 +203,12 @@ const EditProfilePhoto = ({
                                 )}
                             </View>
 
-                            <Text className="text-gray-600 text-center text-sm px-6">
-                                Choose a photo that represents you. It will be visible to other users.
-                            </Text>
+                            <Text className="text-gray-600 text-center text-sm px-6">{t('settings.photo.helperText')}</Text>
                         </View>
 
                         {/* Photo Options */}
                         <View className="px-6 pb-6">
-                            <Text className="text-lg font-semibold text-gray-900 mb-4">Photo Options</Text>
+                            <Text className="text-lg font-semibold text-gray-900 mb-4">{t('settings.photo.optionsTitle')}</Text>
 
                             <View className="gap-3">
                                 {photoOptions.map((option, index) => {
@@ -246,19 +246,11 @@ const EditProfilePhoto = ({
                                         <Ionicons name="information" size={14} color="#3B82F6" />
                                     </View>
                                     <View className="flex-1">
-                                        <Text className="text-blue-900 font-medium text-sm mb-2">
-                                            Photo Guidelines
-                                        </Text>
+                                        <Text className="text-blue-900 font-medium text-sm mb-2">{t('settings.photo.guidelinesTitle')}</Text>
                                         <View className="gap-1">
-                                            <Text className="text-blue-700 text-xs">
-                                                • Use a clear, recent photo of yourself
-                                            </Text>
-                                            <Text className="text-blue-700 text-xs">
-                                                • Avoid inappropriate or offensive content
-                                            </Text>
-                                            <Text className="text-blue-700 text-xs">
-                                                • Square images work best (1:1 ratio)
-                                            </Text>
+                                            <Text className="text-blue-700 text-xs">• {t('settings.photo.guidelineClear')}</Text>
+                                            <Text className="text-blue-700 text-xs">• {t('settings.photo.guidelineAppropriate')}</Text>
+                                            <Text className="text-blue-700 text-xs">• {t('settings.photo.guidelineSquare')}</Text>
                                         </View>
                                     </View>
                                 </View>
