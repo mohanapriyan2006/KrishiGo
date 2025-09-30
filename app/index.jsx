@@ -7,7 +7,7 @@ import SavedCourses from "../components/CoursesComponents/SavedCourses";
 import SearchCourses from "../components/CoursesComponents/SearchCourses";
 import { QuizScreen } from "../components/Quiz";
 import Settings from "../components/SettingsComponents/Settings";
-import TermsAndConditions from "../components/TremsAndConditions";
+import TermsAndConditions from "../components/TermsAndConditions";
 import i18n from "../config/i18n"; // Import i18n instance
 import "../global.css";
 import DataProvider from "../hooks/DataContext";
@@ -34,10 +34,7 @@ function AppContent() {
 			<Stack.Screen name="CourseVideo" component={CourseVideo} />
 			<Stack.Screen name="Settings" component={Settings} />
 			<Stack.Screen name="About" component={About} />
-			<Stack.Screen
-				name="TermsAndConditions"
-				component={TermsAndConditions}
-			/>
+			<Stack.Screen name="TermsAndConditions" component={TermsAndConditions} />
 		</Stack.Navigator>
 	);
 }
