@@ -55,7 +55,6 @@
 			"status": "Join Now"
 		}
 	},
-
 	"settings": {
 		"title": "Settings",
 		"edit": "Edit",
@@ -308,6 +307,38 @@
 				"description": "Test your knowledge with quick quizzes"
 			}
 		}
+	},
+	"profile": {
+		"title": "My Profile",
+		"you": "You",
+		"points": "pts",
+		"hours": "hrs",
+		"activeHours": "Active hours",
+		"courses": "courses",
+		"completed": "Completed",
+		"enrolledCourses": "Enrolled courses",
+		"days": "days",
+		"sustainabilityScore": "Sustainability Score",
+		"scoreBest": "Best : 70 - 100%",
+		"growingStrong": "Growing Strong 🌱",
+		"achievementBadges": "Achievement Badges",
+		"allAchievementBadges": "All Achievement Badges",
+		"badgesEarned": "badges earned",
+		"leaderboardPosition": "Leaderboard Position",
+		"leaderboard": "Leaderboard",
+		"rank": "Rank",
+		"tagline": "Growing Together for Sustainable Future",
+		"joinMessage": "Join KrishiGo - Growing Together! 🌱",
+		"logoutConfirmTitle": "Logout",
+		"logoutConfirmMessage": "Are you sure you want to logout?",
+		"logout": "Logout",
+		"captureError": "Unable to capture profile image",
+		"permissionNeeded": "Permission needed",
+		"mediaPermissionMessage": "Please grant media library permission to save and share images",
+		"shareDialogTitle": "Share my KrishiGo Profile",
+		"shareMessage": "My KrishiGo Profile",
+		"shareError": "Unable to share profile",
+		"noBadgesMessage": "Start earning badges by completing courses and challenges!"
 	},
 	"terms": {
 		"title": "Terms & Conditions",
