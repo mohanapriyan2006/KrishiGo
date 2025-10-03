@@ -1,5 +1,6 @@
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { useContext, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     ActivityIndicator,
     FlatList,
@@ -18,7 +19,8 @@ import { DataContext } from '../../hooks/DataContext';
 
 const SearchCourses = ({ navigation }) => {
 
-    const { user, allCourses , loadAllCourses, loading, wishlistedCourses, setWishlistedCourses, fetchWishlist } = useContext(DataContext);
+    const { user, allCourses , loading, wishlistedCourses, setWishlistedCourses, fetchWishlist } = useContext(DataContext);
+    const { t } = useTranslation();
 
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedFilter, setSelectedFilter] = useState('All');
@@ -39,7 +41,7 @@ const SearchCourses = ({ navigation }) => {
         return (
             <SafeAreaView className="flex-1 justify-center items-center bg-white">
                 <ActivityIndicator size="large" color="#78BB1B" />
-                <Text className="mt-4 text-gray-600">Loading course details...</Text>
+                <Text className="mt-4 text-gray-600">{t('courses.search.loading')}</Text>
             </SafeAreaView>
         );
     }
@@ -47,7 +49,7 @@ const SearchCourses = ({ navigation }) => {
     const toggleWishlist = async (courseId) => {
         if (wishlistLoading) return; // Prevent multiple clicks during operation
         if (!user?.uid) {
-            alert('Please log in to manage your wishlist.');
+            alert(t('courses.search.loginToManage'));
             return;
         }
 
@@ -71,7 +73,7 @@ const SearchCourses = ({ navigation }) => {
             console.log('Error toggling wishlist:', error);
             // Revert optimistic update on error
             await fetchWishlist(user.uid);
-            alert('Failed to update wishlist. Please try again.');
+            alert(t('common.actionFailed'));
         } finally {
             setWishlistLoading(false);
         }
@@ -200,9 +202,9 @@ const SearchCourses = ({ navigation }) => {
             <View className="w-24 h-24 bg-gray-100 rounded-full items-center justify-center mb-4">
                 <Feather name="search" size={32} color="#6B7280" />
             </View>
-            <Text className="text-xl font-bold text-gray-900 mb-2">No courses found</Text>
+            <Text className="text-xl font-bold text-gray-900 mb-2">{t('courses.search.emptyTitle')}</Text>
             <Text className="text-gray-600 text-center">
-                Try adjusting your search or filter to find more courses
+                {t('courses.search.emptySubtitle')}
             </Text>
         </View>
     );
@@ -218,7 +220,7 @@ const SearchCourses = ({ navigation }) => {
                     <Feather name="chevron-left" size={20} color="white" />
                 </TouchableOpacity>
 
-                <Text className="text-2xl font-bold text-gray-900">Search Courses</Text>
+                <Text className="text-2xl font-bold text-gray-900">{t('courses.search.title')}</Text>
 
                 <TouchableOpacity
                     onPress={() => navigation?.navigate('SavedCourses')}
@@ -242,7 +244,7 @@ const SearchCourses = ({ navigation }) => {
                     <TextInput
                         value={searchQuery}
                         onChangeText={setSearchQuery}
-                        placeholder="Search courses, instructors..."
+                        placeholder={t('courses.search.placeholder')}
                         className="flex-1 ml-3 text-base text-gray-900"
                         placeholderTextColor="#9CA3AF"
                     />
@@ -260,8 +262,7 @@ const SearchCourses = ({ navigation }) => {
             {/* Results Count */}
             <View className="px-4 mb-2">
                 <Text className="text-gray-600 text-sm">
-                    {filteredCourses.length} course{filteredCourses.length !== 1 ? 's' : ''} found
-                    {searchQuery ? ` for "${searchQuery}"` : ''}
+                    {t('courses.search.results', { count: filteredCourses.length})}
                 </Text>
             </View>
 

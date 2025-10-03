@@ -1,5 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import {
     Alert,
     Modal,
@@ -11,24 +12,21 @@ import {
 const activities = [
     {
         id: 1,
-        title: 'Solve Quiz - easy',
+        diff: 'easy',
         points: '30pts',
         icon: 'clock',
-        description: 'Test your knowledge with quick quizzes'
     },
     {
         id: 2,
-        title: 'Solve Quiz - medium',
+        diff: 'medium',
         points: '150pts',
         icon: 'brain',
-        description: 'Test your knowledge with quick quizzes'
     },
     {
         id: 3,
-        title: 'Solve Quiz - hard',
+        diff: 'hard',
         points: '500pts',
         icon: 'sun',
-        description: 'Test your knowledge with quick quizzes'
     }
 ];
 
@@ -75,15 +73,16 @@ const ActivityItem = ({ activity, onStart }) => (
 const ChallengePopup = ({ visible, onClose }) => {
 
     const navigation = useNavigation();
+    const { t } = useTranslation();
 
     const handleActivityStart = (activity) => {
         Alert.alert(
-            'Start Activity',
-            `Are you ready to start "${activity.title}"?`,
+            t('challenge.startActivityTitle'),
+            t('challenge.startActivityMsg', { title: activity.title }),
             [
-                { text: 'Cancel', style: 'cancel' },
+                { text: t('common.cancel'), style: 'cancel' },
                 {
-                    text: 'Start',
+                    text: t('challenge.start'),
                     onPress: () => {
                         navigation.navigate('Quiz', { activityId: activity.id });
                         onClose();
@@ -106,7 +105,7 @@ const ChallengePopup = ({ visible, onClose }) => {
                     <View className="bg-lime-600/90 rounded-3xl p-2 shadow-lg">
                         {/* Header */}
                         <View className="flex-row justify-between items-center px-4 pt-2">
-                            <Text className="text-white text-xl font-bold">Daily Activities</Text>
+                            <Text className="text-white text-xl font-bold">{t('challenge.dailyActivities')}</Text>
                             <TouchableOpacity
                                 onPress={onClose}
                                 className="bg-white/20 rounded-full p-2"
@@ -118,19 +117,26 @@ const ChallengePopup = ({ visible, onClose }) => {
 
                         {/* Activities List */}
                         <View className="gap-1">
-                            {activities.map((activity) => (
-                                <ActivityItem
-                                    key={activity.id}
-                                    activity={activity}
-                                    onStart={handleActivityStart}
-                                />
-                            ))}
+                            {activities.map((activity) => {
+                                const localized = {
+                                    ...activity,
+                                    title: t(`challenge.activities.${activity.diff}.title`),
+                                    description: t(`challenge.activities.${activity.diff}.description`),
+                                };
+                                return (
+                                    <ActivityItem
+                                        key={activity.id}
+                                        activity={localized}
+                                        onStart={handleActivityStart}
+                                    />
+                                );
+                            })}
                         </View>
 
                         {/* Footer */}
                         <View className=" mb-2 pt-4 border-t border-white/20">
                             <Text className="text-white/80 text-center text-sm">
-                                Earn points by completing activities
+                                {t('challenge.earnByCompleting')}
                             </Text>
                         </View>
                     </View>
@@ -141,52 +147,3 @@ const ChallengePopup = ({ visible, onClose }) => {
 };
 
 export default ChallengePopup;
-
-// export const ChallengePopupExample = () => {
-//     const [showPopup, setShowPopup] = useState(false);
-//     const [userPoints, setUserPoints] = useState(0);
-
-//     const handleActivityStart = (activity) => {
-//         console.log('Starting activity:', activity.title);
-
-//         // Simulate activity completion and point earning
-//         setTimeout(() => {
-//             const points = parseInt(activity.points.replace('pts', ''));
-//             setUserPoints(prev => prev + points);
-//             Alert.alert(
-//                 'Activity Completed!',
-//                 `You earned ${activity.points}! Total: ${userPoints + points} points`
-//             );
-//         }, 2000);
-//     };
-
-//     return (
-//         <View className="flex-1 bg-gray-100 justify-center items-center p-4">
-//             {/* User Stats */}
-//             <View className="bg-white rounded-xl p-4 mb-6 shadow-sm">
-//                 <Text className="text-gray-600 text-sm">Total Points</Text>
-//                 <Text className="text-2xl font-bold text-green-600">{userPoints} pts</Text>
-//             </View>
-
-//             {/* Open Popup Button */}
-//             <TouchableOpacity
-//                 onPress={() => setShowPopup(true)}
-//                 className="bg-green-500 rounded-xl px-8 py-4 shadow-lg"
-//                 activeOpacity={0.8}
-//             >
-//                 <Text className="text-white font-semibold text-lg">View Activities</Text>
-//             </TouchableOpacity>
-
-//             {/* Info */}
-//             <Text className="text-gray-500 text-center mt-4 px-6">
-//                 Complete activities to earn points and help the community
-//             </Text>
-
-//             <ChallengePopup
-//                 visible={showPopup}
-//                 onClose={() => setShowPopup(false)}
-//                 onActivityStart={handleActivityStart}
-//             />
-//         </View>
-//     );
-// };

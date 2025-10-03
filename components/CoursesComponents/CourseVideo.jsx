@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Alert,
     Dimensions,
@@ -22,10 +23,11 @@ const { width } = Dimensions.get('window');
 const CourseVideo = ({ navigation, route }) => {
 
     const { user , getCourseImage } = useContext(DataContext);
+    const { t } = useTranslation();
 
     // Get parameters from navigation
     const moduleId = route?.params?.moduleId;
-    const module = route?.params?.module || {};
+    const module = useMemo(() => route?.params?.module || {}, [route?.params?.module]);
     // console.log('Module ID from route params:', moduleId);
     const courseId = route?.params?.courseId;
     const courseTitle = route?.params?.courseTitle || "Course Title";
@@ -43,7 +45,7 @@ const CourseVideo = ({ navigation, route }) => {
 
     useEffect(() => {
         setModuleData(module);
-    }, [moduleId]);
+    }, [moduleId, module]);
 
 
     // Check if module is already completed when component loads
@@ -65,14 +67,14 @@ const CourseVideo = ({ navigation, route }) => {
     }, [user, courseId, moduleId]);
 
     // Handle marking module as completed
-    const handleOnCompleted = async (type) => {
+    const handleOnCompleted = useCallback(async (isManual) => {
         if (!user) {
-            Alert.alert('Login Required', 'Please log in to track your progress');
+            Alert.alert(t('courses.video.loginRequiredTitle'), t('courses.video.loginRequiredMsg'));
             return;
         }
 
         if (!courseId || !moduleId) {
-            Alert.alert('Error', 'Course or module information is missing');
+            Alert.alert(t('common.error'), t('courses.video.missingInfo'));
             return;
         }
 
@@ -82,37 +84,28 @@ const CourseVideo = ({ navigation, route }) => {
             await setModuleCompleted(user.uid, courseId, moduleId, newCompletedState);
             setIsCompleted(newCompletedState);
 
-            if (type == "Mark as completed") {
+            if (isManual) {
                 Alert.alert(
-                    'Success!',
-                    newCompletedState ? 'Module marked as completed!' : 'Module marked as incomplete',
+                    t('common.success'),
+                    newCompletedState ? t('courses.video.markedCompleted') : t('courses.video.markedIncomplete'),
                     [
-                        {
-                            text: 'Continue Learning',
-                            onPress: () => navigation?.goBack()
-                        },
-                        {
-                            text: 'Stay Here',
-                            style: 'cancel'
-                        }
+                        { text: t('courses.video.continueLearning'), onPress: () => navigation?.goBack() },
+                        { text: t('courses.video.stayHere'), style: 'cancel' }
                     ]
                 );
             } else {
-                Alert.alert('Great job!', 'You have completed the video module.', [
-                    {
-                        text: 'OK',
-                        onPress: () => navigation?.goBack()
-                    }
+                Alert.alert(t('courses.video.greatJobTitle'), t('courses.video.completedVideoMsg'), [
+                    { text: t('common.ok'), onPress: () => navigation?.goBack() }
                 ]);
             }
         } catch (error) {
             console.log('Error updating module completion:', error);
-            Alert.alert('Error', 'Failed to update progress. Please try again.');
+            Alert.alert(t('common.error'), t('courses.video.updateFailed'));
         } finally {
             setIsUpdating(false);
         }
 
-    };
+    }, [user, courseId, moduleId, isCompleted, navigation, t]);
 
 
     const transcript = `Efficient harvesting is a multi-stage process that begins long before the first crop is picked. It is rooted in meticulous planning and the integration of appropriate technology. The first critical step is precision timing, which involves monitoring crop maturity indicators specific to each plant—such as color, size, sugar content (Brix level), or firmness—to harvest at the exact moment of peak quality and marketable yield, ensuring the product has the best possible shelf life and nutritional value. 
@@ -136,7 +129,7 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
     const onStateChange = (state) => {
         if (state === 'ended') {
             setIsPlaying(false);
-            handleOnCompleted("Course completed");
+            handleOnCompleted(false);
         }
     };
 
@@ -152,7 +145,7 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
                 >
                     <Feather name="chevron-left" size={20} color="white" />
                 </TouchableOpacity>
-                <Text className=" text-lg font-semibold">Course video</Text>
+                <Text className=" text-lg font-semibold">{t('courses.video.title')}</Text>
             </View>
 
             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
@@ -214,7 +207,7 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
                 {/* Transcript Section */}
                 <View className="px-4 mb-8">
                     <Text className="text-xl font-bold text-gray-900 mb-4">
-                        Content
+                        {t('courses.video.content')}
                     </Text>
 
                     <View className="bg-green-50 p-4 rounded-xl">
@@ -232,22 +225,22 @@ Ultimately, the highest profit margins are secured by practicing strategic prici
                         activeOpacity={0.8}
                         onPress={() => navigation?.goBack()}
                     >
-                        <Text className="text-primaryDark font-semibold ">Back</Text>
+                        <Text className="text-primaryDark font-semibold ">{t('common.back')}</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
                         className={`flex-1 py-4 rounded-xl items-center ${isCompleted ? 'bg-primary' : 'bg-green-50 border-[0.5px] border-lime-500'
                             }`}
                         activeOpacity={0.8}
-                        onPress={() => handleOnCompleted("Mark as completed")}
+                        onPress={() => handleOnCompleted(true)}
                         disabled={isUpdating}
                     >
                         <Text className={`${isCompleted ? 'text-white' : 'text-primaryDark'} font-semibold`}>
                             {isUpdating
-                                ? 'Updating...'
+                                ? t('common.updating')
                                 : isCompleted
-                                    ? '✓ Completed'
-                                    : 'Mark as completed'
+                                    ? t('common.completed')
+                                    : t('courses.video.markAsCompleted')
                             }
                         </Text>
                     </TouchableOpacity>

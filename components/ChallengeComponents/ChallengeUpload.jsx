@@ -1,6 +1,7 @@
 import { Feather, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useContext, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Alert,
     Image,
@@ -16,6 +17,7 @@ import { DataContext } from '../../hooks/DataContext';
 const ChallengeUpload = ({ visible, onClose }) => {
 
     const { rewardTasks = [] } = useContext(DataContext);
+    const { t } = useTranslation();
 
     const [challengeData, setChallengeData] = useState({
         name: '',
@@ -33,7 +35,7 @@ const ChallengeUpload = ({ visible, onClose }) => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
         if (permissionResult.granted === false) {
-            Alert.alert('Permission Required', 'Permission to access camera roll is required!');
+            Alert.alert(t('challenge.permissionRequiredTitle'), t('challenge.permissionRequiredMsg'));
             return;
         }
 
@@ -50,7 +52,7 @@ const ChallengeUpload = ({ visible, onClose }) => {
 
     const handleSubmit = () => {
         if (!challengeData.name.trim() || !challengeData.activityName.trim() || !challengeData.location.trim()) {
-            Alert.alert('Error', 'Please fill in all fields');
+            Alert.alert(t('common.error'), t('challenge.fillAllFields'));
             return;
         }
 
@@ -64,7 +66,7 @@ const ChallengeUpload = ({ visible, onClose }) => {
         };
 
         console.log('Submitted Challenge Data:', data);
-        Alert.alert('Success', 'Activity submitted successfully!');
+        Alert.alert(t('common.success'), t('challenge.activitySubmitSuccess'));
         handleReset();
     };
 
@@ -96,7 +98,7 @@ const ChallengeUpload = ({ visible, onClose }) => {
                 <View className="bg-white rounded-2xl w-full max-w-sm mx-4 shadow-xl">
                     {/* Header */}
                     <View className="flex-row justify-between items-center p-4 border-b border-gray-100">
-                        <Text className="text-lg font-semibold text-gray-800">Upload Activity</Text>
+                        <Text className="text-lg font-semibold text-gray-800">{t('challenge.uploadTitle')}</Text>
                         <TouchableOpacity onPress={handleClose} className="p-2">
                             <Feather name="x" size={24} color="#6B7280" />
                         </TouchableOpacity>
@@ -118,9 +120,9 @@ const ChallengeUpload = ({ visible, onClose }) => {
                             ) : (
                                 <View className="items-center">
                                     <Feather name="camera" size={32} color="#9CA3AF" className="mb-2" />
-                                    <Text className="text-gray-600 font-medium mb-1">Upload a photo here</Text>
+                                    <Text className="text-gray-600 font-medium mb-1">{t('challenge.uploadPhotoHere')}</Text>
                                     <View className="bg-primaryDark px-4 py-2 rounded-lg">
-                                        <Text className="text-white font-medium">Browse a file</Text>
+                                        <Text className="text-white font-medium">{t('challenge.browseFile')}</Text>
                                     </View>
                                 </View>
                             )}
@@ -132,7 +134,7 @@ const ChallengeUpload = ({ visible, onClose }) => {
                             <TextInput
                                 value={challengeData.name}
                                 onChangeText={(text) => setChallengeData(prev => ({ ...prev, name: text }))}
-                                placeholder="Enter your name"
+                                placeholder={t('challenge.enterYourName')}
                                 className="border border-gray-200 rounded-xl px-4 py-3 text-gray-800 bg-gray-50"
                                 placeholderTextColor="#9CA3AF"
                             />
@@ -144,7 +146,7 @@ const ChallengeUpload = ({ visible, onClose }) => {
                                     activeOpacity={0.8}
                                     className="border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 flex-row justify-between items-center"
                                 >
-                                    <Text className={`text-sm ${challengeData.activityName ? 'text-gray-800' : 'text-gray-400'}`}> {challengeData.activityName || 'Select Activity'} </Text>
+                                    <Text className={`text-sm ${challengeData.activityName ? 'text-gray-800' : 'text-gray-400'}`}> {challengeData.activityName || t('challenge.selectActivity')} </Text>
                                     <Feather name={activityPickerVisible ? 'chevron-up' : 'chevron-down'} size={18} color="#6B7280" />
                                 </TouchableOpacity>
                                 {activityPickerVisible && (
@@ -160,12 +162,12 @@ const ChallengeUpload = ({ visible, onClose }) => {
                                                     className="px-4 py-3 border-b border-gray-100 active:bg-gray-50"
                                                 >
                                                     <Text className="text-gray-800 text-sm font-medium" numberOfLines={1}>{task.task}</Text>
-                                                    <Text className="text-[10px] text-primaryDark mt-1" numberOfLines={1}>ID: {task.id} • Farmer +{task.farmerPoints} / Helper +{task.helperPoints}</Text>
+                                                    <Text className="text-[10px] text-primaryDark mt-1" numberOfLines={1}>{t('challenge.taskIdAndPoints', { id: task.id, farmer: task.farmerPoints, helper: task.helperPoints })}</Text>
                                                 </TouchableOpacity>
                                             ))}
                                             {rewardTasks.length === 0 && (
                                                 <View className="px-4 py-4 items-center">
-                                                    <Text className="text-xs text-gray-500">No activities available</Text>
+                                                    <Text className="text-xs text-gray-500">{t('challenge.noActivities')}</Text>
                                                 </View>
                                             )}
                                         </ScrollView>
@@ -176,7 +178,7 @@ const ChallengeUpload = ({ visible, onClose }) => {
                             {/* Activity ID (Read-only once selected) */}
                             {challengeData.activityId ? (
                                 <View className="flex-row items-center justify-between border border-primary bg-lime-100 rounded-xl px-4 py-3">
-                                    <Text className="text-xs font-medium text-primaryDark">Selected ID</Text>
+                                    <Text className="text-xs font-medium text-primaryDark">{t('challenge.selectedId')}</Text>
                                     <Text className="text-sm font-semibold text-primaryDark">#{challengeData.activityId}</Text>
                                 </View>
                             ) : null}
@@ -185,7 +187,7 @@ const ChallengeUpload = ({ visible, onClose }) => {
                             <TextInput
                                 value={challengeData.location}
                                 onChangeText={(text) => setChallengeData(prev => ({ ...prev, location: text }))}
-                                placeholder="Location details"
+                                placeholder={t('challenge.locationDetails')}
                                 className="border border-gray-200 rounded-xl px-4 py-3 text-gray-800 bg-gray-50"
                                 placeholderTextColor="#9CA3AF"
                             />
@@ -194,7 +196,7 @@ const ChallengeUpload = ({ visible, onClose }) => {
                             <TextInput
                                 value={challengeData.description}
                                 onChangeText={(text) => setChallengeData(prev => ({ ...prev, description: text }))}
-                                placeholder="Description (optional)"
+                                placeholder={t('challenge.descriptionOptional')}
                                 className="border border-gray-200 rounded-xl px-4 py-3 text-gray-800 bg-gray-50"
                                 placeholderTextColor="#9CA3AF"
                                 multiline
@@ -208,7 +210,7 @@ const ChallengeUpload = ({ visible, onClose }) => {
                             activeOpacity={0.8}
                         >
                             <Text className="text-white font-semibold tracking-wider text-center text-lg">
-                                Submit Activity
+                                {t('challenge.submitActivity')}
                             </Text>
                         </TouchableOpacity>
                     </ScrollView>
@@ -222,14 +224,14 @@ const ChallengeUpload = ({ visible, onClose }) => {
                                 </View>
                                 <View className="flex-1">
                                     <Text className="text-blue-900 font-medium text-sm mb-2">
-                                        Photo Guidelines
+                                        {t('challenge.photoGuidelines')}
                                     </Text>
                                     <View className="gap-1">
                                         <Text className="text-blue-700 text-xs">
-                                            • Use a clear, Geo-tagged photo of yourself
+                                            • {t('challenge.guidelineGeoTagged')}
                                         </Text>
                                         <Text className="text-blue-700 text-xs">
-                                            • Avoid inappropriate or offensive content
+                                            • {t('challenge.guidelineAppropriate')}
                                         </Text>
                                     </View>
                                 </View>

@@ -1,5 +1,6 @@
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { useContext, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Alert,
     FlatList,
@@ -14,6 +15,7 @@ import { DataContext } from '../../hooks/DataContext';
 
 const SavedCourses = ({ navigation }) => {
     const { user, wishlistedCourses, setWishlistedCourses, allCourses, fetchWishlist } = useContext(DataContext);
+    const { t } = useTranslation();
     
     const [selectedSort, setSelectedSort] = useState('Alphabetical');
     const [wishlistLoading, setWishlistLoading] = useState(false);
@@ -27,17 +29,17 @@ const SavedCourses = ({ navigation }) => {
     const toggleWishlist = async (courseId, courseTitle) => {
         if (wishlistLoading) return;
         if (!user?.uid) {
-            alert('Please log in to manage your wishlist.');
+            alert(t('courses.saved.loginToManage'));
             return;
         }
 
         Alert.alert(
-            'Remove Course',
-            `Remove "${courseTitle}" from your saved courses?`,
+            t('courses.saved.removeTitle'),
+            t('courses.saved.removeConfirm', { title: courseTitle }),
             [
-                { text: 'Cancel', style: 'cancel' },
+                { text: t('common.cancel'), style: 'cancel' },
                 {
-                    text: 'Remove',
+                    text: t('common.remove'),
                     style: 'destructive',
                     onPress: async () => {
                         setWishlistLoading(true);
@@ -46,10 +48,10 @@ const SavedCourses = ({ navigation }) => {
                             setWishlistedCourses(prev => prev.filter(id => id !== courseId));
                             // Refresh to ensure consistency
                             await fetchWishlist(user.uid);
-                            Alert.alert('Removed', 'Course removed from saved list');
+                            Alert.alert(t('courses.saved.removedTitle'), t('courses.saved.removedMsg'));
                         } catch (error) {
                             console.log('Error removing course:', error);
-                            alert('Failed to remove course. Please try again.');
+                            alert(t('common.actionFailed'));
                             // Refresh wishlist on error
                             await fetchWishlist(user.uid);
                         } finally {
@@ -103,7 +105,7 @@ const SavedCourses = ({ navigation }) => {
                             ? 'text-white'
                             : 'text-gray-700'
                             }`}>
-                            {item}
+                            {t(`courses.saved.sort.${item.toLowerCase()}`)}
                         </Text>
                     </TouchableOpacity>
                 )}
@@ -178,15 +180,15 @@ const SavedCourses = ({ navigation }) => {
             <View className="w-24 h-24 bg-gray-100 rounded-full items-center justify-center mb-6">
                 <Ionicons name="bookmark-outline" size={40} color="#6B7280" />
             </View>
-            <Text className="text-2xl font-bold text-gray-900 mb-2">No Saved Courses</Text>
+            <Text className="text-2xl font-bold text-gray-900 mb-2">{t('courses.saved.emptyTitle')}</Text>
             <Text className="text-gray-600 text-center mb-6 leading-6">
-                You haven&apos;t saved any courses yet. Browse our course catalog and save courses you&apos;re interested in.
+                {t('courses.saved.emptySubtitle')}
             </Text>
             <TouchableOpacity
                 onPress={() => navigation?.navigate('SearchCourses')}
                 className="bg-primary px-6 py-3 rounded-xl"
             >
-                <Text className="text-white font-semibold">Browse Courses</Text>
+                <Text className="text-white font-semibold">{t('courses.saved.browse')}</Text>
             </TouchableOpacity>
         </View>
     );
@@ -203,7 +205,7 @@ const SavedCourses = ({ navigation }) => {
                     <Feather name="chevron-left" size={20} color="white" />
                 </TouchableOpacity>
 
-                <Text className="text-2xl font-bold text-gray-900">Saved Courses</Text>
+                <Text className="text-2xl font-bold text-gray-900">{t('courses.saved.title')}</Text>
 
                 <TouchableOpacity
                     onPress={() => navigation?.navigate('SearchCourses')}
