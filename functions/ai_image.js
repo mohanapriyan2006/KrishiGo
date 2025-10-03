@@ -1,4 +1,4 @@
-import { FARMER_SYSTEM_PROMPT } from "./../ai/ai_contest";
+import { FARMER_SYSTEM_PROMPT } from "../ai/ai_contest";
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
