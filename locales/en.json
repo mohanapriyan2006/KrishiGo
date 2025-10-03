@@ -55,7 +55,6 @@
 			"status": "Join Now"
 		}
 	},
-
 	"settings": {
 		"title": "Settings",
 		"edit": "Edit",
@@ -69,6 +68,424 @@
 		"aboutKrishiGo": "About KrishiGo",
 		"termsConditions": "Terms and Conditions",
 		"logout": "Logout",
-		"deleteAccount": "Delete Account"
+		"logoutTitle": "Logout",
+		"logoutConfirm": "Are you sure you want to logout?",
+		"deleteAccount": "Delete Account",
+		"language": {
+			"title": "Change Language",
+			"save": "Save",
+			"selectInfo": "Select your preferred language for the app",
+			"infoTitle": "Language Support",
+			"infoText": "The app interface will be displayed in your selected language. Some content might still appear in English while we work on complete translations."
+		},
+		"profileEdit": {
+			"title": "Edit Profile",
+			"save": "Save",
+			"saving": "Saving",
+			"subtitle": "Update your profile information below",
+			"changePhoto": "Change Photo",
+			"labels": {
+				"street": "Street",
+				"city": "City",
+				"state": "State",
+				"country": "Country",
+				"zipCode": "Zip Code"
+			},
+			"placeholders": {
+				"firstName": "Enter your first name",
+				"lastName": "Enter your last name",
+				"phone": "Enter your phone number",
+				"street": "Enter your street",
+				"city": "Enter your city",
+				"state": "Enter your state",
+				"country": "Enter your country",
+				"zipCode": "Enter your zip code"
+			},
+			"errors": {
+				"firstNameRequired": "First name is required",
+				"firstNameMin": "First name must be at least 2 characters",
+				"lastNameRequired": "Last name is required",
+				"lastNameMin": "Last name must be at least 1 character",
+				"phoneRequired": "Phone number is required",
+				"phoneInvalid": "Please enter a valid phone number",
+				"cityRequired": "City is required",
+				"stateRequired": "State is required",
+				"countryRequired": "Country is required",
+				"streetRequired": "Street is required",
+				"zipRequired": "Zip code is required"
+			},
+			"privacyTitle": "Privacy & Security",
+			"privacyText": "Your personal information is encrypted and securely stored. We never share your data with third parties without your consent.",
+			"updateSuccess": "Your profile has been updated successfully!",
+			"updateFailed": "Failed to update profile. Please try again."
+		},
+		"photo": {
+			"title": "Profile Photo",
+			"save": "Save",
+			"saving": "Saving",
+			"helperText": "Choose a photo that represents you. It will be visible to other users.",
+			"optionsTitle": "Photo Options",
+			"takePhoto": "Take Photo",
+			"chooseFromGallery": "Choose from Gallery",
+			"removePhoto": "Remove Photo",
+			"permissionsTitle": "Permissions Required",
+			"permissionsText": "We need camera and photo library permissions to change your profile photo.",
+			"removeTitle": "Remove Photo",
+			"removeConfirm": "Are you sure you want to remove your profile photo?",
+			"remove": "Remove",
+			"updateSuccess": "Your profile photo has been updated successfully!",
+			"updateFailed": "Failed to update photo. Please try again.",
+			"takeFailed": "Failed to take photo. Please try again.",
+			"selectFailed": "Failed to select photo. Please try again.",
+			"guidelinesTitle": "Photo Guidelines",
+			"guidelineClear": "Use a clear, recent photo of yourself",
+			"guidelineAppropriate": "Avoid inappropriate or offensive content",
+			"guidelineSquare": "Square images work best (1:1 ratio)"
+		},
+		"delete": {
+			"title": "Delete Account",
+			"instructions": "To confirm account deletion, please enter your password:",
+			"password": "Password",
+			"passwordPlaceholder": "Enter your password",
+			"account": "Account",
+			"confirm": "Delete",
+			"success": "Your account has been successfully deleted.",
+			"failed": "There was an issue deleting your account. Please try again later.",
+			"enterPassword": "Please enter your password.",
+			"authFailedTitle": "Authentication Failed",
+			"authFailedText": "The password you entered is incorrect. Please try again.",
+			"tryAgain": "Try Again"
+		}
+	},
+	"journey": {
+		"title": "My journey",
+		"ongoing": "Ongoing",
+		"completed": "Completed",
+		"statusCompleted": "COMPLETED",
+		"statusInProgress": "IN PROGRESS",
+		"durationLabel": "Duration",
+		"na": "N/A",
+		"modulesCount": "{{completed}}/{{total}} modules",
+		"review": "Review",
+		"resume": "Resume",
+		"emptyOngoingTitle": "No ongoing courses",
+		"emptyCompletedTitle": "No completed courses",
+		"emptyOngoingSubtitle": "Start a new course to begin your learning journey",
+		"emptyCompletedSubtitle": "Complete some courses to see them here"
+	},
+	"common": {
+		"ok": "OK",
+		"back": "Back",
+		"cancel": "Cancel",
+		"remove": "Remove",
+		"success": "Success!",
+		"error": "Error",
+		"completed": "✓ Completed",
+		"updating": "Updating...",
+		"actionFailed": "Action failed. Please try again."
+	},
+	"courses": {
+		"details": {
+			"title": "Course Details",
+			"loading": "Loading course details...",
+			"pointsSuffix": "pts",
+			"hours": "{{hours}}hrs",
+			"modules": "{{count}} modules",
+			"about": "About this course",
+			"certificateBy": "Certificate by {{brand}}",
+			"courseModules": "Course modules",
+			"enrolled": "✓ Enrolled",
+			"enrolling": "Enrolling...",
+			"enrollNow": "Enroll now"
+		},
+		"video": {
+			"title": "Course video",
+			"content": "Content",
+			"back": "Back",
+			"markAsCompleted": "Mark as completed",
+			"updating": "Updating...",
+			"completed": "✓ Completed",
+			"loginRequiredTitle": "Login Required",
+			"loginRequiredMsg": "Please log in to track your progress",
+			"missingInfo": "Course or module information is missing",
+			"markedCompleted": "Module marked as completed!",
+			"markedIncomplete": "Module marked as incomplete",
+			"continueLearning": "Continue Learning",
+			"stayHere": "Stay Here",
+			"greatJobTitle": "Great job!",
+			"completedVideoMsg": "You have completed the video module.",
+			"updateFailed": "Failed to update progress. Please try again."
+		},
+		"saved": {
+			"title": "Saved Courses",
+			"loginToManage": "Please log in to manage your wishlist.",
+			"removeTitle": "Remove Course",
+			"removeConfirm": "Remove \"{{title}}\" from your saved courses?",
+			"removedTitle": "Removed",
+			"removedMsg": "Course removed from saved list",
+			"emptyTitle": "No Saved Courses",
+			"emptySubtitle": "You haven't saved any courses yet. Browse our course catalog and save courses you're interested in.",
+			"browse": "Browse Courses",
+			"sort": {
+				"alphabetical": "Alphabetical",
+				"rating": "Rating"
+			}
+		},
+		"search": {
+			"title": "Search Courses",
+			"loading": "Loading course details...",
+			"loginToManage": "Please log in to manage your wishlist.",
+			"placeholder": "Search courses, instructors...",
+			"emptyTitle": "No courses found",
+			"emptySubtitle": "Try adjusting your search or filter to find more courses",
+			"results": "{{count}} courses found"
+		}
+	},
+	"quiz": {
+		"completedTitle": "Quiz Completed",
+		"completedMsg": "Your final score is {{score}} out of {{total}}",
+		"score": "Score: {{score}}",
+		"progress": "Question {{current}} of {{total}}",
+		"submitAnswer": "Submit Answer",
+		"previous": "← Previous",
+		"next": "Next →",
+		"finish": "Finish"
+	},
+	"challenge": {
+		"title": "Challenges",
+		"completeChallenge": "Complete Challenge",
+		"earnRewards": "Earn Rewards",
+		"startChallenge": "Start Challenge",
+		"earnRewardsPoints": "Earn Rewards Points",
+		"uptoPoints": "upto {{points}}pts",
+		"desc": "Complete sustainable & smart farming tasks. Farmer actions grant higher points; helpers (youth) earn support points.",
+		"farmerPoints": "Farmer Points",
+		"helperPoints": "Helper Points",
+		"farmerDone": "Farmer Done",
+		"helperDone": "Helper Done",
+		"pending": "Pending",
+		"farmerPlus": "Farmer +{{points}}",
+		"helperPlus": "Helper +{{points}}",
+		"submitProof": "Submit Proof / Claim",
+		"activityCompletedTitle": "Activity Completed!",
+		"activityCompletedMsg": "You earned {{earned}}! Total: {{total}} points",
+		"submitSuccess": "Challenge data submitted successfully!",
+		"startActivityTitle": "Start Activity",
+		"startActivityMsg": "Are you ready to start \"{{title}}\"?",
+		"start": "Start",
+		"dailyActivities": "Daily Activities",
+		"earnByCompleting": "Earn points by completing activities",
+		"permissionRequiredTitle": "Permission Required",
+		"permissionRequiredMsg": "Permission to access camera roll is required!",
+		"fillAllFields": "Please fill in all fields",
+		"activitySubmitSuccess": "Activity submitted successfully!",
+		"uploadTitle": "Upload Activity",
+		"uploadPhotoHere": "Upload a photo here",
+		"browseFile": "Browse a file",
+		"enterYourName": "Enter your name",
+		"selectActivity": "Select Activity",
+		"taskIdAndPoints": "ID: {{id}} • Farmer +{{farmer}} / Helper +{{helper}}",
+		"noActivities": "No activities available",
+		"selectedId": "Selected ID",
+		"locationDetails": "Location details",
+		"descriptionOptional": "Description (optional)",
+		"submitActivity": "Submit Activity",
+		"photoGuidelines": "Photo Guidelines",
+		"guidelineGeoTagged": "Use a clear, Geo-tagged photo of yourself",
+		"guidelineAppropriate": "Avoid inappropriate or offensive content",
+		"activities": {
+			"easy": {
+				"title": "Solve Quiz - easy",
+				"description": "Test your knowledge with quick quizzes"
+			},
+			"medium": {
+				"title": "Solve Quiz - medium",
+				"description": "Test your knowledge with quick quizzes"
+			},
+			"hard": {
+				"title": "Solve Quiz - hard",
+				"description": "Test your knowledge with quick quizzes"
+			}
+		}
+	},
+	"profile": {
+		"title": "My Profile",
+		"you": "You",
+		"points": "pts",
+		"hours": "hrs",
+		"activeHours": "Active hours",
+		"courses": "courses",
+		"completed": "Completed",
+		"enrolledCourses": "Enrolled courses",
+		"days": "days",
+		"sustainabilityScore": "Sustainability Score",
+		"scoreBest": "Best : 70 - 100%",
+		"growingStrong": "Growing Strong 🌱",
+		"achievementBadges": "Achievement Badges",
+		"allAchievementBadges": "All Achievement Badges",
+		"badgesEarned": "badges earned",
+		"leaderboardPosition": "Leaderboard Position",
+		"leaderboard": "Leaderboard",
+		"rank": "Rank",
+		"tagline": "Growing Together for Sustainable Future",
+		"joinMessage": "Join KrishiGo - Growing Together! 🌱",
+		"logoutConfirmTitle": "Logout",
+		"logoutConfirmMessage": "Are you sure you want to logout?",
+		"logout": "Logout",
+		"captureError": "Unable to capture profile image",
+		"permissionNeeded": "Permission needed",
+		"mediaPermissionMessage": "Please grant media library permission to save and share images",
+		"shareDialogTitle": "Share my KrishiGo Profile",
+		"shareMessage": "My KrishiGo Profile",
+		"shareError": "Unable to share profile",
+		"noBadgesMessage": "Start earning badges by completing courses and challenges!"
+	},
+	"terms": {
+		"title": "Terms & Conditions",
+		"bannerTitle": "📜 Terms & Conditions",
+		"appName": "KrishiGo",
+		"bannerDescription": "Welcome to KrishiGo! By accessing or using our app, you agree to the following Terms & Conditions. Please read them carefully.",
+		"summaryTitle": "Summary",
+		"summaryText": "KrishiGo is built to make farming fun, rewarding, and sustainable. Play fair, respect the rules, and together we'll grow knowledge and sustainability. 🌍💚",
+		"lastUpdated": "Last Updated: December 2024",
+		"version": "Version 1.0 - KrishiGo Terms & Conditions",
+		"items": {
+			"1": {
+				"title": "Acceptance of Terms",
+				"content": "By downloading, registering, or using KrishiGo, you agree to comply with these Terms. If you do not agree, please do not use the app."
+			},
+			"2": {
+				"title": "Eligibility",
+				"content": [
+					"The app is designed for young farmers and youth (18+ years).",
+					"Users under 18 must have parental/guardian consent.",
+					"You agree to provide accurate registration details (name, age, email/phone)."
+				]
+			},
+			"3": {
+				"title": "Use of the App",
+				"content": [
+					"KrishiGo is for educational and entertainment purposes related to agriculture and sustainability.",
+					"You agree not to misuse the app for fraudulent activities, hacking, or unauthorized access.",
+					"Quiz answers must be given fairly—no cheating or use of automated tools."
+				]
+			},
+			"4": {
+				"title": "Points & Rewards",
+				"content": [
+					"Points are earned through quizzes, challenges, and in-app activities.",
+					"Points have no cash value outside the app unless converted through authorized reward mechanisms.",
+					"Conversion of points to money or vouchers is subject to availability, verification, and KrishiGo policies.",
+					"KrishiGo reserves the right to modify, suspend, or discontinue reward programs at any time."
+				]
+			},
+			"5": {
+				"title": "Sustainability & Content",
+				"content": [
+					"Quiz content is for awareness and learning purposes only.",
+					"KrishiGo does not guarantee that following suggested practices will result in specific farming outcomes.",
+					"Users should consult agricultural experts before applying any techniques in real farming."
+				]
+			},
+			"6": {
+				"title": "Privacy & Data",
+				"content": [
+					"We respect your privacy. Your data will be used only for app functionality, rewards distribution, and improving user experience.",
+					"We may share aggregated (non-personal) data for research and reporting purposes.",
+					"By using the app, you consent to our data practices outlined in the Privacy Policy."
+				]
+			},
+			"7": {
+				"title": "Prohibited Activities",
+				"subtitle": "You agree not to:",
+				"content": [
+					"Create multiple fake accounts to exploit rewards.",
+					"Sell or transfer points/accounts without KrishiGo's permission.",
+					"Spread harmful, misleading, or offensive content."
+				]
+			},
+			"8": {
+				"title": "Limitation of Liability",
+				"content": [
+					"KrishiGo is not responsible for technical issues, network failures, or delays in reward redemption.",
+					"We are not liable for financial, farming, or personal losses arising from the use of our app.",
+					"All use of the app is at your own risk."
+				]
+			},
+			"9": {
+				"title": "Modifications & Updates",
+				"content": [
+					"KrishiGo may update these Terms anytime. Changes will be notified in-app or on our website.",
+					"Continued use of the app means you accept the updated Terms."
+				]
+			},
+			"10": {
+				"title": "Contact Us",
+				"content": "For questions, feedback, or concerns regarding these Terms, please contact us at:"
+			}
+		}
+	},
+	"about": {
+		"title": "About KrishiGo",
+		"bannerTitle": "🌱 About KrishiGo",
+		"bannerWelcome": "Welcome to KrishiGo – where farming meets fun, learning, and rewards! 🚜✨",
+		"bannerDescription": "KrishiGo is a gamified platform designed for young farmers and agri-enthusiasts who want to learn, engage, and contribute to sustainable farming practices while earning exciting rewards.",
+		"missionTitle": "🎯 Our Mission",
+		"missionText": "To empower the next generation of farmers with knowledge, motivation, and incentives that make agriculture smarter, greener, and more sustainable.",
+		"howWorksTitle": "🔑 How KrishiGo Works",
+		"features": [
+			{
+				"icon": "🧩",
+				"title": "Play Quizzes",
+				"description": "Learn about modern farming, sustainability, and best agri-practices."
+			},
+			{
+				"icon": "⭐",
+				"title": "Earn Points",
+				"description": "Every correct answer gives you points for your knowledge and effort."
+			},
+			{
+				"icon": "🎁",
+				"title": "Claim Rewards",
+				"description": "Redeem your points for vouchers, agri-products, or exclusive discounts."
+			},
+			{
+				"icon": "💰",
+				"title": "Convert to Money",
+				"description": "Use your points to unlock financial benefits and farming resources."
+			}
+		],
+		"whyTitle": "🌾 Why KrishiGo?",
+		"benefits": [
+			{
+				"icon": "👩‍🌾",
+				"title": "For Farmers",
+				"description": "Practical tips, eco-friendly methods, and a chance to earn while learning."
+			},
+			{
+				"icon": "👨‍💻",
+				"title": "For Youth",
+				"description": "A fun, engaging way to connect with agriculture and contribute to a sustainable future."
+			},
+			{
+				"icon": "🌍",
+				"title": "For the Environment",
+				"description": "Promoting reduced chemical use, water conservation, and healthier farming practices."
+			}
+		],
+		"impactTitle": "🚀 Our Impact",
+		"impacts": [
+			"Encouraging young farmers to adopt sustainable practices.",
+			"Making agriculture exciting through quizzes, challenges, and community competitions.",
+			"Building greener ecosystems while rewarding knowledge and action."
+		],
+		"closing": "👉 With KrishiGo, farming isn't just about growing crops its about growing knowledge, rewards, and a sustainable future. 🌱💡",
+		"contactTitle": "Get in Touch",
+		"contact": {
+			"email": "support@krishigo.com",
+			"website": "www.krishigo.com"
+		},
+		"version": "KrishiGo v1.0.0",
+		"copyright": "© 2024 KrishiGo. All rights reserved."
 	}
 }

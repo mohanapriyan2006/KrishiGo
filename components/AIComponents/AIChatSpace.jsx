@@ -140,6 +140,7 @@ const ChatPopup = ({ visible, onClose }) => {
 		if (selectedImage) {
 			try {
 				imageUrl = await uploadImageToR2(selectedImage);
+				console.log("Image uploaded to R2:", imageUrl);
 			} catch (error) {
 				Alert.alert(
 					"Upload Error",
@@ -169,12 +170,20 @@ const ChatPopup = ({ visible, onClose }) => {
 		await saveMessageToFirebase(userMessage);
 
 		try {
-			// Pass both text and image URL to Gemini API
+			console.log("Sending to Gemini with:", {
+				text: currentInput,
+				hasImage: !!imageUrl,
+				imageUrl: imageUrl,
+			});
+
+			// Use direct Gemini API call (no Firebase Functions)
 			const botResponseText = await callGeminiAPIExternal(
 				currentInput,
 				messages,
-				imageUrl // Pass the Cloudflare R2 image URL
+				imageUrl // Pass the Cloudflare R2 image URL directly to Gemini
 			);
+
+			console.log("Received response from Gemini");
 
 			const botResponse = {
 				id: (Date.now() + 1).toString(),
@@ -189,36 +198,12 @@ const ChatPopup = ({ visible, onClose }) => {
 			console.log("Error sending message:", error);
 			Alert.alert(
 				"Connection Error",
-				"Failed to get farming advice. Please check your internet connection and try again."
-			);
-		} finally {
-			setIsLoading(false);
-		}
-
-		try {
-			console.log("Sending to Gemini with:", {
-				text: currentInput,
-				hasImage: !!imageUrl,
-				imageUrl: imageUrl,
-			});
-
-			// Pass both text and image URL to Gemini API
-			const botResponseText = await callGeminiAPIExternal(
-				currentInput,
-				messages,
-				imageUrl // Pass the Cloudflare R2 image URL
-			);
-
-			console.log("Received response from Gemini", { botResponseText });
-			// ... rest of the code ...
-		} catch (error) {
-			console.log("Error sending message:", error);
-			Alert.alert(
-				"Connection Error",
 				error.message.includes("image")
 					? "Failed to analyze the image. Please try again or describe what you see."
 					: "Failed to get farming advice. Please check your internet connection and try again."
 			);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 

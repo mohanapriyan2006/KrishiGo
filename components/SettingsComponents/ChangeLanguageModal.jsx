@@ -1,16 +1,18 @@
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
-	Modal,
-	SafeAreaView,
-	ScrollView,
-	Text,
-	TouchableOpacity,
-	View,
+    Modal,
+    SafeAreaView,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import useLanguage from "../../hooks/useLanguage";
 
 const ChangeLanguageModal = ({ showLanguageModal, setShowLanguageModal }) => {
+	const { t } = useTranslation();
 	const { changeLanguage, currentLanguage } = useLanguage();
 	const [selectedLanguage, setSelectedLanguage] = useState(
 		currentLanguage || "en"
@@ -62,13 +64,13 @@ const ChangeLanguageModal = ({ showLanguageModal, setShowLanguageModal }) => {
 								<Feather name="x" size={24} color="#6B7280" />
 							</TouchableOpacity>
 							<Text className="text-xl font-bold text-gray-900">
-								Change Language
+								{t('settings.language.title')}
 							</Text>
 							<TouchableOpacity
 								onPress={handleSaveLanguage}
 								className="px-4 py-2 bg-primary rounded-full"
 							>
-								<Text className="text-white font-semibold">Save</Text>
+								<Text className="text-white font-semibold">{t('settings.language.save')}</Text>
 							</TouchableOpacity>
 						</View>
 
@@ -78,7 +80,7 @@ const ChangeLanguageModal = ({ showLanguageModal, setShowLanguageModal }) => {
 							showsVerticalScrollIndicator={false}
 						>
 							<Text className="text-gray-600 text-sm mb-4">
-								Select your preferred language for the app
+								{t('settings.language.selectInfo')}
 							</Text>
 
 							<View className="gap-2">
@@ -133,12 +135,10 @@ const ChangeLanguageModal = ({ showLanguageModal, setShowLanguageModal }) => {
 									</View>
 									<View className="flex-1">
 										<Text className="text-blue-900 font-medium text-sm mb-1">
-											Language Support
+											{t('settings.language.infoTitle')}
 										</Text>
 										<Text className="text-blue-700 text-xs leading-4">
-											The app interface will be displayed in your selected
-											language. Some content might still appear in English while
-											we work on complete translations.
+											{t('settings.language.infoText')}
 										</Text>
 									</View>
 								</View>

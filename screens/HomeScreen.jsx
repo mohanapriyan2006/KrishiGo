@@ -106,8 +106,8 @@ export default function Home() {
 		<ScrollView className="flex-1 bg-[#f5f5f5]">
 			<View className="p-5 mb-10 pt-[50px]">
 				{/* Header */}
-				<View className="flex-row justify-between items-center mb-5">
-					<View className="p-8">
+				<View className=" mb-8 relative" >
+					<View className="p-8 pt-10">
 						<Text className="text-base text-[#666]">{t("home.greeting")}</Text>
 						<Text className="text-3xl font-bold text-primaryDark">
 							{userDetails?.firstName || t("home.user")} !
@@ -115,7 +115,7 @@ export default function Home() {
 					</View>
 					<Image
 						source={require("../assets/images/welcome_img.png")}
-						style={{ width: 180, height: 150 }}
+						style={{ width: 180, height: 150,  position: 'absolute' , top: -5, right: 0}}
 					/>
 				</View>
 

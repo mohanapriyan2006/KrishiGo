@@ -1,5 +1,6 @@
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { useContext, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Alert,
     KeyboardAvoidingView,
@@ -20,6 +21,7 @@ const EditAccountModal = ({
     setShowEditModal,
     userProfile,
 }) => {
+    const { t } = useTranslation();
 
     const { user, userDetails, fetchUserDetails } = useContext(DataContext);
 
@@ -42,46 +44,46 @@ const EditAccountModal = ({
 
         // First Name validation
         if (!formData.firstName.trim()) {
-            newErrors.firstName = 'First name is required';
+            newErrors.firstName = t('settings.profileEdit.errors.firstNameRequired');
         } else if (formData.firstName.trim().length < 2) {
-            newErrors.firstName = 'First name must be at least 2 characters';
+            newErrors.firstName = t('settings.profileEdit.errors.firstNameMin');
         }
 
         // Last Name validation
         if (!formData.lastName.trim()) {
-            newErrors.lastName = 'Last name is required';
+            newErrors.lastName = t('settings.profileEdit.errors.lastNameRequired');
         } else if (formData.lastName.trim().length < 1) {
-            newErrors.lastName = 'Last name must be at least 1 characters';
+            newErrors.lastName = t('settings.profileEdit.errors.lastNameMin');
         }
 
         // Phone Number validation
         const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
         const cleanPhone = formData.phoneNumber.replace(/[\s\-\(\)]/g, '');
         if (!formData.phoneNumber.trim()) {
-            newErrors.phoneNumber = 'Phone number is required';
+            newErrors.phoneNumber = t('settings.profileEdit.errors.phoneRequired');
         } else if (!phoneRegex.test(cleanPhone)) {
-            newErrors.phoneNumber = 'Please enter a valid phone number';
+            newErrors.phoneNumber = t('settings.profileEdit.errors.phoneInvalid');
         }
 
         // City validation
         if (!formData.city.trim()) {
-            newErrors.city = 'City is required';
+            newErrors.city = t('settings.profileEdit.errors.cityRequired');
         }
         // State validation
         if (!formData.state.trim()) {
-            newErrors.state = 'State is required';
+            newErrors.state = t('settings.profileEdit.errors.stateRequired');
         }
         // Country validation
         if (!formData.country.trim()) {
-            newErrors.country = 'Country is required';
+            newErrors.country = t('settings.profileEdit.errors.countryRequired');
         }
         // Street validation
         if (!formData.street.trim()) {
-            newErrors.street = 'Street is required';
+            newErrors.street = t('settings.profileEdit.errors.streetRequired');
         }
         // Zip code validation
         if (!formData.zipCode.trim()) {
-            newErrors.zipCode = 'Zip code is required';
+            newErrors.zipCode = t('settings.profileEdit.errors.zipRequired');
         }
 
         setErrors(newErrors);
@@ -126,21 +128,17 @@ const EditAccountModal = ({
             });
 
             Alert.alert(
-                'Success',
-                'Your profile has been updated successfully!',
+                t('common.success'),
+                t('settings.profileEdit.updateSuccess'),
                 [
                     {
-                        text: 'OK',
+                        text: t('common.ok'),
                         onPress: () => setShowEditModal(false)
                     }
                 ]
             );
-        } catch (error) {
-            Alert.alert(
-                'Error',
-                'Failed to update profile. Please try again.',
-                [{ text: 'OK' }]
-            );
+        } catch (_error) {
+            Alert.alert(t('common.error'), t('settings.profileEdit.updateFailed'), [{ text: t('common.ok') }]);
         } finally {
             fetchUserDetails();
             setIsLoading(false);
@@ -149,16 +147,6 @@ const EditAccountModal = ({
 
     const handleCancel = () => {
         // Reset form data to original values
-        setFormData({
-            firstName: userProfile?.firstName || 'Vijay',
-            lastName: userProfile?.lastName || 'Kumar',
-            phoneNumber: userProfile?.phoneNumber || '+91 12345-67890',
-            location: userProfile?.location || 'Koomapatti',
-            street: userProfile?.address?.street || 'Street',
-            state: userProfile?.address?.state || 'State',
-            country: userProfile?.address?.country || 'Country',
-            zipCode: userProfile?.address?.zipCode || 'Zip Code',
-        });
         setErrors({});
         setShowEditModal(false);
     };
@@ -217,7 +205,7 @@ const EditAccountModal = ({
                                 <Feather name="x" size={24} color="#6B7280" />
                             </TouchableOpacity>
 
-                            <Text className="text-xl font-bold text-gray-900">Edit Profile</Text>
+                            <Text className="text-xl font-bold text-gray-900">{t('settings.profileEdit.title')}</Text>
 
                             <TouchableOpacity
                                 onPress={handleSave}
@@ -227,11 +215,11 @@ const EditAccountModal = ({
                             >
                                 {isLoading ? (
                                     <View className="flex-row items-center">
-                                        <Text className="text-white font-semibold mr-2">Saving</Text>
+                                        <Text className="text-white font-semibold mr-2">{t('settings.profileEdit.saving')}</Text>
                                         <View className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                                     </View>
                                 ) : (
-                                    <Text className="text-white font-semibold">Save</Text>
+                                    <Text className="text-white font-semibold">{t('settings.profileEdit.save')}</Text>
                                 )}
                             </TouchableOpacity>
                         </View>
@@ -242,9 +230,7 @@ const EditAccountModal = ({
                             showsVerticalScrollIndicator={false}
                             keyboardShouldPersistTaps="handled"
                         >
-                            <Text className="text-gray-600 text-sm mb-6">
-                                Update your profile information below
-                            </Text>
+                            <Text className="text-gray-600 text-sm mb-6">{t('settings.profileEdit.subtitle')}</Text>
 
                             {/* Profile Picture Section */}
                             <View className="items-center mb-6">
@@ -252,78 +238,78 @@ const EditAccountModal = ({
                                     <Ionicons name="person" size={40} color="#314C1C" />
                                 </View>
                                 <TouchableOpacity className="bg-primary px-4 py-2 rounded-full">
-                                    <Text className="text-white font-medium">Change Photo</Text>
+                                    <Text className="text-white font-medium">{t('settings.profileEdit.changePhoto')}</Text>
                                 </TouchableOpacity>
                             </View>
 
                             {/* First Name */}
                             {renderInputField(
-                                'First Name',
+                                t('settings.firstName'),
                                 'firstName',
-                                'Enter your first name',
+                                t('settings.profileEdit.placeholders.firstName'),
                                 'default',
                                 <Ionicons name="person-outline" size={20} color="#6B7280" />
                             )}
 
                             {/* Last Name */}
                             {renderInputField(
-                                'Last Name',
+                                t('settings.lastName'),
                                 'lastName',
-                                'Enter your last name',
+                                t('settings.profileEdit.placeholders.lastName'),
                                 'default',
                                 <Ionicons name="person-outline" size={20} color="#6B7280" />
                             )}
 
                             {/* Phone Number */}
                             {renderInputField(
-                                'Phone Number',
+                                t('settings.phone'),
                                 'phoneNumber',
-                                'Enter your phone number',
+                                t('settings.profileEdit.placeholders.phone'),
                                 'phone-pad',
                                 <Feather name="phone" size={20} color="#6B7280" />
                             )}
 
                             {/* Street */}
                             {renderInputField(
-                                'Street',
+                                t('settings.profileEdit.labels.street'),
                                 'street',
-                                'Enter your street',
+                                t('settings.profileEdit.placeholders.street'),
                                 'default',
                                 <Ionicons name="location-outline" size={20} color="#6B7280" />
                             )}
 
                             {/* City */}
                             {renderInputField(
-                                'City',
+                                t('settings.profileEdit.labels.city'),
                                 'city',
-                                'Enter your city',
+                                t('settings.profileEdit.placeholders.city'),
                                 'default',
                                 <Ionicons name="location-outline" size={20} color="#6B7280" />
                             )}
 
                             {/* State */}
                             {renderInputField(
-                                'State',
+                                t('settings.profileEdit.labels.state'),
                                 'state',
-                                'Enter your state',
+                                t('settings.profileEdit.placeholders.state'),
                                 'default',
                                 <Ionicons name="location-outline" size={20} color="#6B7280" />
                             )}
 
                             {/* Country */}
                             {renderInputField(
-                                'Country',
+                                t('settings.profileEdit.labels.country'),
                                 'country',
-                                'Enter your country',
+                                t('settings.profileEdit.placeholders.country'),
                                 'default',
                                 <Ionicons name="location-outline" size={20} color="#6B7280" />
                             )}
 
                             {/* Zip Code */}
                             {renderInputField(
-                                'Zip Code',
+                                t('settings.profileEdit.labels.zipCode'),
                                 'zipCode',
-                                'Enter your zip code',
+                                t('settings.profileEdit.placeholders.zipCode'),
                                 'default',
                                 <Ionicons name="location-outline" size={20} color="#6B7280" />
                             )}
@@ -336,11 +322,10 @@ const EditAccountModal = ({
                                     </View>
                                     <View className="flex-1">
                                         <Text className="text-blue-900 font-medium text-sm mb-1">
-                                            Privacy & Security
+                                            {t('settings.profileEdit.privacyTitle')}
                                         </Text>
                                         <Text className="text-blue-700 text-xs leading-4">
-                                            Your personal information is encrypted and securely stored.
-                                            We never share your data with third parties without your consent.
+                                            {t('settings.profileEdit.privacyText')}
                                         </Text>
                                     </View>
                                 </View>

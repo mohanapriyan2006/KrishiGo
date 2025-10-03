@@ -2,12 +2,12 @@ import { Feather, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-	Alert,
-	SafeAreaView,
-	ScrollView,
-	Text,
-	TouchableOpacity,
-	View,
+    Alert,
+    SafeAreaView,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { auth } from "../../config/firebase";
 import { DataContext } from "../../hooks/DataContext";
@@ -19,7 +19,7 @@ import EditAccountModal from "./EditAccountModal";
 
 const Settings = ({ navigation }) => {
 	const { userDetails } = useContext(DataContext);
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 	const { currentLanguage } = useLanguage();
 
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -93,12 +93,14 @@ const Settings = ({ navigation }) => {
 
 	const handleLogout = () => {
 		Alert.alert(
-			'Logout',
-			'Are you sure you want to logout?',
+			t('settings.logoutTitle', 'Logout'),
+			t('settings.logoutConfirm', 'Are you sure you want to logout?'),
 			[
-				{ text: 'Cancel', style: 'cancel' },
+				{ text: t('common.cancel'), style: 'cancel' },
 				{
-					text: 'Logout', style: 'destructive', onPress: () => {
+					text: t('settings.logout', 'Logout'),
+					style: 'destructive',
+					onPress: () => {
 						auth.signOut();
 						navigation.navigate('Login');
 					}
