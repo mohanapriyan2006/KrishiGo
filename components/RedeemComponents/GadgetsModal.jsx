@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Alert,
     Image,
@@ -12,6 +13,8 @@ import {
 } from 'react-native';
 
 const GadgetsModal = ({ visible, onClose, selectedItem, onConfirm }) => {
+    const { t } = useTranslation();
+
     const [deliveryDetails, setDeliveryDetails] = useState({
         fullName: '',
         address: '',
@@ -59,43 +62,46 @@ const GadgetsModal = ({ visible, onClose, selectedItem, onConfirm }) => {
     };
 
     const deliveryOptions = [
-        { id: 'standard', name: 'Standard Delivery', time: '5-7 days', price: 'Free', icon: 'car-outline' },
-        { id: 'express', name: 'Express Delivery', time: '2-3 days', price: '+₹50', icon: 'flash-outline' },
-        { id: 'premium', name: 'Premium Delivery', time: '1-2 days', price: '+₹100', icon: 'rocket-outline' },
+        { id: 'standard', name: t('rewards.gadgets.delivery.standard'), time: t('rewards.gadgets.delivery.standardTime'), price: t('rewards.gadgets.delivery.standardPrice'), icon: 'car-outline' },
+        { id: 'express', name: t('rewards.gadgets.delivery.express'), time: t('rewards.gadgets.delivery.expressTime'), price: t('rewards.gadgets.delivery.expressPrice'), icon: 'flash-outline' },
+        { id: 'premium', name: t('rewards.gadgets.delivery.premium'), time: t('rewards.gadgets.delivery.premiumTime'), price: t('rewards.gadgets.delivery.premiumPrice'), icon: 'rocket-outline' },
     ];
 
     const handleConfirmRedeem = () => {
         const { fullName, address, city, pincode, phoneNumber } = deliveryDetails;
         
         if (!fullName || !address || !city || !pincode || !phoneNumber) {
-            Alert.alert('Missing Information', 'Please fill in all delivery details.');
+            Alert.alert(t('rewards.gadgets.missingTitle'), t('rewards.gadgets.missingMsg'));
             return;
         }
 
         if (pincode.length !== 6 || !/^\d+$/.test(pincode)) {
-            Alert.alert('Invalid Pincode', 'Please enter a valid 6-digit pincode.');
+            Alert.alert(t('rewards.gadgets.invalidPincodeTitle'), t('rewards.gadgets.invalidPincodeMsg'));
             return;
         }
 
         if (phoneNumber.length !== 10 || !/^\d+$/.test(phoneNumber)) {
-            Alert.alert('Invalid Phone Number', 'Please enter a valid 10-digit phone number.');
+            Alert.alert(t('rewards.gadgets.invalidPhoneTitle'), t('rewards.gadgets.invalidPhoneMsg'));
             return;
         }
 
         const selectedDelivery = deliveryOptions.find(option => option.id === deliverySpeed);
         
         Alert.alert(
-            'Order Confirmed!',
-            `Your ${selectedItem?.title} (${selectedColor}) will be delivered within ${selectedDelivery?.time}. Tracking details will be sent via SMS.`,
+            t('rewards.gadgets.orderConfirmedTitle'),
+            t('rewards.gadgets.orderConfirmedMsg', { title: selectedItem?.title, color: selectedColor, time: selectedDelivery?.time }),
             [
                 {
-                    text: 'Track Order',
+                    text: t('rewards.gadgets.trackOrder'),
                     onPress: () => {
-                        Alert.alert('Order Tracking', 'Order ID: KG' + Math.random().toString(36).substr(2, 9).toUpperCase() + '\n\nYou can track your order in the Profile > My Orders section.');
+                        Alert.alert(
+                            t('rewards.gadgets.trackingTitle'),
+                            t('rewards.gadgets.trackingMsg', { id: 'KG' + Math.random().toString(36).substr(2, 9).toUpperCase() })
+                        );
                     }
                 },
                 {
-                    text: 'OK',
+                    text: t('common.ok'),
                     onPress: () => {
                         resetForm();
                         onConfirm();
@@ -131,7 +137,7 @@ const GadgetsModal = ({ visible, onClose, selectedItem, onConfirm }) => {
                 {/* Header */}
                 <View className="bg-white px-6 py-4 border-b border-gray-200">
                     <View className="flex-row items-center justify-between">
-                        <Text className="text-xl font-bold text-gray-900">Order Details</Text>
+                        <Text className="text-xl font-bold text-gray-900">{t('rewards.gadgets.orderDetails')}</Text>
                         <TouchableOpacity onPress={handleCancel} className="p-2">
                             <Ionicons name="close" size={24} color="#374151" />
                         </TouchableOpacity>
@@ -149,10 +155,10 @@ const GadgetsModal = ({ visible, onClose, selectedItem, onConfirm }) => {
                             />
                             <View className="flex-1 ml-4">
                                 <Text className="text-lg font-bold text-gray-900">{selectedItem?.title}</Text>
-                                <Text className="text-gray-600 text-sm">by {gadgetDetails.brand}</Text>
+                                <Text className="text-gray-600 text-sm">{t('rewards.gadgets.byBrand', { brand: gadgetDetails.brand })}</Text>
                                 <View className="flex-row items-center mt-2">
                                     <Text className="text-primary font-bold text-lg">{selectedItem?.value}</Text>
-                                    <Text className="text-gray-500 text-sm ml-2">• {selectedItem?.points} points</Text>
+                                    <Text className="text-gray-500 text-sm ml-2">• {selectedItem?.points} {t('rewards.common.points')}</Text>
                                 </View>
                                 
                             </View>
@@ -161,7 +167,7 @@ const GadgetsModal = ({ visible, onClose, selectedItem, onConfirm }) => {
 
                     {/* Color Selection */}
                     <View className="bg-white mx-4 mt-4 rounded-xl p-4 shadow-sm">
-                        <Text className="text-lg font-bold text-gray-900 mb-3">Select Color</Text>
+                        <Text className="text-lg font-bold text-gray-900 mb-3">{t('rewards.gadgets.selectColor')}</Text>
                         <View className="flex-row gap-3">
                             {gadgetDetails.colors.map((color) => (
                                 <TouchableOpacity
@@ -176,7 +182,7 @@ const GadgetsModal = ({ visible, onClose, selectedItem, onConfirm }) => {
                                         ? 'text-primary' 
                                         : 'text-gray-700'
                                     }`}>
-                                        {color}
+                                        {t(`rewards.gadgets.colors.${color.toLowerCase().replace(/\s+/g, '_')}`, { defaultValue: color })}
                                     </Text>
                                 </TouchableOpacity>
                             ))}
@@ -185,7 +191,7 @@ const GadgetsModal = ({ visible, onClose, selectedItem, onConfirm }) => {
 
                     {/* Delivery Options */}
                     <View className="bg-white mx-4 mt-4 rounded-xl p-4 shadow-sm">
-                        <Text className="text-lg font-bold text-gray-900 mb-3">Delivery Options</Text>
+                        <Text className="text-lg font-bold text-gray-900 mb-3">{t('rewards.gadgets.deliveryOptions')}</Text>
                         {deliveryOptions.map((option) => (
                             <TouchableOpacity
                                 key={option.id}
@@ -211,24 +217,24 @@ const GadgetsModal = ({ visible, onClose, selectedItem, onConfirm }) => {
 
                     {/* Delivery Address Form */}
                     <View className="bg-white mx-4 mt-4 rounded-xl p-4 shadow-sm">
-                        <Text className="text-lg font-bold text-gray-900 mb-4">Delivery Address</Text>
+                        <Text className="text-lg font-bold text-gray-900 mb-4">{t('rewards.gadgets.deliveryAddress')}</Text>
                         
                         <View className="gap-2">
                             <View>
-                                <Text className="text-gray-700 font-medium mb-2">Full Name *</Text>
+                                <Text className="text-gray-700 font-medium mb-2">{t('rewards.gadgets.fullNameLabel')}</Text>
                                 <TextInput
                                     className="border border-gray-300 rounded-lg px-3 py-3 text-base"
-                                    placeholder="Enter your full name"
+                                    placeholder={t('rewards.gadgets.fullNamePlaceholder')}
                                     value={deliveryDetails.fullName}
                                     onChangeText={(text) => setDeliveryDetails(prev => ({ ...prev, fullName: text }))}
                                 />
                             </View>
 
                             <View>
-                                <Text className="text-gray-700 font-medium mb-2">Address *</Text>
+                                <Text className="text-gray-700 font-medium mb-2">{t('rewards.gadgets.addressLabel')}</Text>
                                 <TextInput
                                     className="border border-gray-300 rounded-lg px-3 py-3 text-base"
-                                    placeholder="House no, Street, Area"
+                                    placeholder={t('rewards.gadgets.addressPlaceholder')}
                                     value={deliveryDetails.address}
                                     onChangeText={(text) => setDeliveryDetails(prev => ({ ...prev, address: text }))}
                                     multiline
@@ -239,19 +245,19 @@ const GadgetsModal = ({ visible, onClose, selectedItem, onConfirm }) => {
 
                             <View className="flex-row gap-3">
                                 <View className="flex-1">
-                                    <Text className="text-gray-700 font-medium mb-2">City *</Text>
+                                    <Text className="text-gray-700 font-medium mb-2">{t('rewards.gadgets.cityLabel')}</Text>
                                     <TextInput
                                         className="border border-gray-300 rounded-lg px-3 py-3 text-base"
-                                        placeholder="City"
+                                        placeholder={t('rewards.gadgets.cityPlaceholder')}
                                         value={deliveryDetails.city}
                                         onChangeText={(text) => setDeliveryDetails(prev => ({ ...prev, city: text }))}
                                     />
                                 </View>
                                 <View className="flex-1">
-                                    <Text className="text-gray-700 font-medium mb-2">Pincode *</Text>
+                                    <Text className="text-gray-700 font-medium mb-2">{t('rewards.gadgets.pincodeLabel')}</Text>
                                     <TextInput
                                         className="border border-gray-300 rounded-lg px-3 py-3 text-base"
-                                        placeholder="Pincode"
+                                        placeholder={t('rewards.gadgets.pincodePlaceholder')}
                                         value={deliveryDetails.pincode}
                                         onChangeText={(text) => setDeliveryDetails(prev => ({ ...prev, pincode: text.replace(/[^0-9]/g, '') }))}
                                         keyboardType="number-pad"
@@ -261,10 +267,10 @@ const GadgetsModal = ({ visible, onClose, selectedItem, onConfirm }) => {
                             </View>
 
                             <View>
-                                <Text className="text-gray-700 font-medium mb-2">Phone Number *</Text>
+                                <Text className="text-gray-700 font-medium mb-2">{t('rewards.gadgets.phoneLabel')}</Text>
                                 <TextInput
                                     className="border border-gray-300 rounded-lg px-3 py-3 text-base"
-                                    placeholder="10-digit phone number"
+                                    placeholder={t('rewards.gadgets.phonePlaceholder')}
                                     value={deliveryDetails.phoneNumber}
                                     onChangeText={(text) => setDeliveryDetails(prev => ({ ...prev, phoneNumber: text.replace(/[^0-9]/g, '') }))}
                                     keyboardType="phone-pad"
@@ -276,30 +282,30 @@ const GadgetsModal = ({ visible, onClose, selectedItem, onConfirm }) => {
 
                     {/* Order Summary */}
                     <View className="bg-white mx-4 mt-4 rounded-xl p-4 shadow-sm">
-                        <Text className="text-lg font-bold text-gray-900 mb-3">Order Summary</Text>
+                        <Text className="text-lg font-bold text-gray-900 mb-3">{t('rewards.gadgets.orderSummary')}</Text>
                         <View className="space-y-2">
                             <View className="flex-row justify-between">
-                                <Text className="text-gray-600">Product Value:</Text>
+                                <Text className="text-gray-600">{t('rewards.gadgets.summary.productValue')}</Text>
                                 <Text className="text-gray-900 font-medium">{selectedItem?.value}</Text>
                             </View>
                             <View className="flex-row justify-between">
-                                <Text className="text-gray-600">Points Used:</Text>
-                                <Text className="text-gray-900 font-medium">{selectedItem?.points} pts</Text>
+                                <Text className="text-gray-600">{t('rewards.gadgets.summary.pointsUsed')}</Text>
+                                <Text className="text-gray-900 font-medium">{selectedItem?.points} {t('rewards.common.points')}</Text>
                             </View>
                             <View className="flex-row justify-between">
-                                <Text className="text-gray-600">Selected Color:</Text>
-                                <Text className="text-gray-900 font-medium">{selectedColor}</Text>
+                                <Text className="text-gray-600">{t('rewards.gadgets.summary.selectedColor')}</Text>
+                                <Text className="text-gray-900 font-medium">{t(`rewards.gadgets.colors.${selectedColor.toLowerCase().replace(/\s+/g, '_')}`, { defaultValue: selectedColor })}</Text>
                             </View>
                             <View className="flex-row justify-between">
-                                <Text className="text-gray-600">Delivery:</Text>
+                                <Text className="text-gray-600">{t('rewards.gadgets.summary.delivery')}</Text>
                                 <Text className="text-gray-900 font-medium">
                                     {deliveryOptions.find(opt => opt.id === deliverySpeed)?.price}
                                 </Text>
                             </View>
                             <View className="border-t border-gray-200 pt-2 mt-2">
                                 <View className="flex-row justify-between">
-                                    <Text className="text-gray-900 font-bold">Total Points:</Text>
-                                    <Text className="text-primary font-bold">{selectedItem?.points} pts</Text>
+                                    <Text className="text-gray-900 font-bold">{t('rewards.gadgets.summary.totalPoints')}</Text>
+                                    <Text className="text-primary font-bold">{selectedItem?.points} {t('rewards.common.points')}</Text>
                                 </View>
                             </View>
                         </View>
@@ -312,13 +318,13 @@ const GadgetsModal = ({ visible, onClose, selectedItem, onConfirm }) => {
                                 className="flex-1 bg-gray-200 py-4 rounded-lg"
                                 onPress={handleCancel}
                             >
-                                <Text className="text-gray-700 font-semibold text-center">Cancel</Text>
+                                <Text className="text-gray-700 font-semibold text-center">{t('common.cancel')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 className="flex-1 bg-primary py-4 rounded-lg"
                                 onPress={handleConfirmRedeem}
                             >
-                                <Text className="text-white font-semibold text-center">Place Order</Text>
+                                <Text className="text-white font-semibold text-center">{t('rewards.gadgets.placeOrder')}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

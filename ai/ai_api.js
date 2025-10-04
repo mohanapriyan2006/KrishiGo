@@ -1,70 +1,138 @@
-import { getFunctions, httpsCallable } from "firebase/functions";
-import { app } from "../config/firebase"; // Adjust path as needed
-import { FARMER_SYSTEM_PROMPT } from "./ai_contest"; // Import from ai_contest.js
-
-// Initialize Firebase Functions
-const functions = getFunctions(app);
+import { FARMER_SYSTEM_PROMPT } from "./ai_contest";
 
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 export const buildConversationHistory = (messages = []) => {
 	const recentMessages = messages.slice(-10);
-	const conversationParts = [{ text: FARMER_SYSTEM_PROMPT }]; // Use imported prompt
+	const conversationParts = [{ text: FARMER_SYSTEM_PROMPT }];
 	recentMessages.forEach((message) => {
 		if (message.id !== "welcome") {
 			conversationParts.push({
 				text: `${message.isBot ? "Assistant" : "User"}: ${message.text}`,
 			});
-			if (message.image && !message.isBot) {
-				conversationParts.push({ text: `User image: ${message.image}` });
+			if (message.imageUrl && !message.isBot) {
+				conversationParts.push({ text: `User shared an image` });
 			}
 		}
 	});
 	return conversationParts;
 };
 
-export const callGeminiAPI = async (userMessage, messages = []) => {
+export const callGeminiAPI = async (
+	userMessage,
+	messages = [],
+	imageUrl = null
+) => {
 	try {
 		if (!GEMINI_API_KEY) throw new Error("Gemini API key not found");
+
 		const conversationHistory = buildConversationHistory(messages);
 		conversationHistory.push({ text: `User: ${userMessage}` });
 
-		const payload = {
-			contents: [{ parts: conversationHistory }],
-			generationConfig: {
-				temperature: 0.7,
-				topK: 40,
-				topP: 0.95,
-				maxOutputTokens: 1024,
-			},
-			safetySettings: [
-				{
-					category: "HARM_CATEGORY_HARASSMENT",
-					threshold: "BLOCK_MEDIUM_AND_ABOVE",
+		let payload;
+
+		if (imageUrl) {
+			console.log("Processing image with Gemini Vision API");
+
+			// Fetch image and convert to base64
+			const response = await fetch(imageUrl);
+			const blob = await response.blob();
+			const base64Data = await new Promise((resolve) => {
+				const reader = new FileReader();
+				reader.onloadend = () => {
+					// Remove data:image/jpeg;base64, prefix
+					const base64 = reader.result.split(",")[1];
+					resolve(base64);
+				};
+				reader.readAsDataURL(blob);
+			});
+
+			payload = {
+				contents: [
+					{
+						parts: [
+							...conversationHistory,
+							{
+								inlineData: {
+									mimeType: "image/jpeg",
+									data: base64Data,
+								},
+							},
+						],
+					},
+				],
+				generationConfig: {
+					temperature: 0.7,
+					topK: 40,
+					topP: 0.95,
+					maxOutputTokens: 1024,
 				},
-				{
-					category: "HARM_CATEGORY_HATE_SPEECH",
-					threshold: "BLOCK_MEDIUM_AND_ABOVE",
+				safetySettings: [
+					{
+						category: "HARM_CATEGORY_HARASSMENT",
+						threshold: "BLOCK_MEDIUM_AND_ABOVE",
+					},
+					{
+						category: "HARM_CATEGORY_HATE_SPEECH",
+						threshold: "BLOCK_MEDIUM_AND_ABOVE",
+					},
+					{
+						category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+						threshold: "BLOCK_MEDIUM_AND_ABOVE",
+					},
+					{
+						category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+						threshold: "BLOCK_MEDIUM_AND_ABOVE",
+					},
+				],
+			};
+		} else {
+			// Text-only request
+			payload = {
+				contents: [{ parts: conversationHistory }],
+				generationConfig: {
+					temperature: 0.7,
+					topK: 40,
+					topP: 0.95,
+					maxOutputTokens: 1024,
 				},
-				{
-					category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-					threshold: "BLOCK_MEDIUM_AND_ABOVE",
-				},
-				{
-					category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-					threshold: "BLOCK_MEDIUM_AND_ABOVE",
-				},
-			],
-		};
+				safetySettings: [
+					{
+						category: "HARM_CATEGORY_HARASSMENT",
+						threshold: "BLOCK_MEDIUM_AND_ABOVE",
+					},
+					{
+						category: "HARM_CATEGORY_HATE_SPEECH",
+						threshold: "BLOCK_MEDIUM_AND_ABOVE",
+					},
+					{
+						category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+						threshold: "BLOCK_MEDIUM_AND_ABOVE",
+					},
+					{
+						category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+						threshold: "BLOCK_MEDIUM_AND_ABOVE",
+					},
+				],
+			};
+		}
+
+		console.log("Sending to Gemini API:", {
+			hasImage: !!imageUrl,
+			text: userMessage,
+			imageUrl: imageUrl,
+		});
 
 		const response = await fetch(GEMINI_API_URL, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify(payload),
 		});
+
 		if (!response.ok) {
 			const errorData = await response.json();
+			console.log("Gemini API error response:", errorData);
 			throw new Error(errorData.error?.message || "Unknown Gemini error");
 		}
 
@@ -72,58 +140,27 @@ export const callGeminiAPI = async (userMessage, messages = []) => {
 		const responseText =
 			data.candidates?.[0]?.content?.parts?.[0]?.text ||
 			"Sorry, I couldn't generate a response.";
+
 		return responseText.replace(/^Assistant:\s*/, "");
 	} catch (error) {
 		console.log("Gemini API error:", error);
-		return `🚜 Sorry, I'm having trouble connecting right now. Please check your internet connection and try again.\n\nError details: ${error.message}`;
+
+		if (imageUrl) {
+			return `🚜 I had trouble analyzing your image. Please try again or describe what you see in words.\n\nError: ${error.message}`;
+		}
+
+		return `🚜 Sorry, I'm having trouble connecting right now. Please check your internet connection and try again.\n\nError: ${error.message}`;
 	}
 };
 
-// Updated to use Firebase Cloud Function
+// Keep this for backward compatibility, but it now uses direct API call
 export const callGeminiAPIExternal = async (
 	input,
 	messages,
 	imageUrl = null
 ) => {
-	try {
-		// Prepare the payload for Firebase Function
-		const payload = {
-			text: input,
-			chatHistory: messages.slice(-10).map((msg) => ({
-				text: msg.text,
-				isBot: msg.isBot,
-				timestamp: msg.timestamp,
-			})),
-			imageUrl: imageUrl, // Cloudflare R2 URL
-		};
-
-		console.log("Calling Firebase Function with:", {
-			hasImage: !!imageUrl,
-			text: input,
-			imageUrl: imageUrl,
-		});
-
-		// Call Firebase Cloud Function
-		const callGeminiFunction = httpsCallable(functions, "callGeminiWithImage");
-		const result = await callGeminiFunction(payload);
-
-		return result.data.response;
-	} catch (error) {
-		console.log("Error calling Firebase Function:", error);
-
-		// Provide more specific error messages
-		if (error.message.includes("image")) {
-			return "🚜 I had trouble analyzing your image. Please try again or describe the issue in words.";
-		}
-
-		// Fallback to direct text-only API if Firebase Function fails
-		if (imageUrl) {
-			console.log("Falling back to text-only API due to function error");
-			return callGeminiAPI(input, messages);
-		}
-
-		throw error;
-	}
+	return await callGeminiAPI(input, messages, imageUrl);
 };
-// Re-export the prompt in case other files need it
+
+// Re-export the prompt
 export { FARMER_SYSTEM_PROMPT };

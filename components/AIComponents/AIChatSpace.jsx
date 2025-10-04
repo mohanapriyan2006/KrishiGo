@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { S3 } from "aws-sdk";
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import {
 	ActivityIndicator,
 	Alert,
@@ -31,6 +32,7 @@ const s3 = new S3({
 });
 
 const ChatPopup = ({ visible, onClose }) => {
+	const { t, i18n } = useTranslation();
 	const [messages, setMessages] = useState([]);
 	const [inputText, setInputText] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +40,7 @@ const ChatPopup = ({ visible, onClose }) => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [recentChats, setRecentChats] = useState([]);
 	const [currentChatId, setCurrentChatId] = useState(null);
-	const [currentChatTitle, setCurrentChatTitle] = useState("New Chat");
+	const [currentChatTitle, setCurrentChatTitle] = useState(t('ai.chat.newChat'));
 	const [showAttachmentOptions, setShowAttachmentOptions] = useState(false);
 	const [selectedImage, setSelectedImage] = useState(null);
 	const [uploadingImage, setUploadingImage] = useState(false);
@@ -124,7 +126,7 @@ const ChatPopup = ({ visible, onClose }) => {
 			return `${process.env.EXPO_PUBLIC_R2_PUBLIC_URL}/${filename}`;
 		} catch (error) {
 			console.log("Error uploading image to R2:", error);
-			throw new Error("Failed to upload image");
+			throw new Error(t('ai.chat.errors.uploadFailed'));
 		} finally {
 			setUploadingImage(false);
 		}
@@ -140,10 +142,11 @@ const ChatPopup = ({ visible, onClose }) => {
 		if (selectedImage) {
 			try {
 				imageUrl = await uploadImageToR2(selectedImage);
+				console.log("Image uploaded to R2:", imageUrl);
 			} catch (error) {
 				Alert.alert(
-					"Upload Error",
-					"Failed to upload image. Please try again.",
+					 t('ai.chat.errors.uploadTitle'),
+					 t('ai.chat.errors.uploadMessage'),
 					error
 				);
 				return;
@@ -152,7 +155,7 @@ const ChatPopup = ({ visible, onClose }) => {
 
 		const userMessage = {
 			id: Date.now().toString(),
-			text: inputText || (selectedImage ? "Please analyze this image" : ""),
+			text: inputText || (selectedImage ? t('ai.chat.messages.analyzeImage') : ""),
 			isBot: false,
 			timestamp: new Date(),
 			image: selectedImage, // Local URI for display
@@ -169,12 +172,37 @@ const ChatPopup = ({ visible, onClose }) => {
 		await saveMessageToFirebase(userMessage);
 
 		try {
-			// Pass both text and image URL to Gemini API
+			// Determine human-readable language name for instruction
+			const langCode = i18n.language;
+			const languageNameMap = {
+				en: 'English',
+				hi: 'Hindi',
+				ml: 'Malayalam',
+				ta: 'Tamil'
+			};
+			const languageName = languageNameMap[langCode] || 'English';
+
+			const systemInstruction = `You are an agricultural assistant. Respond ONLY in ${languageName}. If the user writes in another language, translate their request and answer in ${languageName}. Keep answers concise, practical, and farmer-friendly.`;
+
+			const baseUserText = currentInput || (imageUrl ? t('ai.chat.messages.analyzeImage') : '');
+			const localizedPrompt = `${systemInstruction}\n\n${baseUserText}`.trim();
+
+			console.log("Sending to Gemini with:", {
+				langCode,
+				languageName,
+				userText: baseUserText,
+				hasImage: !!imageUrl,
+				imageUrl: imageUrl,
+			});
+
+			// Use direct Gemini API call with language-aware prompt
 			const botResponseText = await callGeminiAPIExternal(
-				currentInput,
+				localizedPrompt,
 				messages,
-				imageUrl // Pass the Cloudflare R2 image URL
+				imageUrl // Pass the Cloudflare R2 image URL directly to Gemini
 			);
+
+			console.log("Received response from Gemini");
 
 			const botResponse = {
 				id: (Date.now() + 1).toString(),
@@ -188,37 +216,13 @@ const ChatPopup = ({ visible, onClose }) => {
 		} catch (error) {
 			console.log("Error sending message:", error);
 			Alert.alert(
-				"Connection Error",
-				"Failed to get farming advice. Please check your internet connection and try again."
+				 t('ai.chat.errors.connectionTitle'),
+				 error.message.includes("image")
+				 	? t('ai.chat.errors.imageAnalysis')
+				 	: t('ai.chat.errors.generalAdvice')
 			);
 		} finally {
 			setIsLoading(false);
-		}
-
-		try {
-			console.log("Sending to Gemini with:", {
-				text: currentInput,
-				hasImage: !!imageUrl,
-				imageUrl: imageUrl,
-			});
-
-			// Pass both text and image URL to Gemini API
-			const botResponseText = await callGeminiAPIExternal(
-				currentInput,
-				messages,
-				imageUrl // Pass the Cloudflare R2 image URL
-			);
-
-			console.log("Received response from Gemini", { botResponseText });
-			// ... rest of the code ...
-		} catch (error) {
-			console.log("Error sending message:", error);
-			Alert.alert(
-				"Connection Error",
-				error.message.includes("image")
-					? "Failed to analyze the image. Please try again or describe what you see."
-					: "Failed to get farming advice. Please check your internet connection and try again."
-			);
 		}
 	};
 
@@ -231,8 +235,8 @@ const ChatPopup = ({ visible, onClose }) => {
 
 		if (cameraStatus !== "granted" || galleryStatus !== "granted") {
 			Alert.alert(
-				"Permissions Required",
-				"Please grant camera and photo library permissions to upload images."
+				 t('ai.chat.permissions.title'),
+				 t('ai.chat.permissions.msg')
 			);
 			return false;
 		}
@@ -255,7 +259,7 @@ const ChatPopup = ({ visible, onClose }) => {
 				setShowAttachmentOptions(false);
 			}
 		} catch (_error) {
-			Alert.alert("Error", "Failed to take photo. Please try again.");
+			Alert.alert(t('ai.chat.errors.genericTitle'), t('ai.chat.errors.takePhoto'));
 		}
 	};
 
@@ -275,7 +279,7 @@ const ChatPopup = ({ visible, onClose }) => {
 				setShowAttachmentOptions(false);
 			}
 		} catch (_error) {
-			Alert.alert("Error", "Failed to select image. Please try again.");
+			Alert.alert(t('ai.chat.errors.genericTitle'), t('ai.chat.errors.selectImage'));
 		}
 	};
 
@@ -293,7 +297,14 @@ const ChatPopup = ({ visible, onClose }) => {
 	}, [messages]);
 
 	// Format text with bold styling
-	const formatTextWithBold = (text) => {
+	const formatTextWithBold = (message) => {
+		let text;
+		if(message.id === "welcome") {
+			const langCode = i18n.language;
+			text = message.text[langCode] || message.text?.en || message.text;
+		}else{
+			text = message.text;
+		}
 		const parts = text.split(/(\*\*.*?\*\*)/g);
 		return parts.map((part, index) => {
 			if (part.startsWith("**") && part.endsWith("**")) {
@@ -339,7 +350,7 @@ const ChatPopup = ({ visible, onClose }) => {
 						}`}
 						selectable
 					>
-						{formatTextWithBold(message.text)}
+						{formatTextWithBold(message)}
 					</Text>
 					<Text
 						className={`text-xs mt-2 ${
@@ -369,8 +380,8 @@ const ChatPopup = ({ visible, onClose }) => {
 						<ActivityIndicator size="small" color="#314C1C" />
 						<Text className="text-gray-800 text-sm ml-2">
 							{uploadingImage
-								? "Uploading image..."
-								: "Analyzing your farming question..."}
+								? t('ai.chat.loading.uploadingImage')
+								: t('ai.chat.loading.analyzing')}
 						</Text>
 					</View>
 				</View>
@@ -400,7 +411,7 @@ const ChatPopup = ({ visible, onClose }) => {
 								</TouchableOpacity>
 								<View>
 									<Text className="text-white text-lg font-semibold">
-										🌾 Farm Assistant
+										{t('ai.chat.header.title')}
 									</Text>
 									<Text className="text-white/70 text-xs">
 										{currentChatTitle}
@@ -422,11 +433,27 @@ const ChatPopup = ({ visible, onClose }) => {
 								<View className="flex-1 justify-center items-center py-8">
 									<ActivityIndicator size="large" color="#314C1C" />
 									<Text className="text-gray-500 mt-2">
-										Loading your farm chat...
+										{t('ai.chat.loading.initial')}
 									</Text>
 								</View>
 							) : (
 								<>
+									{messages.length === 0 && !isLoading && !uploadingImage && (
+										<View className="items-start mb-4">
+											<View className="flex-col">
+												<Image
+													source={require("../../assets/images/AI.png")}
+													style={{ width: 60, height: 60 }}
+													className="-mb-6 -ml-6"
+												/>
+												<View className="max-w-[85%] px-4 py-3 rounded-2xl bg-lime-300/30 border border-primary rounded-tl-none">
+													<Text className="text-gray-800 text-sm leading-5">
+														{t('ai.chat.welcome.intro')}
+													</Text>
+												</View>
+											</View>
+										</View>
+									)}
 									{messages.map((message) => (
 										<MessageBubble key={message.id} message={message} />
 									))}
@@ -442,7 +469,7 @@ const ChatPopup = ({ visible, onClose }) => {
 								<View className="mb-3 bg-white rounded-lg p-3">
 									<View className="flex-row items-center justify-between mb-2">
 										<Text className="text-gray-700 font-medium">
-											Selected Image {uploadingImage && "(Uploading...)"}
+											{t('ai.chat.image.selected')} {uploadingImage && `(${t('ai.chat.loading.uploadingImage')})`}
 										</Text>
 										<TouchableOpacity
 											onPress={removeSelectedImage}
@@ -468,23 +495,21 @@ const ChatPopup = ({ visible, onClose }) => {
 							<View className="flex-row justify-center mb-3 gap-2">
 								<TouchableOpacity
 									className="bg-white/20 px-3 py-2 rounded-full"
-									onPress={() => setInputText("Identify this plant disease")}
+									onPress={() => setInputText(t('ai.chat.quick.diseasePrompt'))}
 								>
-									<Text className="text-white text-xs">🦠 Disease ID</Text>
+									<Text className="text-white text-xs">🦠 {t('ai.chat.quick.disease')}</Text>
 								</TouchableOpacity>
 								<TouchableOpacity
 									className="bg-white/20 px-3 py-2 rounded-full"
-									onPress={() =>
-										setInputText("What should I plant this season?")
-									}
+									onPress={() => setInputText(t('ai.chat.quick.cropPlanPrompt'))}
 								>
-									<Text className="text-white text-xs">🌱 Crop Plan</Text>
+									<Text className="text-white text-xs">🌱 {t('ai.chat.quick.cropPlan')}</Text>
 								</TouchableOpacity>
 								<TouchableOpacity
 									className="bg-white/20 px-3 py-2 rounded-full"
-									onPress={() => setInputText("How to improve soil health?")}
+									onPress={() => setInputText(t('ai.chat.quick.soilPrompt'))}
 								>
-									<Text className="text-white text-xs">🌿 Soil Tips</Text>
+									<Text className="text-white text-xs">🌿 {t('ai.chat.quick.soil')}</Text>
 								</TouchableOpacity>
 							</View>
 
@@ -497,7 +522,7 @@ const ChatPopup = ({ visible, onClose }) => {
 									>
 										<Ionicons name="camera" size={20} color="#314C1C" />
 										<Text className="ml-3 text-gray-800 font-medium">
-											Take Photo
+											{t('ai.chat.actions.takePhoto')}
 										</Text>
 									</TouchableOpacity>
 									<View className="h-px bg-gray-200 mx-2" />
@@ -507,7 +532,7 @@ const ChatPopup = ({ visible, onClose }) => {
 									>
 										<Ionicons name="image" size={20} color="#314C1C" />
 										<Text className="ml-3 text-gray-800 font-medium">
-											Choose from Gallery
+											{t('ai.chat.actions.chooseFromGallery')}
 										</Text>
 									</TouchableOpacity>
 								</View>
@@ -530,7 +555,7 @@ const ChatPopup = ({ visible, onClose }) => {
 
 								<TextInput
 									className="flex-1 text-base text-gray-800 py-2"
-									placeholder="Type your farm question..."
+									placeholder={t('ai.chat.input.placeholder')}
 									placeholderTextColor="#9CA3AF"
 									value={inputText}
 									onChangeText={setInputText}
@@ -611,13 +636,13 @@ const ChatPopup = ({ visible, onClose }) => {
 									className="bg-primary rounded-lg p-3 flex-row items-center justify-center"
 								>
 									<Ionicons name="add" size={16} color="white" />
-									<Text className="text-white ml-2 font-medium">New Chat</Text>
+									<Text className="text-white ml-2 font-medium">{t('ai.chat.actions.newChat')}</Text>
 								</TouchableOpacity>
 							</View>
 
 							<ScrollView className="flex-1 p-2">
 								<Text className="text-gray-500 text-sm font-medium mb-3 px-2">
-									Recent Chats
+									{t('ai.chat.sidebar.recent')}
 								</Text>
 								{recentChats.map((chat) => (
 									<TouchableOpacity
@@ -635,7 +660,7 @@ const ChatPopup = ({ visible, onClose }) => {
 												className="text-gray-800 font-medium text-sm"
 												numberOfLines={1}
 											>
-												{chat.title || "Untitled Chat"}
+												{chat.title || t('ai.chat.sidebar.untitled')}
 											</Text>
 											<Text
 												className="text-gray-500 text-xs mt-1"
@@ -650,16 +675,16 @@ const ChatPopup = ({ visible, onClose }) => {
 										<TouchableOpacity
 											onPress={() => {
 												Alert.alert(
-													"Delete Chat",
-													"Are you sure you want to delete this chat?",
-													[
-														{ text: "Cancel", style: "cancel" },
+													 t('ai.chat.delete.title'),
+													 t('ai.chat.delete.confirm'),
+													 [
+														{ text: t('common.cancel'), style: 'cancel' },
 														{
-															text: "Delete",
-															style: "destructive",
+															text: t('ai.chat.delete.deleteBtn'),
+															style: 'destructive',
 															onPress: () => deleteChat(chat.id),
 														},
-													]
+													 ]
 												);
 											}}
 											className="ml-2"

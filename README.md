@@ -1,6 +1,6 @@
 # 🌱 KrishiGo - Your Digital Agriculture Companion
 
-![KrishiGo Logo](assets/images/logo.png)
+![KrishiGo Logo](assets/images/logo2.png)
 
 ## 📱 About KrishiGo
 
@@ -18,7 +18,7 @@ KrishiGo is a comprehensive mobile application designed to empower farmers with 
 - 🌐 **Multilingual Support** - Access content in your preferred language
 - 👤 **Personalized Experience** - Track your progress and achievements
 
-![krishiGo logo](assets/images/logo2.png)
+![krishiGo logo](assets/images/logo3.png)
 
 ## 🚀 Getting Started
 
@@ -59,92 +59,104 @@ Once the development server is running, you can open the app in:
 
 ```
 krishigo/
-├── ai/
-│ ├── ai_api.js
-│ ├── ai_contest.js
-│ └── ai_firebase.js
+├── 📁 ai/
+│   ├── ai_api.js
+│   ├── ai_contest.js
+│   └── ai_firebase.js
 │
-├── api/
-│ ├── challenges/
-│ │ └── challenges_firebase.js
-│ │
-│ ├── courses/
-│ │ ├── all_courses_service.js
-│ │ └── courses_service.js
-│ │
-│ ├── quizs/
-│ │ └── quiz_service.js
-│ │
-│ └── user/
-│ ├── login_firebase.js
-│ ├── register_firebase.js
-│ └── user_service.js
+├── 📁 api/
+│   │
+│   ├── 📁 challenges/
+│   │   └── challenges_firebase.js
+│   │
+│   ├── 📁 courses/
+│   │   ├── all_courses_service.js
+│   │   └── courses_service.js
+│   │
+│   ├── 📁 quizs/
+│   │   └── quiz_service.js
+│   │
+│   └── 📁 user/
+│       ├── login_firebase.js
+│       ├── register_firebase.js
+│       ├── user_courses.js
+│       └── user_service.js
 │
-├── app/
-│ ├── index.jsx
-│ ├── MainLayout.jsx
-│ └── NavBar.jsx
+├── 📁 app/
+│   ├── index.jsx
+│   ├── MainLayout.jsx
+│   └── NavBar.jsx
 │
-├── assets/
-│ ├── fonts/
-│ └── images/
+├── 📁 assets/
+│   ├── 📁 fonts/
+│   └── 📁 images/
 │
-├── components/
-│ ├── AIComponents/
-│ │ ├── AIChatSpace.jsx
-│ │ └── FloatingAIbutton.jsx
-│ │
-│ ├── ChallengeComponents/
-│ │ ├── ChallengePopup.jsx
-│ │ └── ChallengeUpload.jsx
-│ │
-│ ├── CoursesComponents/
-│ │ ├── CourseDetails.jsx
-│ │ ├── CourseVideo.jsx
-│ │ ├── SavedCourses.jsx
-│ │ └── SearchCourses.jsx
-│ │
-│ ├── RedeemComponents/
-│ │ ├── CouponModal.jsx
-│ │ ├── GadgetsModal.jsx
-│ │ ├── RedeemScreen.jsx
-│ │ └── UpiModal.jsx
-│ │
-│ ├── SettingsComponents/
-│ │ ├── ChangeLanguageModal.jsx
-│ │ ├── DeleteAccModal.jsx
-│ │ ├── EditAccountModal.jsx
-│ │ ├── EditProfilePhoto.jsx
-│ │ └── Settings.jsx
-│ │
-│ ├── About.jsx
-│ ├── ProgressLine.jsx
-│ ├── Quiz.jsx
-│ ├── RewardPopUp.jsx
-│ ├── RoundProgress.jsx
-│ └── TremsAndConditions.jsx
+├── 📁 components/
+│   ├── 📁 AlComponents/
+│   │   ├── AlChatSpace.jsx
+│   │   └── FloatingAlbution.jsx
+│   │
+│   ├── 📁 ChallengeComponents/
+│   │   ├── ChallengePopup.jsx
+│   │   └── ChallengeUpload.jsx
+│   │
+│   ├── 📁 CoursesComponents/
+│   │   ├── CourseDetails.jsx
+│   │   ├── CourseVideo.jsx
+│   │   ├── SavedCourses.jsx
+│   │   └── SearchCourses.jsx
+│   │
+│   ├── 📁 RedeemComponents/
+│   │   ├── CouponModal.jsx
+│   │   ├── GadgetsModal.jsx
+│   │   ├── RedeemScreen.jsx
+│   │   └── UplModal.jsx
+│   │
+│   ├── 📁 SettingsComponents/
+│   │   ├── ChangedLanguageModal.jsx
+│   │   ├── DeleteAccModal.jsx
+│   │   ├── EditAccountModal.jsx
+│   │   ├── EditProfilePhoto.jsx
+│   │   └── Settings.jsx
+│   │
+│   ├── About.jsx
+│   ├── TermsAndConditions.jsx
+│   ├── ProgressLine.jsx
+│   ├── Quiz.jsx
+│   ├── RewardPopUp.jsx
+│   └── RoundProgress.jsx
 │
-├── config/
-│ └── firebase.js
+├── 📁 config/
+│   ├── firebase.js
+│   └── i18n.js
 │
-├── functions/
-│ └── index.js
+├── 📁 functions/
+│   └── ai_image.js
 │
-├── hooks/
-│ └── DataContext.js
+├── 📁 hooks/
+│   ├── DataContext.js
+│   └── useLanguage.js
 │
-├── screens/
-│ ├── LoginScreen/
-│ │ ├── Login.jsx
-│ │ └── Register.jsx
-│ │
-│ ├── ChallengeScreen.jsx
-│ ├── HomeScreen.jsx
-│ ├── JourneyScreen.jsx
-│ ├── ProfileScreen.jsx
-│ └── RewardsScreen.jsx
+├── 📁 locales/
+│   ├── en.json
+│   ├── hi.json
+│   ├── ml.json
+│   └── ta.json
 │
-├── node_modules/ (auto-generated)
+├── 📁 screens/
+│   │
+│   ├── 📁 LoginScreen/
+│   │   ├── Login.jsx
+│   │   └── Register.jsx
+│   │
+│   ├── ChallengeScreen.jsx
+│   ├── HomeScreen.jsx
+│   ├── JourneyScreen.jsx
+│   ├── ProfileScreen.jsx
+│   └── RewardsScreen.jsx
+│
+├── 📁 utils/
+│   └── format.js
 │
 ├── .env
 ├── .gitignore
@@ -152,7 +164,7 @@ krishigo/
 ├── babel.config.js
 ├── eslint.config.js
 ├── global.css
-├── iconfig.json
+├── jsconfig.json
 ├── metro.config.js
 ├── package-lock.json
 ├── package.json
@@ -280,7 +292,6 @@ krishigo/
   }
 }
 ```
-
 
 ### Rewards System
 

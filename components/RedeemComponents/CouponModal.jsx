@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Alert,
     Modal,
@@ -10,6 +11,7 @@ import {
 } from 'react-native';
 
 const CouponModal = ({ visible, onClose, selectedItem, onConfirm }) => {
+    const { t } = useTranslation();
     const [email, setEmail] = useState('');
 
 
@@ -26,23 +28,23 @@ const CouponModal = ({ visible, onClose, selectedItem, onConfirm }) => {
 
     const handleConfirmRedeem = () => {
         if (!email) {
-            Alert.alert('Missing Information', 'Please provide your email address to receive the voucher.');
+            Alert.alert(t('rewards.coupon.missingTitle'), t('rewards.coupon.missingMsg'));
             return;
         }
 
         // Validate email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            Alert.alert('Invalid Email', 'Please enter a valid email address.');
+            Alert.alert(t('rewards.coupon.invalidEmailTitle'), t('rewards.coupon.invalidEmailMsg'));
             return;
         }
 
         Alert.alert(
-            'Voucher Sent!',
-            `Your ${selectedItem?.title} voucher has been sent to ${email}. Please check your inbox within 10 minutes.`,
+            t('rewards.coupon.sentTitle'),
+            t('rewards.coupon.sentMsg', { title: selectedItem?.title, email }),
             [
                 {
-                    text: 'OK',
+                    text: t('common.ok'),
                     onPress: () => {
                         setEmail('');
                         onConfirm();
@@ -75,7 +77,7 @@ const CouponModal = ({ visible, onClose, selectedItem, onConfirm }) => {
                             <Text className="text-lime-600 font-bold text-lg">
                                 {selectedItem?.value}
                             </Text>
-                            <Text className="text-gray-500 ml-2">• {selectedItem?.points} points</Text>
+                            <Text className="text-gray-500 ml-2">• {selectedItem?.points} {t('rewards.common.points')}</Text>
                         </View>
                     </View>
 
@@ -83,30 +85,30 @@ const CouponModal = ({ visible, onClose, selectedItem, onConfirm }) => {
                     <View className="bg-gray-50 rounded-lg p-4 mb-6">
                         <View className="flex-row items-center mb-3">
                             <Ionicons name="gift-outline" size={20} color="#6b7280" />
-                            <Text className="text-gray-700 font-medium ml-2">Voucher Details</Text>
+                            <Text className="text-gray-700 font-medium ml-2">{t('rewards.coupon.detailsTitle')}</Text>
                         </View>
                         <View className="space-y-2">
                             <View className="flex-row justify-between">
-                                <Text className="text-gray-600">Type:</Text>
-                                <Text className="text-gray-900 font-medium">Digital Voucher</Text>
+                                <Text className="text-gray-600">{t('rewards.coupon.typeLabel')}</Text>
+                                <Text className="text-gray-900 font-medium">{t('rewards.coupon.typeValue')}</Text>
                             </View>
                             <View className="flex-row justify-between">
-                                <Text className="text-gray-600">Validity:</Text>
-                                <Text className="text-gray-900 font-medium">1 Year</Text>
+                                <Text className="text-gray-600">{t('rewards.coupon.validityLabel')}</Text>
+                                <Text className="text-gray-900 font-medium">{t('rewards.coupon.validityValue')}</Text>
                             </View>
                             <View className="flex-row justify-between">
-                                <Text className="text-gray-600">Delivery:</Text>
-                                <Text className="text-gray-900 font-medium">Instant via Email</Text>
+                                <Text className="text-gray-600">{t('rewards.coupon.deliveryLabel')}</Text>
+                                <Text className="text-gray-900 font-medium">{t('rewards.coupon.deliveryValue')}</Text>
                             </View>
                         </View>
                     </View>
 
                     {/* Email Input */}
                     <View className="mb-6">
-                        <Text className="text-gray-700 font-medium mb-2">Email Address</Text>
+                        <Text className="text-gray-700 font-medium mb-2">{t('rewards.coupon.emailLabel')}</Text>
                         <TextInput
                             className="border border-gray-300 rounded-lg px-3 py-3 text-base"
-                            placeholder="Enter your email address"
+                            placeholder={t('rewards.coupon.emailPlaceholder')}
                             value={email}
                             onChangeText={setEmail}
                             keyboardType="email-address"
@@ -119,7 +121,7 @@ const CouponModal = ({ visible, onClose, selectedItem, onConfirm }) => {
                             <View className="flex-row items-start">
                                 <Ionicons name="information-circle-outline" size={16} color="#3b82f6" />
                                 <Text className="text-blue-600 text-xs ml-2 flex-1">
-                                    Voucher code will be sent to your email within 10 minutes. Please check spam folder if not received.
+                                    {t('rewards.coupon.infoNote')}
                                 </Text>
                             </View>
                         </View>
@@ -130,12 +132,8 @@ const CouponModal = ({ visible, onClose, selectedItem, onConfirm }) => {
                         <View className="flex-row items-start">
                             <Ionicons name="warning-outline" size={16} color="#f59e0b" />
                             <View className="ml-2 flex-1">
-                                <Text className="text-yellow-700 text-xs font-medium mb-1">Terms & Conditions</Text>
-                                <Text className="text-yellow-600 text-xs">
-                                    • Voucher is non-refundable and non-transferable{'\n'}
-                                    • Valid for online purchases only{'\n'}
-                                    • Cannot be combined with other offers
-                                </Text>
+                                <Text className="text-yellow-700 text-xs font-medium mb-1">{t('rewards.coupon.termsTitle')}</Text>
+                                <Text className="text-yellow-600 text-xs">{t('rewards.coupon.termsText')}</Text>
                             </View>
                         </View>
                     </View>
@@ -146,13 +144,13 @@ const CouponModal = ({ visible, onClose, selectedItem, onConfirm }) => {
                             className="flex-1 bg-gray-200 py-3 rounded-lg"
                             onPress={handleCancel}
                         >
-                            <Text className="text-gray-700 font-semibold text-center">Cancel</Text>
+                            <Text className="text-gray-700 font-semibold text-center">{t('common.cancel')}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             className="flex-1 bg-primary py-3 rounded-lg"
                             onPress={handleConfirmRedeem}
                         >
-                            <Text className="text-white font-semibold text-center">Get Voucher</Text>
+                            <Text className="text-white font-semibold text-center">{t('rewards.coupon.getVoucher')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

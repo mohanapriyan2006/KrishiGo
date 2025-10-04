@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { useContext, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Alert,
     Image,
@@ -15,9 +16,11 @@ import { DataContext } from '../hooks/DataContext';
 
 const ChallengeScreen = () => {
 
+    // eslint-disable-next-line no-unused-vars
     const navigation = useNavigation();
 
     const { rewardTasks } = useContext(DataContext);
+    const { t } = useTranslation();
 
     const [challengeUploadVisible, setChallengeUploadVisible] = useState(false);
 
@@ -25,6 +28,7 @@ const ChallengeScreen = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [userPoints, setUserPoints] = useState(0);
 
+    // eslint-disable-next-line no-unused-vars
     const handleActivityStart = (activity) => {
         console.log('Starting activity:', activity.title);
 
@@ -33,8 +37,8 @@ const ChallengeScreen = () => {
             const points = parseInt(activity.points.replace('pts', ''));
             setUserPoints(prev => prev + points);
             Alert.alert(
-                'Activity Completed!',
-                `You earned ${activity.points}! Total: ${userPoints + points} points`
+                t('challenge.activityCompletedTitle'),
+                t('challenge.activityCompletedMsg', { earned: activity.points, total: userPoints + points })
             );
         }, 2000);
     };
@@ -49,7 +53,7 @@ const ChallengeScreen = () => {
         console.log('Challenge Upload Data:', data);
         // Handle the uploaded challenge data (e.g., send it to the server)
         setChallengeUploadVisible(false);
-        Alert.alert('Success', 'Challenge data submitted successfully!');
+        Alert.alert(t('common.success'), t('challenge.submitSuccess'));
     };
 
     const handleEarnRewards = () => {
@@ -64,7 +68,7 @@ const ChallengeScreen = () => {
             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
                 {/* Header */}
                 <View className="px-6 py-4 mt-10 bg-white">
-                    <Text className="text-2xl font-bold text-gray-900">Challenges</Text>
+                    <Text className="text-2xl font-bold text-gray-900">{t('challenge.title')}</Text>
                 </View>
 
                 {/* Main Challenge Card */}
@@ -79,10 +83,10 @@ const ChallengeScreen = () => {
                         {/* Challenge Info */}
                         <View className="flex-2/3">
                             <Text className="text-lg font-bold text-gray-900 mb-1">
-                                Complete Challenge
+                                {t('challenge.completeChallenge')}
                             </Text>
                             <Text className="text-gray-600 text-base mb-3">
-                                Earn Rewards
+                                {t('challenge.earnRewards')}
                             </Text>
 
                             {/* Start Challenge Button */}
@@ -91,7 +95,7 @@ const ChallengeScreen = () => {
                                 onPress={handleStartChallenge}
                             >
                                 <Text className="text-white font-semibold text-base text-center">
-                                    Start Challenge
+                                    {t('challenge.startChallenge')}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -111,21 +115,21 @@ const ChallengeScreen = () => {
                         return (
                             <>
                                 <Text className="text-2xl font-bold text-primaryDark mb-2">
-                                    Earn Rewards Points <Text className="font-medium text-sm">upto {totalPotential}pts</Text>
+                                    {t('challenge.earnRewardsPoints')} <Text className="font-medium text-sm">{t('challenge.uptoPoints', { points: totalPotential })}</Text>
                                 </Text>
                                 <Text className="text-gray-600 text-sm mb-4">
-                                    Complete sustainable & smart farming tasks. Farmer actions grant higher points; helpers (youth) earn support points.
+                                    {t('challenge.desc')}
                                 </Text>
 
                                 {/* Legend */}
                                 <View className="flex-row mb-4">
                                     <View className="flex-row items-center mr-4">
                                         <View className="w-3 h-3 rounded-full bg-lime-600 mr-2" />
-                                        <Text className="text-xs text-gray-600">Farmer Points</Text>
+                                        <Text className="text-xs text-gray-600">{t('challenge.farmerPoints')}</Text>
                                     </View>
                                     <View className="flex-row items-center">
                                         <View className="w-3 h-3 rounded-full bg-lime-300 mr-2" />
-                                        <Text className="text-xs text-gray-600">Helper Points</Text>
+                                        <Text className="text-xs text-gray-600">{t('challenge.helperPoints')}</Text>
                                     </View>
                                 </View>
 
@@ -138,7 +142,7 @@ const ChallengeScreen = () => {
                                     >
                                         {rewardTasks.map((item) => {
                                             const statusColor = item.completedBy ? 'bg-green-100 border-green-500' : 'bg-gray-100 border-gray-300';
-                                            const roleLabel = item.completedBy ? (item.completedBy === 'farmer' ? 'Farmer Done' : 'Helper Done') : 'Pending';
+                                            const roleLabel = item.completedBy ? (item.completedBy === 'farmer' ? t('challenge.farmerDone') : t('challenge.helperDone')) : t('challenge.pending');
                                             return (
                                                 <View key={item.id} className="border border-primary rounded-xl p-4 bg-white w-60">
                                                     <View className="flex-row justify-between items-start mb-2">
@@ -162,12 +166,12 @@ const ChallengeScreen = () => {
                                                     <View className="flex-row items-center">
                                                         <View className="flex-row items-center mr-4">
                                                             <View className="px-2 py-1 rounded-md bg-lime-600">
-                                                                <Text className="text-[11px] text-white font-semibold">Farmer +{item.farmerPoints}</Text>
+                                                                <Text className="text-[11px] text-white font-semibold">{t('challenge.farmerPlus', { points: item.farmerPoints })}</Text>
                                                             </View>
                                                         </View>
                                                         <View className="flex-row items-center">
                                                             <View className="px-2 py-1 rounded-md bg-lime-300">
-                                                                <Text className="text-[11px] text-gray-800 font-semibold">Helper +{item.helperPoints}</Text>
+                                                                <Text className="text-[11px] text-gray-800 font-semibold">{t('challenge.helperPlus', { points: item.helperPoints })}</Text>
                                                             </View>
                                                         </View>
                                                     </View>
@@ -183,7 +187,7 @@ const ChallengeScreen = () => {
                                     onPress={handleEarnRewards}
                                 >
                                     <Text className="text-white font-semibold text-center text-lg">
-                                        Submit Proof / Claim
+                                        {t('challenge.submitProof')}
                                     </Text>
                                 </TouchableOpacity>
                             </>
