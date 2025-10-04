@@ -203,26 +203,28 @@ const ChallengeUpload = ({ visible, onClose }) => {
                             />
                         </View>
 
-                        {/* Back Button */}
-                        <TouchableOpacity
-                            onPress={handleClose}
-                            className="bg-primary rounded-xl py-4 mt-6 shadow-sm"
-                            activeOpacity={0.8}
-                        >
-                            <Text className="text-white font-semibold tracking-wider text-center text-lg">
-                                {t('challenge.submitActivity')}
-                            </Text>
-                        </TouchableOpacity>
-                        {/* Submit Button */}
-                        <TouchableOpacity
-                            onPress={handleSubmit}
-                            className="bg-primary rounded-xl py-4 mt-6 shadow-sm"
-                            activeOpacity={0.8}
-                        >
-                            <Text className="text-white font-semibold tracking-wider text-center text-lg">
-                                {t('challenge.submitActivity')}
-                            </Text>
-                        </TouchableOpacity>
+                        <View className="flex-row justify-center gap-4 mx-4 mt-4">
+                            {/* Back Button */}
+                            <TouchableOpacity
+                                onPress={handleClose}
+                                className="bg-gray-100 rounded-xl border-2 border-primary py-2 px-8"
+                                activeOpacity={0.8}
+                            >
+                                <Text className="text-primaryDark font-semibold tracking-wider text-center text-lg">
+                                    {t('common.cancel')}
+                                </Text>
+                            </TouchableOpacity>
+                            {/* Submit Button */}
+                            <TouchableOpacity
+                                onPress={handleSubmit}
+                                className="bg-primary rounded-xl py-2 shadow-sm"
+                                activeOpacity={0.8}
+                            >
+                                <Text className="text-white font-semibold tracking-wider text-center text-lg">
+                                    {t('challenge.submitActivity')}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                     </ScrollView>
 
                     {/* Guidelines */}
