@@ -45,11 +45,11 @@ export default function Home() {
 		},
 		{
 			id: 4,
-			title: t("schemes.shc.title"),
-			description: t("schemes.shc.description"),
-			amount: t("schemes.shc.amount"),
-			deadline: t("schemes.shc.deadline"),
-			status: t("schemes.shc.status"),
+			title: t("schemes.soilHealth.title"),
+			description: t("schemes.soilHealth.description"),
+			amount: t("schemes.soilHealth.amount"),
+			deadline: t("schemes.soilHealth.deadline"),
+			status: t("schemes.soilHealth.status"),
 			image: require("../assets/images/schemes/soil-health-card.jpg"),
 			link: "https://soilhealth.dac.gov.in/"
 		},
@@ -104,6 +104,7 @@ export default function Home() {
 
 	return (
 		<ScrollView className="flex-1 bg-[#f5f5f5]">
+
 			<View className="p-5 mb-10 pt-[50px]">
 				{/* Header */}
 				<View className=" mb-8 relative" >

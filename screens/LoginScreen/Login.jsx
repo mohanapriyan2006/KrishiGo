@@ -170,7 +170,7 @@ const Login = () => {
                                 </Text>
                                 <View className="relative">
                                     <TextInput
-                                        className={`w-full bg-white rounded-xl px-4 py-4 pr-12 text-base border ${errors.password ? "border-red-500" : "border-gray-200"
+                                        className={`w-full bg-white text-black rounded-xl px-4 py-4 pr-12 text-base border ${errors.password ? "border-red-500" : "border-gray-200"
                                             } shadow-sm`}
                                         placeholder="Enter password"
                                         placeholderTextColor="#9CA3AF"

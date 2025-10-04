@@ -99,8 +99,9 @@ const DeleteAccModal = ({ showDeleteModal, setShowDeleteModal, userEmail }) => {
                             value={password}
                             onChangeText={setPassword}
                             placeholder={t('settings.delete.passwordPlaceholder')}
+                            placeholderTextColor="#9CA3AF"
                             secureTextEntry={true}
-                            className="border border-gray-300 rounded-xl px-4 py-3 text-base"
+                            className="border border-gray-300 text-black rounded-xl px-4 py-3 text-base"
                             autoFocus={true}
                         />
                         <Text className="text-gray-500 text-sm mt-1">

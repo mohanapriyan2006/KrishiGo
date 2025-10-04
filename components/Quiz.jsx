@@ -5,7 +5,6 @@ import {
     Image,
     SafeAreaView,
     ScrollView,
-    StatusBar,
     Text,
     TouchableOpacity,
     View
@@ -162,7 +161,7 @@ const QuizScreen = ({ navigation, route }) => {
 
     return (
         <SafeAreaView className="flex-1 bg-white">
-            <StatusBar barStyle="light-content" backgroundColor="#8bc34a" />
+            {/* <StatusBar barStyle="light-content" backgroundColor="#8bc34a" /> */}
 
             {/* Header */}
             <View className="bg-primary px-4 h-[80px] flex-row justify-between items-end pb-3">
