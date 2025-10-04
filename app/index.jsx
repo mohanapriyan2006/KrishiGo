@@ -1,4 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { StatusBar } from "expo-status-bar";
 import { I18nextProvider } from "react-i18next";
 import About from "../components/About";
 import CourseDetails from "../components/CoursesComponents/CourseDetails";
@@ -43,6 +44,7 @@ export default function Index() {
 	return (
 		<I18nextProvider i18n={i18n}>
 			<DataProvider>
+				<StatusBar style="dark" />
 				<AppContent />
 			</DataProvider>
 		</I18nextProvider>

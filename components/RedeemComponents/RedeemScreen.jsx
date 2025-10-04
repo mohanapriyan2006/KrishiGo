@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     FlatList,
     Image,
@@ -10,11 +11,12 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import UpiModal from './UpiModal';
 import CouponModal from './CouponModal';
 import GadgetsModal from './GadgetsModal';
+import UpiModal from './UpiModal';
 
 const RedeemScreen = ({ visible, onClose, totalPoints }) => {
+    const { t } = useTranslation();
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [selectedItem, setSelectedItem] = useState(null);
     
@@ -23,11 +25,12 @@ const RedeemScreen = ({ visible, onClose, totalPoints }) => {
     const [couponModalVisible, setCouponModalVisible] = useState(false);
     const [gadgetsModalVisible, setGadgetsModalVisible] = useState(false);
 
+    // Categories (translated)
     const categories = [
-        { id: 'all', name: 'All', icon: 'apps-outline' },
-        { id: 'money', name: 'Real Money', icon: 'cash-outline' },
-        { id: 'coupons', name: 'Coupons', icon: 'gift-outline' },
-        { id: 'gadgets', name: 'Gadgets', icon: 'phone-portrait-outline' },
+        { id: 'all', name: t('rewards.redeem.categories.all'), icon: 'apps-outline' },
+        { id: 'money', name: t('rewards.redeem.categories.money'), icon: 'cash-outline' },
+        { id: 'coupons', name: t('rewards.redeem.categories.coupons'), icon: 'gift-outline' },
+        { id: 'gadgets', name: t('rewards.redeem.categories.gadgets'), icon: 'phone-portrait-outline' },
     ];
 
     const redeemOptions = {
@@ -63,11 +66,9 @@ const RedeemScreen = ({ visible, onClose, totalPoints }) => {
 
     const handleRedeemItem = (item) => {
         if (totalPoints < item.points) {
-            // Simple alert without importing Alert
-            console.log('Insufficient Points', `You need ${item.points} points to redeem this item. You currently have ${totalPoints} points.`);
+            console.log(t('rewards.redeem.insufficientTitle'), t('rewards.redeem.insufficientMsg', { needed: item.points, current: totalPoints }));
             return;
         }
-        
         setSelectedItem(item);
         
         // Open appropriate modal based on item type
@@ -100,7 +101,7 @@ const RedeemScreen = ({ visible, onClose, totalPoints }) => {
                         <Text className="text-gray-600 text-sm mt-1">{item.description}</Text>
                         <View className="flex-row items-center mt-2">
                             <Text className="text-primary font-bold text-sm">{item.value}</Text>
-                            <Text className="text-gray-500 text-xs ml-2">• {item.points} points</Text>
+                            <Text className="text-gray-500 text-xs ml-2">• {item.points} {t('rewards.common.points')}</Text>
                         </View>
                     </View>
                 </View>
@@ -109,8 +110,8 @@ const RedeemScreen = ({ visible, onClose, totalPoints }) => {
                     onPress={() => handleRedeemItem(item)}
                     disabled={totalPoints < item.points}
                 >
-                    <Text className={`font-medium text-sm ${totalPoints >= item.points ? 'text-white' : 'text-gray-500'}`}>
-                        Redeem
+                    <Text className={`font-medium text-sm ${totalPoints >= item.points ? 'text-white' : 'text-gray-500'}`}> 
+                        {t('rewards.redeem.redeemButton')}
                     </Text>
                 </TouchableOpacity>
             </View>
@@ -123,14 +124,14 @@ const RedeemScreen = ({ visible, onClose, totalPoints }) => {
                 {/* Header */}
                 <View className="bg-white px-6 py-4 border-b border-gray-200">
                     <View className="flex-row items-center justify-between">
-                        <Text className="text-2xl font-bold text-gray-900">Redeem Points</Text>
+                        <Text className="text-2xl font-bold text-gray-900">{t('rewards.redeem.title')}</Text>
                         <TouchableOpacity onPress={onClose} className="p-2">
                             <Ionicons name="close" size={24} color="#374151" />
                         </TouchableOpacity>
                     </View>
                     <View className="flex-row items-center mt-2">
                         <Image source={require('../../assets/images/Coin.png')} style={{ width: 20, height: 20 }} />
-                        <Text className="text-primary font-bold text-lg ml-2">{totalPoints?.toLocaleString()} points available</Text>
+                        <Text className="text-primary font-bold text-lg ml-2">{t('rewards.redeem.pointsAvailable', { points: totalPoints?.toLocaleString() })}</Text>
                     </View>
                 </View>
 

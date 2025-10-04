@@ -487,5 +487,268 @@
 		},
 		"version": "KrishiGo v1.0.0",
 		"copyright": "© 2024 KrishiGo. All rights reserved."
+	},
+	"rewards": {
+		"common": {
+			"points": "points",
+			"pts": "pts"
+		},
+		"popup": {
+			"congrats": "Congratulations!",
+			"redeemedPoints": "You've redeemed {{points}} points"
+		},
+		"upi": {
+			"title": "UPI / Phone Transfer",
+			"missingTitle": "Details Required",
+			"missingMsg": "Please enter either a UPI ID or phone number",
+			"invalidUpiTitle": "Invalid UPI ID",
+			"invalidUpiMsg": "Please enter a valid UPI ID (must contain @)",
+			"invalidPhoneTitle": "Invalid Phone Number",
+			"invalidPhoneMsg": "Phone number must be 10 digits",
+			"transferTitle": "Redeem Confirmation",
+			"transferMsg": "₹{{amount}} will be transferred to your {{method}} within 24 hours",
+			"methodUpi": "UPI ID",
+			"methodPhone": "phone number",
+			"chooseMethod": "Choose one method to receive your money",
+			"upiLabel": "UPI ID",
+			"upiPlaceholder": "example@bank",
+			"or": "OR",
+			"phoneLabel": "Phone Number",
+			"phonePlaceholder": "10-digit mobile number",
+			"infoNote": "Redemptions are processed after basic verification. Make sure details are correct to avoid delays.",
+			"confirm": "Redeem Now"
+		},
+		"coupon": {
+			"missingTitle": "Email Required",
+			"missingMsg": "Please enter your email address",
+			"invalidEmailTitle": "Invalid Email",
+			"invalidEmailMsg": "Please enter a valid email address",
+			"sentTitle": "Voucher Sent",
+			"sentMsg": "Your voucher for {{title}} has been sent to {{email}}",
+			"detailsTitle": "Voucher Details",
+			"typeLabel": "Type",
+			"typeValue": "Digital Code",
+			"validityLabel": "Validity",
+			"validityValue": "30 days",
+			"deliveryLabel": "Delivery",
+			"deliveryValue": "Instant Email",
+			"emailLabel": "Email Address",
+			"emailPlaceholder": "you@example.com",
+			"infoNote": "The voucher code will be sent instantly to your email after verification.",
+			"termsTitle": "Terms & Conditions",
+			"termsText": "Codes are single-use and non-transferable. Expired or misused codes cannot be replaced.",
+			"getVoucher": "Get Voucher"
+		},
+		"gadgets": {
+			"orderDetails": "Order Details",
+			"byBrand": "by {{brand}}",
+			"selectColor": "Select Color",
+			"deliveryOptions": "Delivery Options",
+			"deliveryAddress": "Delivery Address",
+			"fullNameLabel": "Full Name",
+			"fullNamePlaceholder": "Enter recipient name",
+			"addressLabel": "Full Address",
+			"addressPlaceholder": "House / Street / Area",
+			"cityLabel": "City",
+			"cityPlaceholder": "Enter city",
+			"pincodeLabel": "Pincode",
+			"pincodePlaceholder": "6-digit pincode",
+			"phoneLabel": "Phone Number",
+			"phonePlaceholder": "10-digit mobile number",
+			"orderSummary": "Order Summary",
+			"placeOrder": "Place Order",
+			"missingTitle": "Details Required",
+			"missingMsg": "Please fill in all required fields",
+			"invalidPincodeTitle": "Invalid Pincode",
+			"invalidPincodeMsg": "Pincode must be 6 digits",
+			"invalidPhoneTitle": "Invalid Phone",
+			"invalidPhoneMsg": "Phone number must be 10 digits",
+			"orderConfirmedTitle": "Order Confirmed",
+			"orderConfirmedMsg": "Your order for {{title}} ({{color}}) has been placed! Estimated: {{time}}",
+			"trackOrder": "Track Order",
+			"trackingTitle": "Tracking Info",
+			"trackingMsg": "Your tracking ID is {{id}}. Updates will appear soon.",
+			"summary": {
+				"productValue": "Product Value",
+				"pointsUsed": "Points Used",
+				"selectedColor": "Selected Color",
+				"delivery": "Delivery",
+				"totalPoints": "Total Points"
+			},
+			"colors": {
+				"black": "Black",
+				"white": "White",
+				"blue": "Blue",
+				"silver": "Silver",
+				"red": "Red",
+				"rose_gold": "Rose Gold"
+			},
+			"delivery": {
+				"standard": "Standard",
+				"standardTime": "5-7 days",
+				"standardPrice": "Free",
+				"express": "Express",
+				"expressTime": "2-3 days",
+				"expressPrice": "+200 pts",
+				"premium": "Premium",
+				"premiumTime": "1-2 days",
+				"premiumPrice": "+400 pts"
+			}
+		},
+		"redeem": {
+			"title": "Redeem Rewards",
+			"categories": {
+				"all": "All",
+				"money": "Money",
+				"coupons": "Coupons",
+				"gadgets": "Gadgets"
+			},
+			"pointsAvailable": "{{points}} points available",
+			"redeemButton": "Redeem",
+			"insufficientTitle": "Not Enough Points",
+			"insufficientMsg": "You need {{needed}} points (you have {{current}})",
+			"items": {
+				"upi": {
+					"title": "UPI Transfer",
+					"description": "Direct UPI money transfer"
+				},
+				"amazon": {
+					"title": "Amazon Voucher",
+					"description": "₹500 Amazon gift card"
+				},
+				"flipkart": {
+					"title": "Flipkart Voucher",
+					"description": "₹250 Flipkart gift card"
+				},
+				"zomato": {
+					"title": "Zomato Voucher",
+					"description": "₹200 food delivery voucher"
+				},
+				"bms": {
+					"title": "BookMyShow",
+					"description": "Movie tickets voucher"
+				},
+				"swiggy": {
+					"title": "Swiggy Voucher",
+					"description": "₹150 food delivery voucher"
+				},
+				"earbuds": {
+					"title": "Wireless Earbuds",
+					"description": "Bluetooth 5.0 earbuds"
+				},
+				"powerbank": {
+					"title": "Power Bank",
+					"description": "10000mAh portable charger"
+				},
+				"stand": {
+					"title": "Smartphone Holder",
+					"description": "Adjustable phone stand"
+				},
+				"cables": {
+					"title": "USB Cable Set",
+					"description": "Multi-port charging cables"
+				},
+				"speaker": {
+					"title": "Bluetooth Speaker",
+					"description": "Portable wireless speaker"
+				},
+				"watch": {
+					"title": "Smart Watch",
+					"description": "Fitness tracking smartwatch"
+				}
+			}
+		},
+		"screen": {
+			"title": "Rewards",
+			"totalEarned": "Total points earned",
+			"redeemButton": "Redeem",
+			"referral": {
+				"title": "Refer & Earn",
+				"earnUpto": "Earn upto {{points}} points",
+				"shareTitle": "Invite to KrishiGo",
+				"shareMessage": "Join me on KrishiGo! Use my referral code: {{code}}",
+				"shareError": "Failed to open share options",
+				"codeCopiedTitle": "Code Copied",
+				"codeCopiedMsg": "Referral code copied: {{code}}"
+			},
+			"daily": {
+				"title": "Daily Rewards",
+				"claim": "Claim",
+				"claimed": "Claimed",
+				"items": {
+					"checkin": "Daily Check-In",
+					"quiz1": "Complete 1 Quiz"
+				}
+			},
+			"leaderboard": {
+				"title": "Leaderboard"
+			},
+			"ai": {
+				"comingSoonTitle": "Coming Soon",
+				"comingSoonMsg": "AI Assistant is under development"
+			}
+		}
+	},
+	"ai": {
+		"chat": {
+			"header": {
+				"title": "🌾 Farm Assistant"
+			},
+			"newChat": "New Chat",
+			"messages": {
+				"analyzeImage": "Analyze this image"
+			},
+			"welcome": {
+				"intro": "👋 Welcome! Ask anything about crops, soil, pests, weather or upload a plant image for instant analysis."
+			},
+			"loading": {
+				"initial": "Loading your farm chat...",
+				"uploadingImage": "Uploading image",
+				"analyzing": "Analyzing"
+			},
+			"errors": {
+				"uploadTitle": "Upload Error",
+				"uploadMessage": "Failed to upload image. Please try again.",
+				"connectionTitle": "Connection Error",
+				"imageAnalysis": "Image analysis failed. You can still ask questions about it.",
+				"generalAdvice": "For general crop advice, ask without an image.",
+				"genericTitle": "Error",
+				"takePhoto": "Failed to take photo. Please try again.",
+				"selectImage": "Failed to select image. Please try again.",
+				"uploadFailed": "Failed to upload image for analysis"
+			},
+			"permissions": {
+				"title": "Permission Required",
+				"msg": "We need camera and photo library permissions to change your profile photo."
+			},
+			"quick": {
+				"disease": "Disease ID",
+				"diseasePrompt": "Identify this plant disease",
+				"cropPlan": "Crop Plan",
+				"cropPlanPrompt": "What should I plant this season?",
+				"soil": "Soil Tips",
+				"soilPrompt": "How to improve soil health?"
+			},
+			"actions": {
+				"newChat": "New Chat",
+				"takePhoto": "Take Photo",
+				"chooseFromGallery": "Choose from Gallery"
+			},
+			"sidebar": {
+				"recent": "Recent Chats",
+				"untitled": "Untitled Chat"
+			},
+			"delete": {
+				"title": "Delete Chat",
+				"confirm": "Are you sure you want to delete this chat?",
+				"deleteBtn": "Delete"
+			},
+			"image": {
+				"selected": "Selected Image"
+			},
+			"input": {
+				"placeholder": "Type your farm question..."
+			}
+		}
 	}
 }

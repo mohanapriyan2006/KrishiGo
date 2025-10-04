@@ -1,8 +1,10 @@
 import { Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
+import { useTranslation } from 'react-i18next';
 import { Modal, Text, TouchableOpacity, View } from 'react-native';
 
 const RewardPopUp = ({ visible, onClose, points = 100 }) => {
+    const { t } = useTranslation();
     return (
         <Modal
             visible={visible}
@@ -22,8 +24,8 @@ const RewardPopUp = ({ visible, onClose, points = 100 }) => {
                     <View className="px-6 pb-6 -mt-2 items-center gap-2">
                         <Image source={require('../assets/images/coin_spin.gif')}
                             style={{ width: 100, height: 100 }} />
-                        <Text className='text-primaryDark text-2xl font-semibold'>Congratulations!</Text>
-                        <Text className='text-gray-600'>You have redeemed {points} pts</Text>
+                        <Text className='text-primaryDark text-2xl font-semibold'>{t('rewards.popup.congrats')}</Text>
+                        <Text className='text-gray-600'>{t('rewards.popup.redeemedPoints', { points })}</Text>
                     </View>
 
                 </View>
