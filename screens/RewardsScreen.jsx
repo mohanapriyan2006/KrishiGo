@@ -121,7 +121,7 @@ const RewardsScreen = () => {
                                 onPress={handleRedeemPoints}
                             >
                                 <Text className="text-primaryDark tracking-wider font-semibold text-sm">
-                                    {t('rewards.screen.redeemButton')}
+                                    {t('rewards.screen.redeemButton')} {t('rewards.common.points')}
                                 </Text>
                             </TouchableOpacity>
                         </View>
