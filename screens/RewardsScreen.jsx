@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useContext, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Alert,
     Clipboard,
@@ -18,6 +19,7 @@ import { DataContext } from '../hooks/DataContext';
 
 const RewardsScreen = () => {
 
+    const { t } = useTranslation();
     const { user } = useContext(DataContext)
 
     const [totalPoints, setTotalPoints] = useState(8490);
@@ -27,8 +29,8 @@ const RewardsScreen = () => {
     const [rewardPoints, setRewardPoints] = useState(0);
 
     const [dailyRewards, setDailyRewards] = useState([
-        { id: 1, name: 'Daily CheckIn', points: 50, claimed: false },
-        { id: 2, name: 'Complete 1 Quiz', points: 120, claimed: false }
+        { id: 1, key: 'checkin', points: 50, claimed: false },
+        { id: 2, key: 'quiz1', points: 120, claimed: false }
     ]);
 
     const leaderboardData = [
@@ -52,12 +54,12 @@ const RewardsScreen = () => {
     const handleReferFriends = async () => {
         try {
             await Share.share({
-                message: 'Join KrishiGo and earn rewards! Use my referral code: krishigo.in/ref-3213',
+                message: t('rewards.screen.referral.shareMessage', { code: 'krishigo.in/ref-3213' }),
                 url: 'krishigo.in/ref-3213',
-                title: 'Join KrishiGo',
+                title: t('rewards.screen.referral.shareTitle'),
             });
         } catch (_error) {
-            Alert.alert('Error', 'Unable to share referral link');
+            Alert.alert(t('common.error'), t('rewards.screen.referral.shareError'));
         }
     };
 
@@ -70,7 +72,7 @@ const RewardsScreen = () => {
             )
         );
 
-        const claimedReward = dailyRewards.find(r => r.id === rewardId);
+    const claimedReward = dailyRewards.find(r => r.id === rewardId);
         setTotalPoints(prev => prev + claimedReward.points);
 
         setRewardPoints(claimedReward.points);
@@ -79,11 +81,12 @@ const RewardsScreen = () => {
     };
 
     const copyReferralCode = () => {
-        Clipboard.setString('krishigo.in/ref-3213');
+        const code = 'krishigo.in/ref-3213';
+        Clipboard.setString(code);
         Alert.alert(
-            'Referral Code Copied',
-            'krishigo.in/ref-3213 has been copied to clipboard',
-            [{ text: 'OK' }]
+            t('rewards.screen.referral.codeCopiedTitle'),
+            t('rewards.screen.referral.codeCopiedMsg', { code }),
+            [{ text: t('common.ok') }]
         );
     };
 
@@ -92,7 +95,7 @@ const RewardsScreen = () => {
             <ScrollView className="flex-1 mt-10" showsVerticalScrollIndicator={false}>
                 {/* Header */}
                 <View className="px-6 py-4 bg-white">
-                    <Text className="text-2xl font-bold text-gray-900">Your Rewards</Text>
+                    <Text className="text-2xl font-bold text-gray-900">{t('rewards.screen.title')}</Text>
                 </View>
 
                 {/* Points Card */}
@@ -106,10 +109,10 @@ const RewardsScreen = () => {
                         <View className="flex-col flex-2/3">
                             <View>
                                 <Text className="text-white text-2xl font-bold">
-                                    {totalPoints.toLocaleString()} pts
+                                    {totalPoints.toLocaleString()} {t('rewards.common.pts')}
                                 </Text>
                                 <Text className="text-white tracking-wider text-sm opacity-90">
-                                    Total points earned
+                                    {t('rewards.screen.totalEarned')}
                                 </Text>
                             </View>
                             {/* Redeem Button */}
@@ -118,7 +121,7 @@ const RewardsScreen = () => {
                                 onPress={handleRedeemPoints}
                             >
                                 <Text className="text-primaryDark tracking-wider font-semibold text-sm">
-                                    Redeem Points
+                                    {t('rewards.screen.redeemButton')}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -131,10 +134,10 @@ const RewardsScreen = () => {
                     <View className="flex-row gap-2 items-center justify-between">
                         <View>
                             <Text className="text-primaryDark text-sm font-medium">
-                                Refer your friends
+                                {t('rewards.screen.referral.title')}
                             </Text>
                             <Text className="text-primaryDark text-sm">
-                                Earn upto 899pts
+                                {t('rewards.screen.referral.earnUpto', { points: 899 })}
                             </Text>
                         </View>
                         <View className="flex-row gap-1">
@@ -160,7 +163,7 @@ const RewardsScreen = () => {
                 {/* Daily Rewards Section */}
                 <View className="bg-white mx-6 mt-6 rounded-2xl p-6 shadow-sm">
                     <Text className="text-lg font-bold text-gray-900 mb-4">
-                        Daily Rewards
+                        {t('rewards.screen.daily.title')}
                     </Text>
 
                     <View className="bg-[#67b00019] rounded-xl p-4">
@@ -172,10 +175,10 @@ const RewardsScreen = () => {
                                         style={{ width: 40, height: 40, marginRight: 12 }} />
                                     <View>
                                         <Text className="text-gray-900 font-medium">
-                                            {reward.name}
+                                            {t(`rewards.screen.daily.items.${reward.key}`)}
                                         </Text>
                                         <Text className="text-gray-600 text-sm">
-                                            {reward.points} points
+                                            {reward.points} {t('rewards.common.points')}
                                         </Text>
                                     </View>
                                 </View>
@@ -193,7 +196,7 @@ const RewardsScreen = () => {
                                         ? 'text-gray-500'
                                         : 'text-primaryDark'
                                         }`}>
-                                        {reward.claimed ? 'Claimed' : 'Claim'}
+                                        {reward.claimed ? t('rewards.screen.daily.claimed') : t('rewards.screen.daily.claim')}
                                     </Text>
                                 </TouchableOpacity>
 
@@ -215,7 +218,7 @@ const RewardsScreen = () => {
                 {/* Leaderboard Section */}
                 <View className="bg-white mx-6 mt-4 rounded-2xl p-6 shadow-sm">
                     <Text className="text-lg font-bold text-gray-900 mb-4">
-                        Leaderboard
+                        {t('rewards.screen.leaderboard.title')}
                     </Text>
 
                     <View className="space-y-3">
@@ -259,7 +262,7 @@ const RewardsScreen = () => {
                 <View className="absolute bottom-6 right-6">
                     <TouchableOpacity
                         className="w-14 h-14 bg-primary rounded-full items-center justify-center shadow-lg"
-                        onPress={() => Alert.alert('AI Assistant', 'AI Assistant feature coming soon!')}
+                        onPress={() => Alert.alert(t('rewards.screen.ai.comingSoonTitle'), t('rewards.screen.ai.comingSoonMsg'))}
                     >
                         <Text className="text-white font-bold text-lg">AI</Text>
                     </TouchableOpacity>

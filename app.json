@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "krishiGo-project",
-    "slug": "krishiGo-project",
+    "name": "krishiGo",
+    "slug": "krishiGo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
@@ -9,11 +9,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.mohanapriyan2006.krishiGoproject",
-      "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
-      }
+      "supportsTablet": true
     },
     "entryPoint": "./src/navigation/index.js",
     "android": {

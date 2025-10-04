@@ -1,17 +1,18 @@
 import {
-    addDoc,
-    collection,
-    deleteDoc,
-    doc,
-    getDocs,
-    limit,
-    onSnapshot,
-    orderBy,
-    query,
-    serverTimestamp,
-    startAfter,
-    updateDoc,
+	addDoc,
+	collection,
+	deleteDoc,
+	doc,
+	getDocs,
+	limit,
+	onSnapshot,
+	orderBy,
+	query,
+	serverTimestamp,
+	startAfter,
+	updateDoc,
 } from "firebase/firestore";
+
 
 export const createFirebaseChatHandlers = ({
 	db,
@@ -27,6 +28,8 @@ export const createFirebaseChatHandlers = ({
 	getRecentChats,
 }) => {
 	const PAGE_SIZE = 20;
+
+
 
 	const loadRecentChats = async () => {
 		const userId = getUserId();
@@ -55,6 +58,7 @@ export const createFirebaseChatHandlers = ({
 		}
 	};
 
+
 	const startNewChat = async () => {
 		const userId = getUserId();
 		if (!userId) return;
@@ -70,8 +74,13 @@ export const createFirebaseChatHandlers = ({
 			setCurrentChatTitle("New Chat");
 
 			const welcomeMessage = {
-				id: "welcome-" + Date.now(),
-				text: "🌾 Hello, fellow farmer! I'm your AI farming assistant...",
+				id: "welcome",
+				text: {
+					en: "🌾 Hello, fellow farmer! I'm your AI farming assistant...",
+					hi: "🌾 नमस्ते, किसान मित्र! मैं आपका एआई कृषि सहायक हूँ...",
+					ml: "🌾 നമസ്കാരം, കർഷക സുഹൃത്തേ! ഞാൻ നിങ്ങളുടെ എഐ കൃഷി സഹായി...",
+					ta: "🌾 வணக்கம், விவசாயி நண்பரே! நான் உங்கள் AI விவசாய உதவியாளர்...",
+				},
 				isBot: true,
 				timestamp: new Date(),
 			};

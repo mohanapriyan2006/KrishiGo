@@ -1,6 +1,6 @@
 # 🌱 KrishiGo - Your Digital Agriculture Companion
 
-![KrishiGo Logo](assets/images/logo.png)
+![KrishiGo Logo](assets/images/logo2.png)
 
 ## 📱 About KrishiGo
 
@@ -18,7 +18,7 @@ KrishiGo is a comprehensive mobile application designed to empower farmers with 
 - 🌐 **Multilingual Support** - Access content in your preferred language
 - 👤 **Personalized Experience** - Track your progress and achievements
 
-![krishiGo logo](assets/images/logo2.png)
+![krishiGo logo](assets/images/logo3.png)
 
 ## 🚀 Getting Started
 
