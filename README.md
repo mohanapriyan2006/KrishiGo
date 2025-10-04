@@ -2,6 +2,8 @@
 
 ![KrishiGo Logo](assets/images/logo2.png)
 
+## Demo APK -> [CLICK TO DOWNLOAD](https://expo.dev/artifacts/eas/moybGR6df2bufCkfUFSGrU.apk)
+
 ## 📱 About KrishiGo
 
 KrishiGo is a comprehensive mobile application designed to empower farmers with educational resources, interactive courses, challenges, and rewards. Built with React Native and Expo, this app provides a complete learning platform for agricultural knowledge, sustainable farming practices, and modern techniques.
