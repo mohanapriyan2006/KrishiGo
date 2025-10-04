@@ -16,7 +16,7 @@
   <h3 style="color: white; text-align: center; margin: 0;">🚀 Get KrishiGo APK</h3>
   <p style="color: white; text-align: center; margin: 10px 0;">Experience the future of agricultural learning!</p>
   
-  **[📥 DOWNLOAD APK](https://github.com/mohanapriyan2006/KrishiGo/releases/download/v1.0/KrishiGo.apk)**
+  **[📥 DOWNLOAD APK](https://expo.dev/artifacts/eas/moybGR6df2bufCkfUFSGrU.apk)**
 </div>
 
 </div>
@@ -392,7 +392,7 @@ krishigo/
 
 **Ready to transform your farming knowledge?**
 
-### [📥 DOWNLOAD KRISHIGO APK NOW](https://github.com/mohanapriyan2006/KrishiGo/releases/download/v1.0/KrishiGo.apk)
+### [📥 DOWNLOAD KRISHIGO APK NOW](https://expo.dev/artifacts/eas/moybGR6df2bufCkfUFSGrU.apk)
 
 ---
 
@@ -403,10 +403,3 @@ krishigo/
 </div>
 
 -------------------------------
-
-
-## 📬 Contact
-
-For any inquiries or support, please contact the project maintainers:
-
-- GitHub: [@mohanapriyan2006](https://github.com/mohanapriyan2006)
