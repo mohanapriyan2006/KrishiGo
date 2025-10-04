@@ -271,6 +271,7 @@ const Register = () => {
 										className={`bg-white p-4 rounded-xl border ${errors.firstName ? "border-red-500" : "border-gray-300"
 											}`}
 										placeholder="First Name"
+										placeholderTextColor="#9CA3AF"
 										value={formData.firstName}
 										onChangeText={(text) => handleInputChange("firstName", text)}
 									/>
@@ -285,6 +286,7 @@ const Register = () => {
 										className={`bg-white p-4 rounded-xl border ${errors.lastName ? "border-red-500" : "border-gray-300"
 											}`}
 										placeholder="Last Name"
+										placeholderTextColor="#9CA3AF"
 										value={formData.lastName}
 										onChangeText={(text) => handleInputChange("lastName", text)}
 									/>
@@ -301,6 +303,7 @@ const Register = () => {
 									className={`bg-white p-4 rounded-xl border ${errors.email ? "border-red-500" : "border-gray-300"
 										}`}
 									placeholder="Email"
+									placeholderTextColor="#9CA3AF"
 									keyboardType="email-address"
 									value={formData.email}
 									onChangeText={(text) => handleInputChange("email", text)}
@@ -320,6 +323,7 @@ const Register = () => {
 										<TextInput
 											className={`flex-1 bg-white p-4 rounded-xl border ${errors["farmerDetails.kisanCardNumber"] ? "border-red-500" : "border-gray-300"}`}
 											placeholder="Enter 12-16 digit number"
+											placeholderTextColor="#9CA3AF"
 											keyboardType="numeric"
 											value={formData.farmerDetails.kisanCardNumber}
 											onChangeText={(text) => {
@@ -356,6 +360,7 @@ const Register = () => {
 									className={`bg-white p-4 rounded-xl border ${errors.phoneNumber ? "border-red-500" : "border-gray-300"
 										}`}
 									placeholder="Phone Number (with country code)"
+									placeholderTextColor="#9CA3AF"
 									value={formData.phoneNumber}
 									onChangeText={(text) =>
 										handleInputChange("phoneNumber", text)
@@ -375,6 +380,7 @@ const Register = () => {
 										: "border-gray-300"
 										}`}
 									placeholder="Street Address"
+									placeholderTextColor="#9CA3AF"
 									value={formData.address.street}
 									onChangeText={(text) =>
 										handleInputChange("address.street", text)
@@ -395,6 +401,7 @@ const Register = () => {
 											: "border-gray-300"
 											}`}
 										placeholder="City"
+										placeholderTextColor="#9CA3AF"
 										value={formData.address.city}
 										onChangeText={(text) =>
 											handleInputChange("address.city", text)
@@ -413,6 +420,7 @@ const Register = () => {
 											: "border-gray-300"
 											}`}
 										placeholder="State"
+										placeholderTextColor="#9CA3AF"
 										value={formData.address.state}
 										onChangeText={(text) =>
 											handleInputChange("address.state", text)
@@ -433,6 +441,7 @@ const Register = () => {
 										: "border-gray-300"
 										}`}
 									placeholder="ZIP Code"
+									placeholderTextColor="#9CA3AF"
 									keyboardType="numeric"
 									value={formData.address.zipCode}
 									onChangeText={(text) =>
@@ -505,9 +514,10 @@ const Register = () => {
 							<View className="mb-4">
 								<View className="relative">
 									<TextInput
-										className={`bg-white p-4 rounded-xl border ${errors.password ? "border-red-500" : "border-gray-300"
+										className={`bg-white text-black p-4 rounded-xl border ${errors.password ? "border-red-500" : "border-gray-300"
 											}`}
 										placeholder="Password"
+										placeholderTextColor="#9CA3AF"
 										secureTextEntry={!isPasswordVisible}
 										value={formData.password}
 										onChangeText={(text) => handleInputChange("password", text)}
@@ -533,11 +543,12 @@ const Register = () => {
 							<View className="mb-4">
 								<View className="relative">
 									<TextInput
-										className={`bg-white p-4 rounded-xl border ${errors.confirmPassword
+										className={`bg-white text-black p-4 rounded-xl border ${errors.confirmPassword
 											? "border-red-500"
 											: "border-gray-300"
 											}`}
 										placeholder="Confirm Password"
+										placeholderTextColor="#9CA3AF"
 										secureTextEntry={!isConfirmPasswordVisible}
 										value={formData.confirmPassword}
 										onChangeText={(text) =>

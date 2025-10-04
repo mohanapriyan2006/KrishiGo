@@ -203,6 +203,16 @@ const ChallengeUpload = ({ visible, onClose }) => {
                             />
                         </View>
 
+                        {/* Back Button */}
+                        <TouchableOpacity
+                            onPress={handleClose}
+                            className="bg-primary rounded-xl py-4 mt-6 shadow-sm"
+                            activeOpacity={0.8}
+                        >
+                            <Text className="text-white font-semibold tracking-wider text-center text-lg">
+                                {t('challenge.submitActivity')}
+                            </Text>
+                        </TouchableOpacity>
                         {/* Submit Button */}
                         <TouchableOpacity
                             onPress={handleSubmit}
