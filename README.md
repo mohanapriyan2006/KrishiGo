@@ -34,15 +34,13 @@ KrishiGo is a revolutionary **gamified learning platform** designed specifically
 - **AI Assistant**: Get instant help and guidance from our smart AI companion
 - **Progress Tracking**: Monitor your learning journey with detailed analytics
 
-![Quiz Interface](image2)
-
 ### 🏆 Reward System
 - **Points & Badges**: Earn rewards for completing courses and quizzes
 - **Leaderboards**: Compete with friends and climb the rankings
 - **Daily Rewards**: Collect points every day to stay motivated
 - **Referral Program**: Invite friends and earn bonus points
 
-![Rewards System](image3)
+
 
 ### 📚 Comprehensive Curriculum
 - **Sustainable Agriculture**: Learn eco-friendly farming practices
@@ -72,19 +70,103 @@ Connect with fellow learners and compete in friendly challenges
 <div align="center">
   <table>
     <tr>
-      <td><img src="image1" width="200px" alt="AI Assistant"/></td>
-      <td><img src="image2" width="200px" alt="Quiz Interface"/></td>
-      <td><img src="image3" width="200px" alt="Rewards"/></td>
-      <td><img src="image4" width="200px" alt="Dashboard"/></td>
+      <td align="center"><b>Login</b></td>
+      <td align="center"><b>Register</b></td>
+      <td align="center"><b>Home</b></td>
+      <td align="center"><b>AI Assistant</b></td>
     </tr>
     <tr>
-      <td align="center"><b>AI Assistant</b></td>
-      <td align="center"><b>Interactive Quizzes</b></td>
-      <td align="center"><b>Reward System</b></td>
-      <td align="center"><b>Personal Dashboard</b></td>
+      <td><img src="screenshots\1.jpg" width="300px" alt="AI Assistant"/></td>
+      <td><img src="screenshots\2.jpg" width="300px" alt="Quiz Interface"/></td>
+      <td><img src="screenshots\3.jpg" width="300px" alt="Rewards"/></td>
+      <td><img src="screenshots\4.jpg" width="300px" alt="Dashboard"/></td>
     </tr>
   </table>
 </div>
+
+----
+----
+
+<div align="center">
+  <table>
+    <tr>
+      <td><img src="screenshots\5.jpg" width="200px" alt="AI Assistant"/></td>
+      <td><img src="screenshots\6.jpg" width="200px" alt="Quiz Interface"/></td>
+      <td><img src="screenshots\7.jpg" width="200px" alt="Rewards"/></td>
+      <td><img src="screenshots\8.jpg" width="200px" alt="Dashboard"/></td>
+    </tr>
+    <tr>
+      <td align="center"><b>Journey</b></td>
+      <td align="center"><b>Course Details</b></td>
+      <td align="center"><b>Course Video</b></td>
+      <td align="center"><b>Explore Course</b></td>
+    </tr>
+  </table>
+</div>
+
+----
+----
+
+<div align="center">
+  <table>
+    <tr>
+      <td><img src="screenshots\9.jpg" width="200px" alt="AI Assistant"/></td>
+      <td><img src="screenshots\10.jpg" width="200px" alt="Quiz Interface"/></td>
+      <td><img src="screenshots\11.jpg" width="200px" alt="Rewards"/></td>
+      <td><img src="screenshots\12.jpg" width="200px" alt="Dashboard"/></td>
+    </tr>
+    <tr>
+      <td align="center"><b>Saved Courses</b></td>
+      <td align="center"><b>Challenges</b></td>
+      <td align="center"><b>Upload Challege</b></td>
+      <td align="center"><b>Daily Activity</b></td>
+    </tr>
+  </table>
+</div>
+
+----
+----
+
+<div align="center">
+  <table>
+    <tr>
+      <td><img src="screenshots\13.jpg" width="200px" alt="AI Assistant"/></td>
+      <td><img src="screenshots\14.jpg" width="200px" alt="Quiz Interface"/></td>
+      <td><img src="screenshots\15.jpg" width="200px" alt="Rewards"/></td>
+      <td><img src="screenshots\16.jpg" width="200px" alt="Dashboard"/></td>
+    </tr>
+    <tr>
+      <td align="center"><b>Quiz</b></td>
+      <td align="center"><b>Rewards</b></td>
+      <td align="center"><b>Redeem Points</b></td>
+      <td align="center"><b>UPI Cash Redeem</b></td>
+    </tr>
+  </table>
+</div>
+
+----
+----
+
+<div align="center">
+  <table>
+    <tr>
+      <td><img src="screenshots\17.jpg" width="200px" alt="AI Assistant"/></td>
+      <td><img src="screenshots\18.jpg" width="200px" alt="Quiz Interface"/></td>
+      <td><img src="screenshots\19.jpg" width="200px" alt="Rewards"/></td>
+      <td><img src="screenshots\20.jpg" width="200px" alt="Dashboard"/></td>
+    </tr>
+    <tr>
+      <td align="center"><b>Profile</b></td>
+      <td align="center"><b>Settings</b></td>
+      <td align="center"><b>Change Language</b></td>
+      <td align="center"><b>Edit Account</b></td>
+    </tr>
+  </table>
+</div>
+
+---------------
+---------------
+
 
 ## 🚀 Getting Started
 
